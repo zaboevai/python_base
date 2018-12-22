@@ -1,0 +1,5 @@
+OS info is 
+uname_result(system='Linux', node='MintComp', release='4.15.0-43-generic', version='#46-Ubuntu SMP Thu Dec 6 14:45:28 UTC 2018', machine='x86_64', processor='x86_64')
+
+Python version is 3.7.1 (default, Oct 22 2018, 11:21:55) 
+[GCC 8.2.0] ('64bit', 'ELF')
