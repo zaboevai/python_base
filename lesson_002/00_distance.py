@@ -14,10 +14,18 @@ sites = {
 
 distances = {}
 
-# TODO здесь заполнение словаря
+calc_dist = lambda x1,y1,x2,y2: round(((x1-x2)**2+(y1-y2)**2)**0.5, 2)
+
+for key in sites:
+    temp_dict = {}
+    for key2 in sites:
+        if key != key2:
+            x1, y1, x2, y2 = sites[key][0], sites[key][1], sites[key2][0], sites[key2][1]
+            temp_dict[key2] = calc_dist(x1, y1, x2, y2)
+
+    distances[key] = temp_dict
 
 print(distances)
-
 
 
 
