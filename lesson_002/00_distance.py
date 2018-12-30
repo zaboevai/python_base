@@ -16,6 +16,8 @@ distances = {}
 
 calc_dist = lambda x1,y1,x2,y2: round(((x1-x2)**2+(y1-y2)**2)**0.5, 2)
 
+# TODO Вычисления правильнные, но в данной работе пока нельзя использовать
+# TODO циклы, на первых этапах нужно все делать вручную
 for key in sites:
     temp_dict = {}
     for key2 in sites:

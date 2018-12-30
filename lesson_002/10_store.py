@@ -91,6 +91,6 @@ print('Стул -', chair_quantity+chair_quantity1+chair_quantity2, 'шт, ст�
 
 
 
-
+# Зачет!
 
 

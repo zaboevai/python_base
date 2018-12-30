@@ -25,3 +25,4 @@ print(garden_set.difference(meadow_set))
 # выведите на консоль те, которые растут на лугу, но не растут в саду
 print(meadow_set.difference(garden_set))
 
+# Зачет!

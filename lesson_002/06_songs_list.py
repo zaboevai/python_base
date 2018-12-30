@@ -24,7 +24,7 @@ sum_sound_time = 0
 
 songs_to_sum = ['Halo', 'Enjoy the Silence', 'Clean']
 
-
+# TODO Необходимо решить без использования циклов
 for song in violator_songs_list:
     if song[0] in songs_to_sum:
         sum_sound_time += song[1]
@@ -50,6 +50,7 @@ violator_songs_dict = {
 
 songs_to_sum   = ['Sweetest Perfection', 'Policy of Truth', 'Blue Dress']
 
+# TODO Необходимо решить без использования циклов
 for key in violator_songs_dict:
     if key in songs_to_sum:
        sum_sound_time += violator_songs_dict[key]
