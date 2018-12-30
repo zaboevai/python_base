@@ -26,6 +26,7 @@ print('Рост: '+my_family[1]+' -', my_family_height[1][1],'см.')
 
 sum_height = 0
 
+# TODO Пока необходимо решать без использования циклов
 for height in my_family_height:
     sum_height += height[1]
 
