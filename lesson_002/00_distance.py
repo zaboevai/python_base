@@ -25,7 +25,15 @@ for key in sites:
             x1, y1, x2, y2 = sites[key][0], sites[key][1], sites[key2][0], sites[key2][1]
             temp_dict[key2] = calc_dist(x1, y1, x2, y2)
 
-    distances[key] = temp_dict
+             'Paris': {'Moscow': round(((sites['Paris'][0] - sites['Moscow'][0]) ** 2
+                                        + (sites['Paris'][1] - sites['Moscow'][1]) ** 2) ** 0.5
+                                       , 2),
+
+                       'London': round(((sites['Paris'][0] - sites['London'][0]) ** 2
+                                        + (sites['Paris'][1] - sites['London'][1]) ** 2) ** 0.5
+                                       , 2),
+                       }
+             }
 
 print(distances)
 
