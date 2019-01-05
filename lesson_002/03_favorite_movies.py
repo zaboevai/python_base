@@ -14,19 +14,7 @@ my_favorite_movies = 'Терминатор, Пятый элемент, Ават�
 # Переопределять my_favorite_movies и использовать .split() нельзя.
 # Запятая не должна выводиться.
 
-# TODO Как и в предыдущих заданиях в этом нельзя использовать циклы и т д,
-# TODO нужно нужно решить использую только функцию print и срезы.
-films     = []
-start_pos = 0
-text_len  = len(my_favorite_movies)
-srt       = (0,4,1,3)
-
-for num, key in enumerate(my_favorite_movies):
-    if key == ',':
-       films.append(my_favorite_movies[start_pos:num].lstrip())
-       start_pos = num+1
-    elif num == text_len-1:
-       films.append(my_favorite_movies[start_pos:text_len].lstrip())
-
-for i in srt:
-    print(films[i])
+print(my_favorite_movies[0:10])
+print(my_favorite_movies[-15:])
+print(my_favorite_movies[12:25])
+print(my_favorite_movies[-22:-17])

@@ -26,32 +26,24 @@ point = (23, 34)
 #       квадратный корень - это возведение в степень 0.5
 #       операции сравнения дают булевы константы True и False
 
-# TODO В начальных уроках нельзя использовать функции, циклы и т д Нужно
-# TODO максимально простое решение.
-def is_in_circle(point):
+distance = round(((0-point[0])**2+(0-point[1])**2)**0.5, 2)
+print(distance <= radius)
 
-    calc_dist = lambda x1,y1,x2,y2: round(((x1-x2)**2+(y1-y2)**2)**0.5, 2)
-
-    x1, y1, x2, y2 = 0, 0, point[0], point[1]
-
-    distance = calc_dist(x1,y1,x2,y2)
-
-    # print(distance)
-    print(distance <= radius)
-
-is_in_circle(point)
 
 # Аналогично для другой точки
 point_2 = (30, 30)
 # Если точка point_2 лежит внутри круга (radius = 42), то выведите на консоль True,
 # Или False, если точка лежит вовне круга.
 
-is_in_circle(point_2)
+distance = round(((0-point_2[0])**2+(0-point_2[1])**2)**0.5, 2)
+print(distance <= radius)
+
 
 # Пример вывода на консоль:
 #
 # 77777.7777
 # False
 # False
+
 
 

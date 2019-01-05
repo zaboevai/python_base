@@ -21,15 +21,11 @@ violator_songs_list = [
 # Лучше заранее вычислить необходимое, а затем в print(xxx, yyy, zzz)
 
 sum_sound_time = 0
+sum_sound_time += violator_songs_list[3][1]
+sum_sound_time += violator_songs_list[5][1]
+sum_sound_time += violator_songs_list[8][1]
 
-songs_to_sum = ['Halo', 'Enjoy the Silence', 'Clean']
-
-# TODO Необходимо решить без использования циклов
-for song in violator_songs_list:
-    if song[0] in songs_to_sum:
-        sum_sound_time += song[1]
-        #print(song)
-print('Три песни звучат', round(sum_sound_time,2), 'минут')
+print('Три песни звучат', round(sum_sound_time, 2), 'минут')
 
 
 # Есть словарь песен группы Depeche Mode
@@ -48,12 +44,10 @@ violator_songs_dict = {
 # распечатайте общее время звучания трех песен: 'Sweetest Perfection', 'Policy of Truth' и 'Blue Dress'
 #   А другие три песни звучат ХХХ минут
 
-songs_to_sum   = ['Sweetest Perfection', 'Policy of Truth', 'Blue Dress']
-
-# TODO Необходимо решить без использования циклов
-for key in violator_songs_dict:
-    if key in songs_to_sum:
-       sum_sound_time += violator_songs_dict[key]
-       #print(key+' -',violator_songs_dict[key])
+sum_sound_time = 0
+sum_sound_time += violator_songs_dict['Sweetest Perfection']
+sum_sound_time += violator_songs_dict['Policy of Truth']
+sum_sound_time += violator_songs_dict['Blue Dress']
 
 print('А другие три песни звучат', round(sum_sound_time, 2), 'минут')
+

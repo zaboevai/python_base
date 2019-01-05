@@ -25,9 +25,9 @@ print('Рост: '+my_family[1]+' -', my_family_height[1][1],'см.')
 #   Общий рост моей семьи - ХХ см
 
 sum_height = 0
+sum_height += my_family_height[0][1]
+sum_height += my_family_height[1][1]
+sum_height += my_family_height[2][1]
+sum_height += my_family_height[3][1]
 
-# TODO Пока необходимо решать без использования циклов
-for height in my_family_height:
-    sum_height += height[1]
-
-print('Общий рост моей семьи -',sum_height,'см.')
+print('Общий рост моей семьи -', sum_height, 'см.')
