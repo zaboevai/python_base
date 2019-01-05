@@ -31,3 +31,5 @@ sum_height += my_family_height[2][1]
 sum_height += my_family_height[3][1]
 
 print('Общий рост моей семьи -', sum_height, 'см.')
+
+# Зачет!

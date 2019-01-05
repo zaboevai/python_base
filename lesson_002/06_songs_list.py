@@ -51,3 +51,4 @@ sum_sound_time += violator_songs_dict['Blue Dress']
 
 print('А другие три песни звучат', round(sum_sound_time, 2), 'минут')
 
+# Зачет!
