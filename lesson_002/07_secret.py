@@ -11,6 +11,7 @@ secret_message = [
     'бсц59мегщ2лятьаьгенедыв9фк9ехб1а',
 ]
 
+
 # ключ к расшифровке:
 #   первое слово - 4-я буква
 #   второе слово - буквы с 10 по 13, включительно
@@ -21,14 +22,14 @@ secret_message = [
 # Требуется задать конкретные индексы, например secret_message[3][12:23:4]
 # Если нужны вычисления и разные пробы - делайте это в консоли пайтона, тут нужен только результат
 
-# TODO Загаданная поговорка звучит иначе, ключ применен неверно.
-# TODO Подсказка. Каждая строка является отдельным словом, то есть должно
-# TODO получиться 5 слов.
-
 mes = ''
-mes += secret_message[0][4]
-mes += secret_message[1][10:13]+' '
-mes += secret_message[2][5:15:2]+' '
-mes += secret_message[3][12:6:-1]+' '
-mes += secret_message[4][20:15:-1]
+mes = secret_message[0][3]
+print(mes)
+mes = secret_message[1][9:13]
+print(mes)
+mes = secret_message[2][5:15:2]
+print(mes)
+mes = secret_message[3][12:6:-1]
+print(mes)
+mes = secret_message[4][20:15:-1]
 print(mes)
