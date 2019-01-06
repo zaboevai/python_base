@@ -41,3 +41,5 @@ distances = {'Moscow': {'London': round(((sites['Moscow'][0] - sites['London'][0
              }
 
 print(distances)
+
+# Зачет!
