@@ -7,8 +7,42 @@
 # Если номер месяца некорректен - сообщить об этом
 
 # Номер месяца получать от пользователя следующим образом
-user_input = input("Введите, пожалуйста, номер месяца: ")
-month = int(user_input)
-print('Вы ввели', month)
 
-# TODO здесь ваш код
+user_input = input("Введите, пожалуйста, номер месяца: ")
+if user_input.isdigit():
+    month = int(user_input)
+
+    if 1 <= month <= 12:
+        if month == 1:
+            date_count = 31
+            date_count
+        elif month == 2:
+            date_count = 28
+        elif month == 3:
+            date_count = 31
+        elif month == 4:
+            date_count = 30
+        elif month == 5:
+            date_count = 31
+        elif month == 6:
+            date_count = 30
+        elif month == 7:
+            date_count = 31
+        elif month == 8:
+            date_count = 31
+        elif month == 9:
+            date_count = 30
+        elif month == 10:
+            date_count = 31
+        elif month == 11:
+            date_count = 30
+        elif month == 12:
+            date_count = 31
+
+        print('Вы ввели', month)
+        print('Кол-во дней в месяце:', date_count)
+
+    else:
+        print('Месяца с таким номер не существует.')
+else:
+    print('Необходимо ввести число.')
