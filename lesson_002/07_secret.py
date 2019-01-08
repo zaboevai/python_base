@@ -33,3 +33,5 @@ mes = secret_message[3][12:6:-1]
 print(mes)
 mes = secret_message[4][20:15:-1]
 print(mes)
+
+# Зачет!
