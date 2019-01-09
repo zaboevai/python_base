@@ -10,4 +10,11 @@
 
 a, b = 179, 37
 
-# TODO здесь ваш код
+i = a
+int_div = 0
+while i >= 0:
+    i -= b
+    if i > 0:
+        int_div += 1
+
+print('Целочисленное деление', a, 'на', b, 'дает', int_div)
