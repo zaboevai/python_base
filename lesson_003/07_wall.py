@@ -26,7 +26,7 @@ step = x
 brick_x_count = sd.resolution[0] // x
 brick_y_count = sd.resolution[1] // y
 
-sd.resolution = (800, 800)
+# sd.resolution = (800, 800)
 
 start_x = pos_x
 start_y = pos_y
