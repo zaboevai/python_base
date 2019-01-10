@@ -12,8 +12,8 @@ sd.background_color = sd.COLOR_DARK_ORANGE
 x = 100
 y = 50
 
-pos_x = 0
-pos_y = 0
+pos_x = 50
+pos_y = 50
 # start_x = 50
 # end_x = start_x + x
 #
@@ -25,6 +25,8 @@ step = x
 
 brick_x_count = sd.resolution[0] // x
 brick_y_count = sd.resolution[1] // y
+
+x_count = brick_x_count
 
 sd.resolution = (800, 800)
 
@@ -62,7 +64,7 @@ for brick_y in range(brick_y_count):
         sd.rectangle(left_bottom=start_position, right_top=end_position, color=sd.COLOR_BLACK, width=1)
 
         # двигаем кирпич по x
-        start_x += x
+        start_x += pos_x + x
         end_x += x
 
         sd.sleep(0.03)
