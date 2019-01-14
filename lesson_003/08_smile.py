@@ -38,6 +38,8 @@ def draw_smile(x, y, color):
     sd.circle(center_position=left_eye_point, radius=eye_radius, color=sd.COLOR_BLACK, width=0)
 
     # рисуем душки очков
+    # TODO Когда переменная используется, ее нельзя называть "_"
+    # TODO В данном случае цикл не особо нужен
     for _ in range(3):
         if _ == 0:
             # центральная часть
