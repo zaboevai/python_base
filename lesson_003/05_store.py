@@ -51,6 +51,7 @@ item_of_goods = []
 
 for product_name, product_code in goods.items():
 
+    # TODO Правильней будет сразу испольщовать store[product_code] в цикле
     product_position = store[product_code]
     position_quantity = 0
     position_price = 0
@@ -59,6 +60,8 @@ for product_name, product_code in goods.items():
     product_value = 0
 
     for position in product_position:
+        # TODO В position словарь из двух элементов, не нужно обходить его в
+        # TODO цикле. Достаточно обращаться по ключам
         for item, item_count in position.items():
 
             if item == 'quantity':

@@ -7,6 +7,7 @@ import simple_draw as sd
 sd.resolution = (1200, 600)
 
 def draw_circle(position , radius=50, step = 0, color=sd.COLOR_GREEN, width=2):
+    # TODO Эта функция рисует круг, а не пузырек
     sd.circle(center_position=position, radius=radius+step, width=width, color=color)
 
 

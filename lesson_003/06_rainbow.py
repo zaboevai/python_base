@@ -29,3 +29,5 @@ for color in rainbow_colors[::-1]:
     step += 30
 
 sd.pause()
+
+# Зачет!
