@@ -70,22 +70,11 @@ brick_x, brick_y, brick_z = 11, 10, 2
 # brick_x, brick_y, brick_z = 3, 11, 6
 
 # (просто раскоментировать нужную строку и проверить свой код)
-
-# TODO Решение не правильное. Такой большой уровень вложености тут не нужен.
-# TODO Задача решается 1 условием с несколькими elif и else.
-# TODO Подсказка. Несколько условий можно объединять логческими операторами.
-if hole_x >= brick_x <= hole_y:
-    if hole_x >= brick_y <= hole_y:
-        print('ДА')
-    else:
-        if hole_x >= brick_z <= hole_y:
-            print('ДА')
-        else:
-            print('НЕТ')
-elif hole_x >= brick_y <= hole_y:
-    if hole_x >= brick_z <= hole_y:
-        print('ДА')
-    else:
-        print('НЕТ')
+if (hole_x >= brick_x <= hole_y) and (hole_x >= brick_y <= hole_y):
+    print('ДА')
+elif (hole_x >= brick_y <= hole_y) and (hole_x >= brick_z <= hole_y):
+    print('ДА')
+elif (hole_x >= brick_x <= hole_y) and (hole_x >= brick_z <= hole_y):
+    print('ДА')
 else:
     print('НЕТ')

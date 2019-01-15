@@ -38,23 +38,20 @@ def draw_smile(x, y, color):
     sd.circle(center_position=left_eye_point, radius=eye_radius, color=sd.COLOR_BLACK, width=0)
 
     # рисуем душки очков
-    # TODO Когда переменная используется, ее нельзя называть "_"
-    # TODO В данном случае цикл не особо нужен
-    for _ in range(3):
-        if _ == 0:
-            # центральная часть
-            point1 = sd.get_point(round(right_oculus_point.x - SMILE_SIZE / 4), right_oculus_point.y)
-            point2 = sd.get_point(round(left_oculus_point.x + SMILE_SIZE / 4), left_oculus_point.y)
-        elif _ == 1:
-            # левая часть
-            point1 = sd.get_point(left_oculus_point.x-oculus_radius, left_oculus_point.y)
-            point2 = sd.get_point(left_oculus_point.x-oculus_radius*2, left_oculus_point.y)
-        elif _ == 2:
-            # правая часть
-            point1 = sd.get_point(right_oculus_point.x+oculus_radius, right_oculus_point.y)
-            point2 = sd.get_point(right_oculus_point.x+oculus_radius*2, right_oculus_point.y)
+    # центральная часть
+    point1 = sd.get_point(round(right_oculus_point.x - SMILE_SIZE / 4), right_oculus_point.y)
+    point2 = sd.get_point(round(left_oculus_point.x + SMILE_SIZE / 4), left_oculus_point.y)
+    sd.line(point1, point2, sd.COLOR_DARK_ORANGE, width=3)
 
-        sd.line(point1, point2, sd.COLOR_DARK_ORANGE, width=3)
+    # левая часть
+    point1 = sd.get_point(left_oculus_point.x-oculus_radius, left_oculus_point.y)
+    point2 = sd.get_point(left_oculus_point.x-oculus_radius*2, left_oculus_point.y)
+    sd.line(point1, point2, sd.COLOR_DARK_ORANGE, width=3)
+
+    # правая часть
+    point1 = sd.get_point(right_oculus_point.x+oculus_radius, right_oculus_point.y)
+    point2 = sd.get_point(right_oculus_point.x+oculus_radius*2, right_oculus_point.y)
+    sd.line(point1, point2, sd.COLOR_DARK_ORANGE, width=3)
 
     # рисуем бороду
     step = SMILE_SIZE // 10

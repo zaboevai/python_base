@@ -8,43 +8,29 @@
 
 # Номер месяца получать от пользователя следующим образом
 
+months_day_count = {'1':  31,
+                    '2':  28,
+                    '3':  31,
+                    '4':  30,
+                    '5':  31,
+                    '6':  30,
+                    '7':  31,
+                    '8':  31,
+                    '9':  30,
+                    '10': 31,
+                    '11': 30,
+                    '12': 31,
+                    }
+
+
 user_input = input("Введите, пожалуйста, номер месяца: ")
 if user_input.isdigit():
-    # TODO Если пользователь введет букву вся программа сразу сломается, это не хорошо
     month = int(user_input)
 
     if 1 <= month <= 12:
-        # TODO Для того, чтобы не писать такое огромное количество условий
-        # TODO можно воспользоваться словарем дня хранения информации о том сколько днгей в месяце
-        if month == 1:
-            date_count = 31
-            date_count
-        elif month == 2:
-            date_count = 28
-        elif month == 3:
-            date_count = 31
-        elif month == 4:
-            date_count = 30
-        elif month == 5:
-            date_count = 31
-        elif month == 6:
-            date_count = 30
-        elif month == 7:
-            date_count = 31
-        elif month == 8:
-            date_count = 31
-        elif month == 9:
-            date_count = 30
-        elif month == 10:
-            date_count = 31
-        elif month == 11:
-            date_count = 30
-        elif month == 12:
-            date_count = 31
-
+        day_count = months_day_count[user_input]
         print('Вы ввели', month)
-        print('Кол-во дней в месяце:', date_count)
-
+        print('Кол-во дней в месяце:', day_count)
     else:
         print('Месяца с таким номер не существует.')
 else:
