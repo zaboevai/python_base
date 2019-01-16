@@ -62,7 +62,7 @@ colors = {1: ('RED', sd.COLOR_RED),
 
 print('Возможные цвета:')
 for num, name in colors.items():
-    print(num, ':', name[0].lower())
+    print('    ', num, ':', name[0].lower())
 
 while True:
     color = input('Укажите номер цвета: ')
