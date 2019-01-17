@@ -59,5 +59,5 @@ for product_name, product_code in goods.items():
 
     print(product_name, '-', product_quantity, 'шт, стоимость', product_value, 'руб')
 
-
+# Зачет!
 

@@ -94,3 +94,5 @@ for _ in range(10):
     draw_smile(rnd_point.x, rnd_point.y, SMILE_COLOR)
 
 sd.pause()
+
+# Зачет!
