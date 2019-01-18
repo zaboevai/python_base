@@ -69,19 +69,16 @@ def draw_branches(point, angle, length=100):
 
     delta = 30
     delta_deviation = delta * 0.4
-    delta_deviation = delta + sd.randint(-delta_deviation, delta_deviation)
+    delta_deviation = delta + sd.randint(0, delta_deviation)
+
     next_angle = round(angle - delta_deviation)
 
-    next_length = length * 0.8
-
-    # length_deviation = round(next_length * 0.2)
-    # next_length += length_deviation + sd.randint(-length_deviation, length_deviation)
-    # print(next_length)
-    # next_length += length_deviation
+    next_length = length * 0.75
+    length_deviation = round(next_length * 0.2)
+    next_length += sd.randint(0, length_deviation)
 
     draw_branches(next_point, next_angle, next_length)
 
-    delta_deviation = delta + sd.randint(-delta_deviation, delta_deviation)
     next_angle = round(angle + delta_deviation)
     draw_branches(next_point, next_angle, next_length)
 
