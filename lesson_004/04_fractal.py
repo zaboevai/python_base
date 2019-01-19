@@ -26,7 +26,9 @@ import simple_draw as sd
 
 # можно поиграть -шрифтами- цветами и углами отклонения
 
-sd.resolution=(1200, 800)
+sd.resolution = (1200, 800)
+
+
 def draw_branches(point, angle, length=100):
     if length < 10:
         return
@@ -35,18 +37,17 @@ def draw_branches(point, angle, length=100):
     vector.draw()
 
     next_point = vector.end_point
-
     delta = 30
-    next_length = length * 0.75
+    length *= 0.75
 
     next_angle = angle - delta
-    draw_branches(next_point, next_angle, next_length)
+    draw_branches(next_point, next_angle, length)
 
     next_angle = angle + delta
-    draw_branches(next_point, next_angle, next_length)
+    draw_branches(next_point, next_angle, length)
 
 
-root_point = sd.get_point(900, 30)
+root_point = sd.get_point(1000, 30)
 draw_branches(point=root_point, angle=90, length=100)
 
 # 4) Усложненное задание (делать по желанию)
@@ -57,7 +58,7 @@ draw_branches(point=root_point, angle=90, length=100)
 # Пригодятся функции
 # sd.random_number()
 
-sd.resolution=(1200, 800)
+
 def draw_branches(point, angle, length=100):
     if length < 10:
         return
@@ -69,24 +70,21 @@ def draw_branches(point, angle, length=100):
 
     delta = 30
     delta_deviation = delta * 0.4
-    delta_deviation = delta + sd.randint(0, delta_deviation)
+    delta += sd.random_number(-delta_deviation, delta_deviation)
 
-    next_angle = round(angle - delta_deviation)
+    length = length * 0.75
+    length_deviation = round(length * 0.2)
+    length += sd.random_number(0, length_deviation)
 
-    next_length = length * 0.75
-    length_deviation = round(next_length * 0.2)
-    next_length += sd.randint(0, length_deviation)
+    next_angle = round(angle + delta)
+    draw_branches(next_point, next_angle, length)
 
-    draw_branches(next_point, next_angle, next_length)
-
-    next_angle = round(angle + delta_deviation)
-    draw_branches(next_point, next_angle, next_length)
+    next_angle = round(angle - delta)
+    draw_branches(next_point, next_angle, length)
 
 
-root_point = sd.get_point(300, 30)
+root_point = sd.get_point(500, 30)
 draw_branches(point=root_point, angle=90, length=100)
-
-
 
 sd.pause()
 
