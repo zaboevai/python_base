@@ -2,7 +2,6 @@
 
 import simple_draw as sd
 
-
 # Запросить у пользователя желаемую фигуру посредством выбора из существующих
 #   вывести список всех фигур с номерами и ждать ввода номера желаемой фигуры.
 # и нарисовать эту фигуру в центре экрана
@@ -68,18 +67,18 @@ while True:
 
     figure = input('Укажите номер фигуры: ')
 
-    print('Возможные цвета:')
-    for num, name in colors.items():
-        print('    ', num, ':', name[0].lower())
+    if figure.isdigit() and int(figure) in figures:
+        figure = int(figure)
 
-    color = input('Укажите номер цвета: ')
+        print('Возможные цвета:')
+        for num, name in colors.items():
+            print('    ', num, ':', name[0].lower())
 
-    if figure.isdigit() and color.isdigit():
+        color = input('Укажите номер цвета: ')
 
-        figure, color = int(figure), int(color)
+        if color.isdigit() and int(color) in colors:
 
-        if figure in figures and color in colors:
-
+            color = int(color)
             point = sd.get_point(300, 300)
             if figure == 1:
                 draw_triangle(start_point=point, angle=20, length=100, color=colors[color][1])
@@ -91,11 +90,9 @@ while True:
                 draw_hexagon(start_point=point, angle=20, length=100, color=colors[color][1])
 
             break
-
         else:
-            print('\n    Ошибка!: Неверно указан номер.\n')
-
+            print('\n    Ошибка!: Неверно указан номер фигуры.\n')
     else:
-        print('\n    Ошибка!: Указана буква.\n')
+        print('\n    Ошибка!: Неверно указан номер фигуры.\n')
 
 sd.pause()
