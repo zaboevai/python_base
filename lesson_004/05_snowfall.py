@@ -8,7 +8,7 @@ import simple_draw as sd
 # - нарисовать падение этих N снежинок
 # - создать список рандомных длинн лучей снежинок (от 10 до 100) и пусть все снежинки будут разные
 
-N = 200
+N = 20
 
 # Пригодятся функции
 # sd.get_point()
@@ -22,32 +22,48 @@ sd.resolution = (1200, 800)
 y = 700
 x = 0
 snowflakes = {}
+snowflake_size = {'min': 5, 'max': 20}
 
 for i in range(N):
-    snowflakes[i] = {'length': sd.random_number(5, 20),
-                     'x': sd.random_number(0, 1100),
-                     'y': y
+    snowflakes[i] = {'length': sd.random_number(snowflake_size['min'], snowflake_size['max']),
+                     'x': sd.random_number(0, sd.resolution[0]),
+                     'y': y,
+                     'a': sd.random_number(1, 10)/10,
+                     'b': sd.random_number(1, 10)/10,
+                     'c': sd.random_number(1, 120)
                      }
 
 while True:
 
     sd.start_drawing()
 
-    for num, parametr in snowflakes.items():
+    for num, parameter in snowflakes.items():
 
-        point = sd.get_point(parametr['x'], parametr['y'])
-        sd.snowflake(center=point, length=parametr['length'], color=sd.background_color)
+        point = sd.get_point(parameter['x'], parameter['y'])
+        sd.snowflake(center=point,
+                     length=parameter['length'],
+                     color=sd.background_color,
+                     factor_a=parameter['a'],
+                     factor_b=parameter['b'],
+                     factor_c=parameter['c'])
 
-        parametr['x'] += sd.random_number(-5, 5) + parametr['length']
-        parametr['y'] -= sd.random_number(5, 20) - parametr['length']
+        parameter['x'] += sd.random_number(0, 2)
 
-        next_point = sd.get_point(parametr['x'], parametr['y'])
-        sd.snowflake(center=next_point, length=parametr['length'], color=sd.COLOR_WHITE)
 
-        if parametr['y'] < 50:
-            parametr['y'] = y
-            parametr['length'] = sd.random_number(5, 10)
-            parametr['x'] = sd.random_number(0, 1100)
+        parameter['y'] -= snowflake_size['max'] + 1 - parameter['length']
+
+        next_point = sd.get_point(parameter['x'], parameter['y'])
+        sd.snowflake(center=next_point,
+                     length=parameter['length'],
+                     color=sd.COLOR_WHITE,
+                     factor_a=parameter['a'],
+                     factor_b=parameter['b'],
+                     factor_c=parameter['c'])
+
+        if parameter['y'] < 50:
+            parameter['y'] = y
+            parameter['length'] = sd.random_number(snowflake_size['min'], snowflake_size['max'])
+            parameter['x'] = sd.random_number(0, sd.resolution[0])
 
     sd.finish_drawing()
 
