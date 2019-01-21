@@ -14,5 +14,39 @@
 
 # Создать рецепт своего бургера, по вашему вкусу.
 # Если не хватает инградиентов - создать соответствующие функции в модуле my_burger
+from pprint import pprint
 
-# TODO здесь ваш код
+from my_burger import take_bun, take_chop, take_cucumber, take_tomato, take_mayonnaise, take_ketchup, take_chease
+
+
+def cook_burger():
+
+    burger_list = [take_bun(),
+                   take_chop(),
+                   take_chease(),
+                   take_chop(),
+                   take_chease(),
+                   take_cucumber(),
+                   take_tomato(),
+                   take_mayonnaise(),
+                   take_ketchup(),
+                   take_bun(), ]
+
+    print('\nРецепт двойного чизбургера: \n ' + '\n '.join(burger_list))
+
+
+def cook_my_burger():
+    my_burger_list = [take_bun(),
+                      take_mayonnaise(),
+                      take_chop(),
+                      take_chease(),
+                      take_cucumber(),
+                      take_tomato(),
+                      take_ketchup(),
+                      take_bun(), ]
+
+    print('\nРецепт любимого бургера: \n ' + '\n '.join(my_burger_list))
+
+
+cook_burger()
+cook_my_burger()
