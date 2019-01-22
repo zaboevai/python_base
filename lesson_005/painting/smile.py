@@ -66,7 +66,7 @@ def draw_smile(x, y, color=sd.COLOR_YELLOW):
         sd.line(point_start, point_end, BEARD_COLOR, width=step)
 
     # рисуем улыбку
-    step = SMILE_SIZE // 40
+    step = SMILE_SIZE // 10
     smile_step = SMILE_SIZE // 10
     smile_y_pos = y
     smile_length = (SMILE_SIZE - round(SMILE_SIZE * (5 / 7)))
