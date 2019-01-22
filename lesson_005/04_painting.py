@@ -24,3 +24,31 @@
 # Анимировать картину.
 # Пусть слева идет снегопад, радуга переливается цветами, смайлик моргает, солнце крутит лучами, етс.
 # Задержку в анимировании все равно надо ставить, пусть даже 0.01 сек - так библиотека устойчивей работает.
+
+
+import simple_draw as sd
+from painting import smile as pt_smile, \
+                     snowfall as pt_snowfall, \
+                     wall as pt_wall, \
+                     tree as pt_tree, \
+                     rainbow as pt_rainbow
+
+# import painting.snowfall as pt_snowfall
+# import painting.wall as pt_wall
+
+
+
+sd.resolution = (1200, 800)
+
+pt_wall.draw_wall(100, 100)
+
+pt_tree.x = 300
+pt_tree.y = 30
+
+pt_tree.draw_simetric_branches()
+pt_rainbow.draw_line_rainbow(0, 800)
+
+pt_smile.draw_smile(100, 100)
+
+pt_snowfall.y = 700
+pt_snowfall.draw_snowflake()
