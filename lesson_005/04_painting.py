@@ -36,19 +36,32 @@ from painting import smile as pt_smile, \
 # import painting.snowfall as pt_snowfall
 # import painting.wall as pt_wall
 
-
-
 sd.resolution = (1200, 800)
 
-pt_wall.draw_wall(100, 100)
+# pt_wall.draw_wall(100, 100)
 
-pt_tree.x = 300
-pt_tree.y = 30
+# pt_tree.x = 300
+# pt_tree.y = 30
+#
+# root_point = sd.get_point(300, 30)
+# pt_tree.draw_simetric_branches(point=root_point, length=50)
+#
+# pt_rainbow.draw_line_rainbow(0, 1200)
 
-pt_tree.draw_simetric_branches()
-pt_rainbow.draw_line_rainbow(0, 800)
+while True:
+    sd.start_drawing()
 
-pt_smile.draw_smile(100, 100)
+    pt_rainbow.draw_rainbow(x=100, y=-50, radius=700, width=6)
 
-pt_snowfall.y = 700
-pt_snowfall.draw_snowflake()
+    pt_snowfall.y = 700
+    pt_snowfall.draw_snowflake()
+
+    sd.finish_drawing()
+    sd.sleep(0.1)
+#
+
+#
+    pt_smile.draw_smile(100, 100)
+#
+# pt_snowfall.sleep = sd.sleep(0.1)
+#
