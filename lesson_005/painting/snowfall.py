@@ -3,36 +3,19 @@
 
 import simple_draw as sd
 
+sd.resolution = (800, 800)
 
-# sleep = sd.sleep(0.1)
+# высота с которой будут падать снежинки
+
 # кол-во снежинок
 snowflakes_count = 20
 
-sd.resolution = (1200, 800)
-
-# высота с которой будут падать снежинки
-y = 700
-
-snowflakes = {}
 snowflake_size = {'min': 5, 'max': 20}
+snowflakes = {}
 
-# заполняем словарь с параметрами снежинок
-for i in range(snowflakes_count):
-    snowflakes[i] = {'length': sd.random_number(snowflake_size['min'], snowflake_size['max']),
-                     'x': sd.random_number(0, sd.resolution[0]),
-                     'y': y,
-                     'factor_a': sd.random_number(1, 10)/10,
-                     'factor_b': sd.random_number(1, 10)/10,
-                     'factor_c': sd.random_number(1, 120)
-                     }
 
 def draw_snowflake():
-
-
-    # while True:
-
-    # sd.start_drawing()
-
+    y = sd.resolution[1] + 50
     for snowflake_num, snowflake_parameter in snowflakes.items():
 
         start_point = sd.get_point(snowflake_parameter['x'], snowflake_parameter['y'])
@@ -59,13 +42,17 @@ def draw_snowflake():
             snowflake_parameter['length'] = sd.random_number(snowflake_size['min'], snowflake_size['max'])
             snowflake_parameter['x'] = sd.random_number(0, sd.resolution[0])
 
+
+if __name__ == '__main__':
+
+
+    while True:
+
+        sd.start_drawing()
+        draw_snowflake()
+        sd.finish_drawing()
+
+        sd.sleep(0.1)
+
         if sd.user_want_exit():
             break
-
-    # sd.finish_drawing()
-        #
-        # sd.sleep(0.1)
-
-    # sd.pause()
-
-

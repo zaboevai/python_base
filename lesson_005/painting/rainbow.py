@@ -13,30 +13,30 @@ def draw_line_rainbow(start_x = 0, end_x = 100):
         step += 5
 
 
-def draw_rainbow(x=0, y=0, radius=500, width=1, rainbow_colors=rainbow_colors):
+def draw_rainbow(x=0, y=0, radius=500, width=1, rainbow_colors=rainbow_colors, game_tick=0):
 
-    # while True:
+    step = 0
+    for num, color in enumerate(rainbow_colors):
+        start_point = sd.get_point(x, -y)
+        sd.circle(center_position=start_point, radius=radius+step, color=color, width=width+1)
+        step += width
 
-    # sd.start_drawing()
+    if game_tick % 2 == 1:
+        rainbow_colors.append(rainbow_colors[0])
+        rainbow_colors.remove(rainbow_colors[0])
 
-    for i in range(len(rainbow_colors)):
-        step = 0
-        for color in rainbow_colors:
-            start_point = sd.get_point(x, -y)
-            sd.circle(center_position=start_point, radius=radius+step, color=color, width=width+1)
-            step += width
-        # print(i)
-        if i == len(rainbow_colors):
-            rainbow_colors[i-1] = rainbow_colors[len(rainbow_colors)]
-        else:
-            rainbow_colors[i-1] = rainbow_colors[i]
+
+
+if __name__ == '__main__':
+
+    while True:
+
+        sd.start_drawing()
+        draw_rainbow(width=6)
+        sd.finish_drawing()
+        sd.sleep(0.1)
 
         if sd.user_want_exit():
             break
 
-    # sd.finish_drawing()
-    # sd.sleep(0.1)
 
-
-if __name__ == '__main__':
-    draw_rainbow(width=6)

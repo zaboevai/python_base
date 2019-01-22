@@ -13,11 +13,10 @@ brick_sizer_y = 20
 
 half_brick = brick_sizer_x // 2
 
-brick_x_count = wall_size[0] // brick_sizer_x #sd.resolution[0] // x
-brick_y_count = wall_size[1] // brick_sizer_y #sd.resolution[1] // y
-
-
 def draw_wall(pos_x=0, pos_y=0):
+
+    brick_x_count = wall_size[0] // brick_sizer_x  # sd.resolution[0] // x
+    brick_y_count = wall_size[1] // brick_sizer_y  # sd.resolution[1] // y
 
     start_x = pos_x
     start_y = pos_y
