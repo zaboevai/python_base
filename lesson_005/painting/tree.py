@@ -10,35 +10,33 @@ root_point = sd.get_point(x, y)
 root_angle = 90
 root_color = sd.COLOR_DARK_ORANGE
 
-def draw_simetric_branches(point, angle, length=100):
+def draw_simetric_branches(point, angle, length=100, set_day=False):
+
     if length < 10:
         return
 
-    vector = sd.get_vector(start_point=point, angle=angle, length=length, width=2)
+    vector = sd.get_vector(start_point=point, angle=angle, length=length, width=5)
     vector.draw(root_color)
 
     next_point = vector.end_point
 
-    if length < 30:
+    if set_day and length < 30:
         sd.circle(next_point, 7, sd.COLOR_GREEN, width=0)
         sd.circle(next_point, 5, sd.COLOR_DARK_GREEN, width=0)
 
-
-    delta = sd.random_number(20, 30)
+    delta = 30 #sd.random_number(20, 30)
     length *= 0.75
 
-
     next_angle = angle - delta
-    draw_simetric_branches(next_point, next_angle, length)
+    draw_simetric_branches(next_point, next_angle, length, set_day)
 
     next_angle = angle + delta
-    draw_simetric_branches(next_point, next_angle, length)
+    draw_simetric_branches(next_point, next_angle, length, set_day)
 
 
 def draw_branches(point, angle, length=100):
-    if length < 0:
+    if length < 10:
         return
-
 
     vector = sd.get_vector(start_point=point, angle=angle, length=length, width=2)
     vector.draw()
@@ -49,7 +47,7 @@ def draw_branches(point, angle, length=100):
     delta_deviation = delta * 0.4
     delta += sd.random_number(-delta_deviation, delta_deviation)
 
-    length *= 0.75
+    length = length * 0.75
     length_deviation = round(length * 0.2)
     length += sd.random_number(0, length_deviation)
 
@@ -63,7 +61,7 @@ def draw_branches(point, angle, length=100):
 if __name__ == '__main__':
 
     root_point = sd.get_point(1000, 30)
-    draw_simetric_branches(point=root_point, angle=root_angle, length=70)
+    draw_simetric_branches(point=root_point, angle=root_angle, length=70, set_day=True)
 
     root_point = sd.get_point(500, 30)
     draw_branches(point=root_point, angle=root_angle, length=50)
