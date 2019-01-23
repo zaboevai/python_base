@@ -31,12 +31,13 @@ from painting import smile as pt_smile, \
                      snowfall as pt_snowfall, \
                      wall as pt_wall, \
                      tree as pt_tree, \
-                     rainbow as pt_rainbow
+                     rainbow as pt_rainbow, \
+                     shapes as pt_shapes
+
 
 sd.resolution = (1200, 800)
 
-pt_wall.wall_size = (200, 200)
-pt_snowfall.snowflakes_count = 100
+pt_snowfall.snowflakes_count = 20
 
 # заполняем словарь с параметрами снежинок
 for i in range(pt_snowfall.snowflakes_count):
@@ -51,7 +52,26 @@ for i in range(pt_snowfall.snowflakes_count):
          }
 
 tick = 0
+
 root_point = sd.get_point(1000, 30)
+
+building_size = (400, 300)
+building_start_point = sd.get_point(x=100, y=10)
+pt_wall.wall_size = building_size
+
+roof_point_list = (sd.get_point
+                   (building_start_point.x+1 - (building_size[0]*0.1),
+                    building_start_point.y+1 + building_size[1]),
+
+                   sd.get_point
+                   (building_start_point.x+1 + building_size[0] + (building_size[0]*0.1),
+                    building_start_point.y+1 + building_size[1]),
+
+                   sd.get_point
+                   (building_start_point.x+1 + building_size[0] // 2,
+                    building_start_point.y+1 + building_size[1] + building_size[1]//2),
+                   )
+
 
 while True:
 
@@ -62,7 +82,32 @@ while True:
 
     pt_rainbow.draw_rainbow(x=100, y=-50, radius=700, width=6, game_tick=tick)
 
-    pt_wall.draw_wall(pos_x=400, pos_y=30)
+    pt_wall.draw_wall(pos_x=building_start_point.x, pos_y=building_start_point.y)
+
+    sd.polygon(point_list=roof_point_list, color=sd.COLOR_DARK_GREEN, width=0)
+    sd.polygon(point_list=roof_point_list, color=sd.COLOR_BLACK, width=1)
+
+    sd.circle(sd.get_point(building_start_point.x+1 + building_size[0]//2,
+                           building_start_point.y + 1 + building_size[1] + building_size[1] // 4),
+              30, color=sd.COLOR_DARK_YELLOW, width=0)
+
+    sd.circle(sd.get_point(building_start_point.x+1 + building_size[0]//2,
+                           building_start_point.y + 1 + building_size[1] + building_size[1] // 4),
+              30, color=sd.COLOR_BLACK, width=1)
+
+
+    x_step = building_size[0] // 4
+    y_step = building_size[1] // 4
+
+    sd.rectangle(sd.get_point(building_start_point.x+1 + x_step, building_start_point.y+1 + y_step),
+                 sd.get_point(building_start_point.x+1 + building_size[0] - x_step,
+                              building_start_point.y+1 + building_size[1] - y_step),
+                 color=sd.COLOR_DARK_YELLOW, width=0)
+
+    sd.rectangle(sd.get_point(building_start_point.x+1 + x_step, building_start_point.y+1 + y_step),
+                 sd.get_point(building_start_point.x+1 + building_size[0] - x_step,
+                              building_start_point.y+1 + building_size[1] - y_step),
+                 color=sd.COLOR_BLACK, width=3)
 
     pt_tree.root_color = sd.background_color
     pt_tree.draw_simetric_branches(point=root_point, angle=90, length=70)
@@ -70,13 +115,15 @@ while True:
     pt_tree.root_color = sd.COLOR_DARK_ORANGE
     pt_tree.draw_simetric_branches(point=root_point, angle=90, length=70)
 
-    pt_smile.draw_smile(500, 130, tick)
+    pt_smile.draw_smile(building_start_point.x + 1 + building_size[0] // 2,
+                        building_start_point.y + 1 + building_size[1] // 2,
+                        tick)
 
     sd.sleep(0.07)
     sd.finish_drawing()
 
     if tick >= 60:
-            tick = 0
+        tick = 0
 
     if sd.user_want_exit():
         break

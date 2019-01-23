@@ -33,9 +33,7 @@ def blink_eye(left_eye_point, right_eye_point, blink_time = 0):
         # sd.circle(center_position=left_eye_point, radius=eye_radius, color=sd.COLOR_BLACK, width=0)
 
 
-
-
-def draw_smile(x, y, game_tick = 0):
+def draw_smile(x, y, game_tick=0):
 
     # рисуем лицо
     face_point = sd.get_point(x=x, y=y)
@@ -84,9 +82,9 @@ def draw_smile(x, y, game_tick = 0):
     beard_y_pos = y
     beard_length = (SMILE_SIZE - round(SMILE_SIZE * (3 / 7)))
 
-    for i in range(x - SMILE_SIZE, x + SMILE_SIZE + 1, step):
+    for i in range(x - SMILE_SIZE-1, x + SMILE_SIZE + 1, step):
 
-        if i <= x:
+        if i < x:
             beard_step += step
         else:
             beard_step -= step
@@ -101,9 +99,9 @@ def draw_smile(x, y, game_tick = 0):
     smile_y_pos = y-5
     smile_length = (SMILE_SIZE - round(SMILE_SIZE * (6 / 7)))
 
-    for i in range(x-smile_length, x+smile_length+1, step):
+    for i in range(x-smile_length-1, x+smile_length+1, step):
 
-        if i <= x:
+        if i < x:
             smile_step += step
         else:
             smile_step -= step
@@ -112,15 +110,29 @@ def draw_smile(x, y, game_tick = 0):
         point_end = sd.get_point(i, smile_y_pos-smile_length-smile_step)
         sd.line(point_start, point_end, sd.COLOR_RED, width=step)
 
-    if 30 < game_tick < 35:
+    # рисуем волосы
+    sd.vector(sd.get_point(x - 30, y + SMILE_SIZE - 3), 0, 60, sd.COLOR_BLACK, width=5)
+    sd.vector(sd.get_point(x - 30, y + SMILE_SIZE - 7), 10, 60, sd.COLOR_BLACK, width=5)
+    sd.vector(sd.get_point(x - 30, y + SMILE_SIZE + 7), -10, 60, sd.COLOR_BLACK, width=5)
+    #
+    # sd.vector(sd.get_point(x, y + SMILE_SIZE), 0, 20, sd.COLOR_BLACK, width=3)
+    # sd.vector(sd.get_point(x - 20, y + SMILE_SIZE), 0, 20, sd.COLOR_BLACK, width=3)
+
+    if game_tick % 40 <= 3:
         blink_eye(left_eye_point, right_eye_point)
 
 
-
 if __name__ == '__main__':
-    # рисуем смайлы
-    for _ in range(10):
-        rnd_point = sd.random_point()
-        draw_smile(rnd_point.x, rnd_point.y, SMILE_COLOR)
 
-    sd.pause()
+    tick = 0
+    while True:
+
+        tick += 1
+        start_point = sd.get_point(300, 300)
+        draw_smile(start_point.x, start_point.y, tick)
+        sd.sleep(0.07)
+        if tick >= 60:
+            tick = 0
+
+        if sd.user_want_exit():
+            break
