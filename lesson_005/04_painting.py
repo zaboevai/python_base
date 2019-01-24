@@ -65,7 +65,10 @@ building_start_point = sd.get_point(x=100, y=10)
 
 pt_wall.wall_size = building_size
 
-roof_point_list = (sd.get_point
+
+roof_point_list_test = []
+roof_start_point = sd.get_point(building_start_point.x-10, building_start_point.y+1 + building_size[1])
+roof_point_list = [sd.get_point
                    (building_start_point.x+1,
                     building_start_point.y+1 + building_size[1]),
 
@@ -76,27 +79,23 @@ roof_point_list = (sd.get_point
                    sd.get_point
                    (building_start_point.x+1 + building_size[0],
                     building_start_point.y+1 + building_size[1]),
+                   ]
 
-                   )
 background_color = sd.COLOR_BLACK
 sd.background_color = background_color
 
-set_day = False
+set_part_of_day = 'night'
 
+morning = False
+afternoon = False
+evening = False
+night = False
 
 while True:
 
     tick += 1
     sd.start_drawing()
 
-    if set_day:
-        background_color = sd.COLOR_CYAN
-        sd.background_color = background_color
-        pt_snowfall.background_color = background_color
-    else:
-        background_color = sd.COLOR_BLACK
-        sd.background_color = background_color
-        pt_snowfall.background_color = background_color
 
     # for i in range(30):
     #     point =  sd.random_point()
@@ -109,22 +108,19 @@ while True:
     sd.polygon(point_list=roof_point_list, color=sd.COLOR_DARK_GREEN, width=0)
     sd.polygon(point_list=roof_point_list, color=sd.COLOR_BLACK, width=1)
 
-    if set_day == False:
-        pt_snowfall.draw_snowflake(roof_point_list)
-    else:
-        pt_rainbow.draw_rainbow(x=550, y=100, radius=700, width=6, game_tick=tick)
+    pt_snowfall.draw_snowflake(roof_point_list)
 
     sd.circle(sd.get_point(building_start_point.x+1 + building_size[0]//2,
-                           building_start_point.y + 1 + building_size[1] + building_size[1] // 4),
+                           building_start_point.y + 1 + building_size[1] + building_size[1] // 2),
               30, color=sd.COLOR_DARK_YELLOW, width=0)
 
     sd.circle(sd.get_point(building_start_point.x+1 + building_size[0]//2,
-                           building_start_point.y + 1 + building_size[1] + building_size[1] // 4),
+                           building_start_point.y + 1 + building_size[1] + building_size[1] // 2),
               30, color=sd.COLOR_BLACK, width=1)
 
 
     x_step = building_size[0] // 4
-    y_step = building_size[1] // 4
+    y_step = building_size[1] // 5
 
     sd.rectangle(sd.get_point(building_start_point.x+1 + x_step, building_start_point.y+1 + y_step),
                  sd.get_point(building_start_point.x+1 + building_size[0] - x_step,
@@ -140,26 +136,68 @@ while True:
     # pt_tree.draw_simetric_branches(point=root_point, angle=90, length=100)
 
     pt_tree.root_color = sd.COLOR_DARK_ORANGE
-    pt_tree.draw_simetric_branches(point=root_point, angle=90, length=100, set_day=set_day)
+    pt_tree.draw_simetric_branches(point=root_point, angle=90, length=100, set_day=set_part_of_day)
 
     pt_smile.draw_smile(building_start_point.x + 1 + building_size[0] // 2,
                         building_start_point.y + 1 + building_size[1] // 2,
                         tick)
-
-    # sd.sleep(0.05)
     sd.finish_drawing()
+    # sd.sleep(0.03)
 
-    if tick >= 600:
-        tick = 0
-
-    # if tick >= 300:
-    #     if tick == 300:
-    #         sd.clear_screen()
-    #     set_day = True
-    # else:
+    # if tick >= 1200:
+    #     tick = 0
+    #
+    # print(set_part_of_day)
+    #
+    #
+    # if tick < 300:
+    #
     #     if tick == 0:
+    #         background_color = sd.COLOR_BLACK
+    #         sd.background_color = background_color
+    #
     #         sd.clear_screen()
-    #     set_day = False
+    #
+    #     set_part_of_day = 'night'
+    #     pt_snowfall.background_color = background_color
+    #     pt_snowfall.draw_snowflake(roof_point_list)
+    #
+    # elif 300 <= tick < 600:
+    #
+    #         # pt_snowfall.background_color = background_color
+    #
+    #     # if tick == 300:
+    #     #     background_color = sd.COLOR_DARK_CYAN
+    #     #     sd.background_color = background_color
+    #     #     sd.clear_screen()
+    #
+    #     set_part_of_day = 'morning'
+    #     # pt_rainbow.draw_rainbow(x=550, y=100, radius=700, width=6, game_tick=tick)
+    #
+    # elif 600 <= tick < 900:
+    #
+    #
+    #         # pt_snowfall.background_color = background_color
+    #
+    #     if tick == 600:
+    #         background_color = sd.COLOR_CYAN
+    #         sd.background_color = background_color
+    #         sd.clear_screen()
+    #
+    #     set_part_of_day = 'afternoon'
+    #
+    #
+    # elif 900 <= tick < 1200:
+    #
+    #     background_color = sd.COLOR_DARK_CYAN
+    #     sd.background_color = background_color
+    #     # pt_snowfall.background_color = background_color
+    #
+    #     if tick == 900:
+    #         sd.clear_screen()
+    #
+    #     set_part_of_day = 'evening'
+
 
     if sd.user_want_exit():
         break

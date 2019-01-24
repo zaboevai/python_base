@@ -10,7 +10,8 @@ root_point = sd.get_point(x, y)
 root_angle = 90
 root_color = sd.COLOR_DARK_ORANGE
 
-def draw_simetric_branches(point, angle, length=100, set_day=False):
+
+def draw_simetric_branches(point, angle, length=100, set_day=None):
 
     if length < 10:
         return
@@ -19,10 +20,18 @@ def draw_simetric_branches(point, angle, length=100, set_day=False):
     vector.draw(root_color)
 
     next_point = vector.end_point
-
-    if set_day and length < 30:
-        sd.circle(next_point, 7, sd.COLOR_GREEN, width=0)
-        sd.circle(next_point, 5, sd.COLOR_DARK_GREEN, width=0)
+    if length < 30:
+        if set_day == 'afternoon':
+            sd.circle(next_point, 7, sd.COLOR_DARK_GREEN, width=0)
+            sd.circle(next_point, 4, sd.COLOR_GREEN, width=0)
+        elif set_day == 'morning':
+            sd.circle(next_point, 7, sd.COLOR_WHITE, width=0)
+            sd.circle(next_point, 4, sd.COLOR_DARK_GREEN, width=0)
+        elif set_day == 'evening':
+            sd.circle(next_point, 7, sd.COLOR_DARK_GREEN, width=0)
+            sd.circle(next_point, 4, sd.COLOR_GREEN, width=0)
+        else:
+            sd.circle(next_point, 7, sd.COLOR_WHITE, width=0)
 
     delta = 30 #sd.random_number(20, 30)
     length *= 0.75

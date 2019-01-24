@@ -18,9 +18,8 @@ ground = 50
 surface_list = (sd.get_point(101, 211), sd.get_point(301, 411), sd.get_point(501, 211))
 
 
-def draw_snowflake(surface_point_list):
+def draw_snowflake(surface_point_list, set_day = 'night'):
 
-    background_color = sd.background_color
     y = sd.resolution[1] + 50
 
     for snowflake_num, snowflake_parameter in snowflakes.items():
@@ -28,7 +27,7 @@ def draw_snowflake(surface_point_list):
         start_point = sd.get_point(snowflake_parameter['x'], snowflake_parameter['y'])
         sd.snowflake(center=start_point,
                      length=snowflake_parameter['length'],
-                     color=background_color,
+                     color=sd.background_color,
                      factor_a=snowflake_parameter['factor_a'],
                      factor_b=snowflake_parameter['factor_b'],
                      factor_c=snowflake_parameter['factor_c'])
@@ -49,7 +48,9 @@ def draw_snowflake(surface_point_list):
             (surface_point_list[2].x - snowflake_parameter['x'] + 10 > snowflake_parameter['y'] - surface_point_list[0].y and \
             surface_point_list[1].x <= snowflake_parameter['x'] <= surface_point_list[2].x)) or \
             snowflake_parameter['y'] < 50:
-
+            # if set_day != 'night':
+            # del snowflakes[snowflake_num]
+            # else:
             snowflake_parameter['y'] = y
             snowflake_parameter['length'] = sd.random_number(snowflake_size['min'], snowflake_size['max'])
             snowflake_parameter['x'] = sd.random_number(0, sd.resolution[0])
