@@ -28,12 +28,12 @@ def draw_simetric_branches(point, angle, length=100, set_day=None):
             sd.circle(next_point, 7, sd.COLOR_WHITE, width=0)
             sd.circle(next_point, 4, sd.COLOR_DARK_GREEN, width=0)
         elif set_day == 'evening':
-            sd.circle(next_point, 7, sd.COLOR_DARK_GREEN, width=0)
+            sd.circle(next_point, 7, sd.COLOR_WHITE, width=0)
             sd.circle(next_point, 4, sd.COLOR_GREEN, width=0)
         else:
             sd.circle(next_point, 7, sd.COLOR_WHITE, width=0)
 
-    delta = 30 #sd.random_number(20, 30)
+    delta = 30
     length *= 0.75
 
     next_angle = angle - delta
