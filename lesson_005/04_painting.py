@@ -37,8 +37,10 @@ from painting import smile as pt_smile, \
 sd.resolution = (1200, 800)
 sd.background_color = sd.COLOR_BLACK
 
-pt_snowfall.snowflakes_count = 50
+pt_snowfall.snowflakes_count = 40
 snow_falling = True
+snowflakes = {}
+snowflakes_remove = {}
 
 part_of_day = ''
 
@@ -47,11 +49,11 @@ tick = 0
 building_size = (400, 200)
 building_start_point = sd.get_point(x=100, y=10)
 
-root_point = ((sd.get_point(650, 30),  building_size[1] / 2 - sd.random_number(10, 30)),
+root_point = ((sd.get_point(750, 30),  building_size[1] / 2 - sd.random_number(10, 30)),
               (sd.get_point(800, 30),  building_size[1] / 2 - sd.random_number(10, 30)),
               (sd.get_point(1100, 30), building_size[1] / 2 - sd.random_number(10, 30)),
               # (sd.get_point(100, 30),  building_size[1] / 2 - sd.random_number(10, 30)),
-              (sd.get_point(800, 30),  building_size[1] / 2 - sd.random_number(10, 30)))
+              (sd.get_point(900, 30),  building_size[1] / 2 - sd.random_number(10, 30)))
 
 pt_wall.wall_size = building_size
 
@@ -69,10 +71,18 @@ roof_point_list = [sd.get_point
                    ]
 
 
-def draw_house():
-
+def draw_ground():
     # рисуем землю
     sd.rectangle(sd.get_point(0, 0), sd.get_point(sd.resolution[0], 40), sd.COLOR_DARK_ORANGE)
+    grass_count = 1
+    #
+    # for i in range(grass_count):
+    #     x = sd.random_number(1, sd.resolution[0])
+    #     y = sd.random_number(40, 41)
+    #     sd.vector(start=sd.get_point(x, y), angle=90, length=sd.random_number(1, 8), color=sd.COLOR_DARK_GREEN, width=3)
+
+
+def draw_house():
 
     # рисуем стену здания
     pt_wall.draw_wall(pos_x=building_start_point.x, pos_y=building_start_point.y)
@@ -118,7 +128,7 @@ def change_part_day():
 
     elif tick == 200:
 
-        background_color = sd.COLOR_BLUE
+        background_color = sd.COLOR_DARK_BLUE
         sd.background_color = background_color
         pt_snowfall.background_color = background_color
         sd.clear_screen()
@@ -150,20 +160,26 @@ while True:
 
     change_part_day()
 
-    if tick == 0:
+    if part_of_day in ('night', 'evening'):
         snow_falling = True
-    elif tick == 100:
+    elif part_of_day in ('morning'):
         snow_falling = False
+        pt_rainbow.draw_rainbow(x=750, y=100, radius=500, width=6, game_tick=tick, )
+    else:
+        pt_rainbow.draw_rainbow(x=750, y=100, radius=700, width=6, game_tick=tick, )
 
     pt_snowfall.draw_snowflake(roof_point_list, falling=snow_falling)
 
-    if tick >= 200 and not snow_falling:
-        pt_rainbow.draw_rainbow(x=750, y=100, radius=700, width=6, game_tick=tick,)
+    # удаление снежинок из словаря
+    snowflakes = {k: v for k, v in snowflakes.items() if k not in snowflakes_remove}
+
+    draw_ground()
+    draw_house()
 
     for root_param in root_point:
         pt_tree.draw_simetric_branches(point=root_param[0], angle=90, length=root_param[1], set_day=part_of_day)
 
-    draw_house()
+
 
     pt_smile.draw_smile(building_start_point.x + 1 + building_size[0] // 2,
                         building_start_point.y + 1 + building_size[1] // 2,

@@ -2,7 +2,6 @@
 
 import simple_draw as sd
 
-# sd.resolution = (800, 800)
 SMILE_SIZE = 40
 SMILE_COLOR = sd.COLOR_YELLOW
 OCULUS_COLOR = sd.COLOR_WHITE
@@ -12,25 +11,16 @@ eyeball_radius = round(SMILE_SIZE * 0.3)
 eye_radius = round(SMILE_SIZE * 0.1)
 oculus_radius = eyeball_radius + 1
 
-def blink_eye(left_eye_point, right_eye_point, blink_time = 0):
 
+def blink_eye(left_eye_point, right_eye_point, blink_time=0):
     if right_eye_point:
         sd.circle(center_position=right_eye_point, radius=eyeball_radius, color=SMILE_COLOR, width=0)
         sd.circle(center_position=right_eye_point, radius=oculus_radius, color=sd.COLOR_BLACK, width=1)
         sd.sleep(blink_time)
-        # sd.circle(center_position=right_eye_point, radius=eyeball_radius, color=OCULUS_COLOR, width=0)
-        # sd.circle(center_position=right_eye_point, radius=oculus_radius, color=sd.COLOR_BLACK, width=1)
-        # sd.circle(center_position=right_eye_point, radius=eye_radius, color=sd.COLOR_BLACK, width=0)
-
-
 
     if left_eye_point:
         sd.circle(center_position=left_eye_point, radius=eyeball_radius, color=SMILE_COLOR, width=0)
         sd.circle(center_position=left_eye_point, radius=oculus_radius, color=sd.COLOR_BLACK, width=1)
-        # sd.sleep(blink_time)
-        # sd.circle(center_position=left_eye_point, radius=eyeball_radius, color=OCULUS_COLOR, width=0)
-        # sd.circle(center_position=left_eye_point, radius=oculus_radius, color=sd.COLOR_BLACK, width=1)
-        # sd.circle(center_position=left_eye_point, radius=eye_radius, color=sd.COLOR_BLACK, width=0)
 
 
 def draw_smile(x, y, game_tick=0):
@@ -48,13 +38,11 @@ def draw_smile(x, y, game_tick=0):
     sd.circle(center_position=right_oculus_point, radius=eyeball_radius, color=OCULUS_COLOR, width=0)
     sd.circle(center_position=left_oculus_point, radius=eyeball_radius, color=OCULUS_COLOR, width=0)
 
-
     right_eye_point = sd.get_point(x=x+oculus_distance, y=y+oculus_distance)
     left_eye_point = sd.get_point(x=x-oculus_distance, y=y+oculus_distance)
 
     sd.circle(center_position=right_eye_point, radius=eye_radius, color=sd.COLOR_BLACK, width=0)
     sd.circle(center_position=left_eye_point, radius=eye_radius, color=sd.COLOR_BLACK, width=0)
-
 
     # рисуем очки
     sd.circle(center_position=right_oculus_point, radius=oculus_radius, color=sd.COLOR_BLACK, width=1)
@@ -114,9 +102,6 @@ def draw_smile(x, y, game_tick=0):
     sd.vector(sd.get_point(x - 30, y + SMILE_SIZE - 3), 0, 60, sd.COLOR_BLACK, width=5)
     sd.vector(sd.get_point(x - 30, y + SMILE_SIZE - 7), 10, 60, sd.COLOR_BLACK, width=5)
     sd.vector(sd.get_point(x - 30, y + SMILE_SIZE + 7), -10, 60, sd.COLOR_BLACK, width=5)
-    #
-    # sd.vector(sd.get_point(x, y + SMILE_SIZE), 0, 20, sd.COLOR_BLACK, width=3)
-    # sd.vector(sd.get_point(x - 20, y + SMILE_SIZE), 0, 20, sd.COLOR_BLACK, width=3)
 
     if game_tick % 40 <= 3:
         blink_eye(left_eye_point, right_eye_point)
