@@ -35,9 +35,13 @@ from painting import smile as pt_smile, \
                      rainbow as pt_rainbow
 
 sd.resolution = (1200, 800)
-sd.background_color = sd.COLOR_BLACK
 
-pt_snowfall.snowflakes_count = 40
+global background_color
+background_color = sd.COLOR_BLACK
+sd.background_color = background_color
+
+
+pt_snowfall.snowflakes_count = 30
 snow_falling = True
 snowflakes = {}
 snowflakes_remove = {}
@@ -49,8 +53,8 @@ tick = 0
 building_size = (400, 200)
 building_start_point = sd.get_point(x=100, y=10)
 
-root_point = ((sd.get_point(750, 30),  building_size[1] / 2 - sd.random_number(10, 30)),
-              (sd.get_point(800, 30),  building_size[1] / 2 - sd.random_number(10, 30)),
+root_point = ((sd.get_point(750, 30),  building_size[1] / 1.5 - sd.random_number(10, 30)),
+              # (sd.get_point(800, 30),  building_size[1] / 2 - sd.random_number(10, 30)),
               (sd.get_point(1100, 30), building_size[1] / 2 - sd.random_number(10, 30)),
               # (sd.get_point(100, 30),  building_size[1] / 2 - sd.random_number(10, 30)),
               (sd.get_point(900, 30),  building_size[1] / 2 - sd.random_number(10, 30)))
@@ -116,41 +120,43 @@ def draw_house():
 
 
 def change_part_day():
-    global part_of_day
+    global part_of_day, background_color
 
     if tick == 0:
-
-        background_color = sd.COLOR_BLACK
-        sd.background_color = background_color
-        pt_snowfall.background_color = background_color
-        sd.clear_screen()
-        part_of_day = 'night'
-
-    elif tick == 200:
-
-        background_color = sd.COLOR_DARK_BLUE
-        sd.background_color = background_color
-        pt_snowfall.background_color = background_color
-        sd.clear_screen()
+        # background_color = (20, 20, 20)
         part_of_day = 'morning'
 
-    elif tick == 400:
+    # elif tick == 100:
+    #     background_color = (51, 51, 51)
+    # elif tick == 150:
+    #     background_color = (65, 96, 120)
+    # elif tick == 200:
+        background_color = (33, 44, 100)
 
-        background_color = sd.COLOR_DARK_CYAN
-        sd.background_color = background_color
-        pt_snowfall.background_color = background_color
-        sd.clear_screen()
+    elif tick == 300:
+        background_color = (24, 217, 255)
         part_of_day = 'afternoon'
 
+    elif tick == 500:
+        background_color = (209, 221, 230)
+        part_of_day = 'evening'
+    elif tick == 550:
+        background_color = (109, 147, 176)
     elif tick == 600:
+        background_color = (65, 96, 120)
+    elif tick == 750:
+        background_color = (51, 51, 51)
+    elif tick == 800:
+        background_color = sd.COLOR_BLACK
+        part_of_day = 'night'
 
-        background_color = sd.COLOR_DARK_BLUE
+
+
+    if sd.background_color != background_color:
         sd.background_color = background_color
         pt_snowfall.background_color = background_color
         sd.clear_screen()
-        part_of_day = 'evening'
-
-
+step = 0
 while True:
 
     if tick >= 600:
@@ -159,14 +165,20 @@ while True:
     sd.start_drawing()
 
     change_part_day()
-
+    print(part_of_day)
     if part_of_day in ('night', 'evening'):
         snow_falling = True
+        step = 0
     elif part_of_day in ('morning'):
+        if tick % 24 == 0:
+            # sd.clear_screen()
+            step += 24
+        pt_rainbow.draw_rainbow(x=750, y=100, radius=400, width=6, game_tick=tick, grow_step = step)
         snow_falling = False
-        pt_rainbow.draw_rainbow(x=750, y=100, radius=500, width=6, game_tick=tick, )
-    else:
+    elif part_of_day in ('afternoon'):
         pt_rainbow.draw_rainbow(x=750, y=100, radius=700, width=6, game_tick=tick, )
+    # else:
+    #     pt_rainbow.draw_rainbow(x=750, y=100, radius=900, width=6, game_tick=tick, )
 
     pt_snowfall.draw_snowflake(roof_point_list, falling=snow_falling)
 

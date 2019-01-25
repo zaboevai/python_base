@@ -8,22 +8,23 @@ sd.resolution = (800, 800)
 # высота с которой будут падать снежинки
 
 # кол-во снежинок
-snowflakes_count = 20
+snowflakes_count = 1
 
 tick = 0
 
 snowflake_size = {'min': 5, 'max': 15}
+
 snowflakes = {}
-snowflakes_remove = {}
+down_snowflakes = {}
 
 ground = 50
 speed = 0
 
 surface_list = (sd.get_point(101, 211), sd.get_point(301, 411), sd.get_point(501, 211))
-
+down_num = 0
 
 def draw_snowflake(surface_point_list, falling=False):
-
+    global snowflakes, down_num
     y = sd.resolution[1] + 50
 
     if not falling:
@@ -73,21 +74,46 @@ def draw_snowflake(surface_point_list, falling=False):
             surface_point_list[1].x <= snowflake_parameter['x'] <= surface_point_list[2].x)) or \
             snowflake_parameter['y'] < 50:
 
-            if falling:
-                snowflake_parameter['y'] = y
-                snowflake_parameter['length'] = sd.random_number(snowflake_size['min'], snowflake_size['max'])
-                snowflake_parameter['x'] = sd.random_number(0, sd.resolution[0])
-            else:
-                snowflake_parameter['y'] = -10
-                snowflakes_remove[snowflake_num] = snowflakes[snowflake_num]
 
-    # удаление снежинок из словаря
-    # snowflakes = {k: v for k, v in snowflakes.items() if k not in snowflakes_remove}
-    #
+            down_snowflakes[down_num] = {'length': snowflake_parameter['length'],
+                                         'x': snowflake_parameter['x'],
+                                         'y': snowflake_parameter['y'],
+                                         'factor_a': snowflake_parameter['factor_a'],
+                                         'factor_b': snowflake_parameter['factor_b'],
+                                         'factor_c': snowflake_parameter['factor_c']
+                                          }
+            down_num += len(down_snowflakes) + 1
+            print(len(down_snowflakes))
+            print(len(snowflakes))
+            # if falling:
+            #
+            # else:
+            #     snowflake_parameter['y'] = -10
+            snowflake_parameter['y'] = y
+            snowflake_parameter['length'] = sd.random_number(snowflake_size['min'], snowflake_size['max'])
+            snowflake_parameter['x'] = sd.random_number(0, sd.resolution[0])
+
+
+
+
+            # print('down_snowflakes', len(down_snowflakes), down_snowflakes)
+            # print('snowflakes', len(snowflakes), snowflakes)
+    # # удаление снежинок из словаря
+    # snowflakes = {k: v for k, v in snowflakes.items() if k not in down_snowflakes}
+
+    for num, parameter in down_snowflakes.items():
+        # print('snowflakes', len(down_snowflakes), down_snowflakes)
+        sd.snowflake(center=sd.get_point(parameter['x'], parameter['y']),
+                     length=parameter['length'],
+                     color=sd.COLOR_WHITE,
+                     factor_a=parameter['factor_a'],
+                     factor_b=parameter['factor_b'],
+                     factor_c=parameter['factor_c'])
+
 
 if __name__ == '__main__':
 
-    snowflakes_count = 100
+    snowflakes_count = 10
 
     while True:
 
@@ -98,15 +124,19 @@ if __name__ == '__main__':
         sd.line(surface_list[0], surface_list[1])
         sd.line(surface_list[1], surface_list[2])
 
-        if tick > 100:
-            draw_snowflake(surface_list, False)
-        else:
-            draw_snowflake(surface_list, True)
+        # if tick > 100:
+        #     draw_snowflake(surface_list, False)
+        # else:
+        draw_snowflake(surface_list, True)
+
+        if tick % 100 == 0:
+            sd.clear_screen()
+
 
         sd.finish_drawing()
 
         # удаление снежинок из словаря
-        snowflakes = {k: v for k, v in snowflakes.items() if k not in snowflakes_remove}
-
+        # snowflakes = {k: v for k, v in snowflakes.items() if k not in down_snowflakes}
+        sd.sleep(0.05)
         if sd.user_want_exit():
             break
