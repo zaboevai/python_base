@@ -1,0 +1,13 @@
+<application>
+  <component name="SettingsState">
+    <option name="gitlabServers">
+      <list>
+        <GitlabServer>
+          <option name="apiUrl" value="https://gitlab.skillbox.ru/zaboev_andrei/python_base.git" />
+          <option name="preferredConnection" value="HTTPS" />
+          <option name="repositoryUrl" value="gitlab.skillbox.ru" />
+        </GitlabServer>
+      </list>
+    </option>
+  </component>
+</application>
