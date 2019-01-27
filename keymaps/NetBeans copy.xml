@@ -1,0 +1,5 @@
+<keymap version="1" name="NetBeans copy" parent="NetBeans 6.5">
+  <action id="CheckinFiles">
+    <keyboard-shortcut first-keystroke="shift ctrl a" />
+  </action>
+</keymap>

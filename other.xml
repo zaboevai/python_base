@@ -1,0 +1,52 @@
+<application>
+  <component name="PropertiesComponent">
+    <property name="CommitChangeListDialog.DETAILS_SPLITTER_PROPORTION_2" value="0.73115575" />
+    <property name="CommittedChanges.SplitterProportions.0" value="700" />
+    <property name="CommittedChanges.SplitterProportions.1" value="500" />
+    <property name="ExpandBeforeRunStepsPanel" value="true" />
+    <property name="PACKAGE_FILTER" value="apt_pkg&#10;simple-dr&#10;simple-draw&#10;simple-dra&#10;constants" />
+    <property name="PyCharm.InitialConfiguration" value="true" />
+    <property name="PyCharm.InitialConfiguration.V2" value="true" />
+    <property name="PyCharm.InitialConfiguration.V3" value="true" />
+    <property name="PyCharm.InitialConfiguration.V4" value="true" />
+    <property name="PyCharm.InitialConfiguration.V5" value="true" />
+    <property name="PyCharm.InitialConfiguration.V6" value="true" />
+    <property name="PyCharm.InitialConfiguration.V7" value="true" />
+    <property name="PyCharm.initialConfigurationShown" value="true" />
+    <property name="SettingsSearchHistory" value="commit file&#10;font" />
+    <property name="ShowDocumentationInToolWindow" value="false" />
+    <property name="file.chooser.recent.files" value="/mnt/B208B21208B1D597/SkillBox&#10;/mnt/B208B21208B1D597/SkillBox/MissileComander&#10;/mnt/B208B21208B1D597/Python&#10;/usr/bin/python3.7&#10;/usr/local/bin/python3.7&#10;/mnt/B208B21208B1D597/SkillBox/suguby&#10;/mnt/B208B21208B1D597/SkillBox/missile_comand/venv/bin/python3.7&#10;/mnt/B208B21208B1D597/SkillBox/missile_comand/venv/bin&#10;/mnt/B208B21208B1D597/SkillBox/missile_comand&#10;/mnt/B208B21208B1D597/SkillBox/python_base&#10;/media/aizab&#10;/media/aizab/DATA/SkillBox/missile_comand" />
+    <property name="file.gist.reindex.count" value="7983" />
+    <property name="fileTypeChangedCounter" value="1" />
+    <property name="lastTip" value="46" />
+  </component>
+  <component name="PyTestFrameworkService">
+    <option name="SDK_TO_PYTEST">
+      <map>
+        <entry key="/mnt/B208B21208B1D597/SkillBox/missile_comand/venv/bin/python" value="false" />
+        <entry key="/mnt/B208B21208B1D597/SkillBox/missile_comand/venv/bin/python3.7" value="false" />
+        <entry key="/mnt/B208B21208B1D597/SkillBox/python_base/venv/bin/python" value="false" />
+        <entry key="/usr/bin/python3.7" value="false" />
+        <entry key="/usr/local/bin/python3.7" value="false" />
+      </map>
+    </option>
+    <option name="SDK_TO_NOSETEST">
+      <map>
+        <entry key="/mnt/B208B21208B1D597/SkillBox/missile_comand/venv/bin/python" value="false" />
+        <entry key="/mnt/B208B21208B1D597/SkillBox/missile_comand/venv/bin/python3.7" value="false" />
+        <entry key="/mnt/B208B21208B1D597/SkillBox/python_base/venv/bin/python" value="false" />
+        <entry key="/usr/bin/python3.7" value="false" />
+        <entry key="/usr/local/bin/python3.7" value="false" />
+      </map>
+    </option>
+    <option name="SDK_TO_TRIALTEST">
+      <map>
+        <entry key="/mnt/B208B21208B1D597/SkillBox/missile_comand/venv/bin/python" value="false" />
+        <entry key="/mnt/B208B21208B1D597/SkillBox/missile_comand/venv/bin/python3.7" value="false" />
+        <entry key="/mnt/B208B21208B1D597/SkillBox/python_base/venv/bin/python" value="false" />
+        <entry key="/usr/bin/python3.7" value="false" />
+        <entry key="/usr/local/bin/python3.7" value="false" />
+      </map>
+    </option>
+  </component>
+</application>
