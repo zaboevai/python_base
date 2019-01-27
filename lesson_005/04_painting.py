@@ -32,7 +32,8 @@ from painting import smile as pt_smile, \
                      snowfall as pt_snowfall, \
                      wall as pt_wall, \
                      tree as pt_tree, \
-                     rainbow as pt_rainbow
+                     rainbow as pt_rainbow, \
+                     sun as pt_sun
 
 sd.resolution = (1200, 800)
 
@@ -123,7 +124,7 @@ def change_part_day():
     global part_of_day, background_color
 
     if tick == 0:
-        # background_color = (20, 20, 20)
+        background_color = (109, 147, 176)
         part_of_day = 'morning'
 
     # elif tick == 100:
@@ -131,40 +132,43 @@ def change_part_day():
     # elif tick == 150:
     #     background_color = (65, 96, 120)
     # elif tick == 200:
-        background_color = (33, 44, 100)
-
-    elif tick == 300:
-        background_color = (24, 217, 255)
-        part_of_day = 'afternoon'
-
-    elif tick == 500:
-        background_color = (209, 221, 230)
-        part_of_day = 'evening'
-    elif tick == 550:
-        background_color = (109, 147, 176)
-    elif tick == 600:
-        background_color = (65, 96, 120)
-    elif tick == 750:
-        background_color = (51, 51, 51)
-    elif tick == 800:
-        background_color = sd.COLOR_BLACK
-        part_of_day = 'night'
-
-
+    #     background_color = (33, 44, 100)
+    #
+    # elif tick == 300:
+    #     background_color = (24, 217, 255)
+    #     part_of_day = 'afternoon'
+    #
+    # elif tick == 500:
+    #     background_color = (209, 221, 230)
+    #     part_of_day = 'evening'
+    # # elif tick == 550:
+    # #     background_color = (109, 147, 176)
+    # # elif tick == 600:
+    # #     background_color = (65, 96, 120)
+    # # elif tick == 750:
+    # #     background_color = (51, 51, 51)
+    # elif tick == 800:
+    #     background_color = sd.COLOR_BLACK
+    #     part_of_day = 'night'
 
     if sd.background_color != background_color:
         sd.background_color = background_color
         pt_snowfall.background_color = background_color
         sd.clear_screen()
+
 step = 0
+
+
 while True:
 
-    if tick >= 600:
+    if tick >= 800:
         tick = 0
 
     sd.start_drawing()
 
+    pt_sun.draw_sun(sd.get_point(100,600), 40, 100, 20)
     change_part_day()
+
     print(part_of_day)
     if part_of_day in ('night', 'evening'):
         snow_falling = True
@@ -173,10 +177,10 @@ while True:
         if tick % 24 == 0:
             # sd.clear_screen()
             step += 24
-        pt_rainbow.draw_rainbow(x=750, y=100, radius=400, width=6, game_tick=tick, grow_step = step)
+        pt_rainbow.draw_rainbow(x=750, y=100, radius=400, width=10, game_tick=tick, grow_step=step)
         snow_falling = False
     elif part_of_day in ('afternoon'):
-        pt_rainbow.draw_rainbow(x=750, y=100, radius=700, width=6, game_tick=tick, )
+        pt_rainbow.draw_rainbow(x=750, y=100, radius=700, width=10, game_tick=tick, )
     # else:
     #     pt_rainbow.draw_rainbow(x=750, y=100, radius=900, width=6, game_tick=tick, )
 
@@ -191,13 +195,11 @@ while True:
     for root_param in root_point:
         pt_tree.draw_simetric_branches(point=root_param[0], angle=90, length=root_param[1], set_day=part_of_day)
 
-
-
     pt_smile.draw_smile(building_start_point.x + 1 + building_size[0] // 2,
                         building_start_point.y + 1 + building_size[1] // 2,
                         tick)
 
-    sd.sleep(0.03)
+    # sd.sleep(0.03)
 
     tick += 1
 

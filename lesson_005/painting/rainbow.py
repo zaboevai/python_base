@@ -17,6 +17,7 @@ def draw_line_rainbow(start_x=0, end_x=100):
 def draw_rainbow(x=0, y=0, radius=500, width=6, rainbow_colors=rainbow_colors, game_tick=0, grow_step=0):
 
     step = 0
+
     for num, color in enumerate(rainbow_colors):
         start_point = sd.get_point(x, -y)
 
@@ -25,7 +26,7 @@ def draw_rainbow(x=0, y=0, radius=500, width=6, rainbow_colors=rainbow_colors, g
         sd.circle(center_position=start_point, radius=radius+step, color=color, width=width+1)
         step += width
 
-    if game_tick % 2 == 1:
+    if game_tick % 5 == 0:
         rainbow_colors.append(rainbow_colors[0])
         rainbow_colors.remove(rainbow_colors[0])
 
@@ -38,10 +39,10 @@ if __name__ == '__main__':
         tick += 1
         sd.start_drawing()
         step += 5
-        draw_rainbow(game_tick=tick,grow_step= step)
+        draw_rainbow(width=10, game_tick=tick, grow_step=step)
         sd.finish_drawing()
 
-        sd.sleep(0.1)
+        sd.sleep(0.01)
 
         if sd.user_want_exit():
             break
