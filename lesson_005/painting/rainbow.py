@@ -26,7 +26,7 @@ def draw_rainbow(x=0, y=0, radius=500, width=6, rainbow_colors=rainbow_colors, g
         sd.circle(center_position=start_point, radius=radius+step, color=color, width=width+1)
         step += width
 
-    if game_tick % 5 == 0:
+    if game_tick % 3 == 0:
         rainbow_colors.append(rainbow_colors[0])
         rainbow_colors.remove(rainbow_colors[0])
 

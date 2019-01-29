@@ -23,13 +23,13 @@ def draw_simetric_branches(point, angle, length=100, set_day=None):
     if length < 30:
         if set_day == 'morning':
             sd.circle(next_point, 7, sd.COLOR_DARK_GREEN, width=0)
-            sd.circle(next_point, 4, sd.COLOR_GREEN, width=0)
-        elif set_day == 'morning':
+            sd.circle(next_point, 4, sd.COLOR_WHITE, width=0)
+        elif set_day == 'afternoon':
             sd.circle(next_point, 7, sd.COLOR_DARK_GREEN, width=0)
             sd.circle(next_point, 2, sd.COLOR_WHITE, width=0)
         elif set_day == 'evening':
             sd.circle(next_point, 7, sd.COLOR_DARK_GREEN, width=0)
-            sd.circle(next_point, 4, sd.COLOR_GREEN, width=0)
+            sd.circle(next_point, 3, sd.COLOR_WHITE, width=0)
         else:
             sd.circle(next_point, 7, sd.COLOR_WHITE, width=0)
 

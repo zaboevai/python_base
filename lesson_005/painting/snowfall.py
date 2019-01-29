@@ -23,8 +23,10 @@ speed = 0
 surface_list = (sd.get_point(101, 211), sd.get_point(301, 411), sd.get_point(501, 211))
 down_num = 0
 
+
 def draw_snowflake(surface_point_list, falling=False):
     global snowflakes, down_num
+
     y = sd.resolution[1] + 50
 
     if not falling:
@@ -38,7 +40,7 @@ def draw_snowflake(surface_point_list, falling=False):
             y = sd.resolution[1] + 50
             snowflakes[i] = \
                 {'length': sd.random_number(snowflake_size['min'], snowflake_size['max']),
-                 'x': sd.random_number(0, sd.resolution[0]),
+                 'x': sd.random_number(-300, sd.resolution[0]),
                  'y': y,
                  'factor_a': sd.random_number(1, 10) / 10,
                  'factor_b': sd.random_number(1, 10) / 10,
@@ -55,7 +57,8 @@ def draw_snowflake(surface_point_list, falling=False):
                      factor_b=snowflake_parameter['factor_b'],
                      factor_c=snowflake_parameter['factor_c'])
 
-        snowflake_parameter['x'] += sd.random_number(-2, 2)
+        snowflake_parameter['x'] += sd.random_number(-1, 5)
+
         snowflake_parameter['y'] -= snowflake_size['max'] + 1 - snowflake_parameter['length'] + speed
 
         next_point = sd.get_point(snowflake_parameter['x'], snowflake_parameter['y'])
@@ -74,7 +77,6 @@ def draw_snowflake(surface_point_list, falling=False):
             surface_point_list[1].x <= snowflake_parameter['x'] <= surface_point_list[2].x)) or \
             snowflake_parameter['y'] < 50:
 
-
             down_snowflakes[down_num] = {'length': snowflake_parameter['length'],
                                          'x': snowflake_parameter['x'],
                                          'y': snowflake_parameter['y'],
@@ -83,22 +85,20 @@ def draw_snowflake(surface_point_list, falling=False):
                                          'factor_c': snowflake_parameter['factor_c']
                                           }
             down_num += len(down_snowflakes) + 1
-            print(len(down_snowflakes))
-            print(len(snowflakes))
-            # if falling:
-            #
-            # else:
-            #     snowflake_parameter['y'] = -10
-            snowflake_parameter['y'] = y
-            snowflake_parameter['length'] = sd.random_number(snowflake_size['min'], snowflake_size['max'])
-            snowflake_parameter['x'] = sd.random_number(0, sd.resolution[0])
+
+            # print(len(down_snowflakes))
+            # print(len(snowflakes))
+            if falling:
+                snowflake_parameter['y'] = y
+                snowflake_parameter['length'] = sd.random_number(snowflake_size['min'], snowflake_size['max'])
+                snowflake_parameter['x'] = sd.random_number(-300, sd.resolution[0])
 
 
 
 
             # print('down_snowflakes', len(down_snowflakes), down_snowflakes)
             # print('snowflakes', len(snowflakes), snowflakes)
-    # # удаление снежинок из словаря
+    # удаление снежинок из словаря
     # snowflakes = {k: v for k, v in snowflakes.items() if k not in down_snowflakes}
 
     for num, parameter in down_snowflakes.items():
@@ -109,6 +109,16 @@ def draw_snowflake(surface_point_list, falling=False):
                      factor_a=parameter['factor_a'],
                      factor_b=parameter['factor_b'],
                      factor_c=parameter['factor_c'])
+
+        # if not falling:
+        #     sd.snowflake(center=sd.get_point(parameter['x'], parameter['y']),
+        #                  length=parameter['length'],
+        #                  color=sd.background_color,
+        #                  factor_a=parameter['factor_a'],
+        #                  factor_b=parameter['factor_b'],
+        #                  factor_c=parameter['factor_c'])
+    if not falling:
+        down_snowflakes.clear()
 
 
 if __name__ == '__main__':

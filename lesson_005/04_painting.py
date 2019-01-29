@@ -30,7 +30,7 @@
 import simple_draw as sd
 from painting import smile as pt_smile, \
                      snowfall as pt_snowfall, \
-                     wall as pt_wall, \
+                     building as pt_wall, \
                      tree as pt_tree, \
                      rainbow as pt_rainbow, \
                      sun as pt_sun
@@ -41,7 +41,7 @@ global background_color
 background_color = sd.COLOR_BLACK
 sd.background_color = background_color
 
-pt_snowfall.snowflakes_count = 30
+pt_snowfall.snowflakes_count = 100
 snow_falling = True
 snowflakes = {}
 snowflakes_remove = {}
@@ -50,14 +50,13 @@ part_of_day = ''
 
 tick = 0
 
-building_size = (400, 200)
-building_start_point = sd.get_point(x=100, y=10)
+sun_start_point = (-100, -100)
 
-root_point = ((sd.get_point(750, 30),  building_size[1] / 1.5 - sd.random_number(10, 30)),
-              # (sd.get_point(800, 30),  building_size[1] / 2 - sd.random_number(10, 30)),
-              (sd.get_point(1100, 30), building_size[1] / 2 - sd.random_number(10, 30)),
-              # (sd.get_point(100, 30),  building_size[1] / 2 - sd.random_number(10, 30)),
-              (sd.get_point(900, 30),  building_size[1] / 2 - sd.random_number(10, 30)))
+building_size = (480, 240)
+building_start_point = sd.get_point(x=300, y=10)
+
+root_point = ((sd.get_point(950, 20),  building_size[1] / 1.5 - sd.random_number(10, 30)),
+              (sd.get_point(200, 10),  building_size[1] / 2 - sd.random_number(10, 30)))
 
 pt_wall.wall_size = building_size
 
@@ -77,14 +76,8 @@ roof_point_list = [sd.get_point
 
 def draw_ground():
     # рисуем землю
-    sd.rectangle(sd.get_point(0, 0), sd.get_point(sd.resolution[0], 40), sd.COLOR_DARK_ORANGE)
-    grass_count = 1
-    #
-    # for i in range(grass_count):
-    #     x = sd.random_number(1, sd.resolution[0])
-    #     y = sd.random_number(40, 41)
-    #     sd.vector(start=sd.get_point(x, y), angle=90, length=sd.random_number(1, 8), color=sd.COLOR_DARK_GREEN, width=3)
-
+    sd.rectangle(sd.get_point(0, 0), sd.get_point(sd.resolution[0], 40), sd.COLOR_WHITE)
+    sd.rectangle(sd.get_point(0, 0), sd.get_point(sd.resolution[0], 30), sd.COLOR_DARK_ORANGE)
 
 def draw_house():
 
@@ -122,7 +115,7 @@ def draw_house():
 def change_part_day():
     global part_of_day, background_color
 
-    if tick == 0:
+    if tick in (0, 200):
         background_color = (109, 147, 176)
         part_of_day = 'morning'
     elif tick in (201, 400):
@@ -143,7 +136,10 @@ def change_part_day():
 
 
 step = 0
+size_step = 0
 
+sun_point = sd.get_point(sun_start_point[0], sun_start_point[1])
+sun_next_point = sun_point
 
 while True:
 
@@ -152,23 +148,35 @@ while True:
 
     sd.start_drawing()
 
-    pt_sun.draw_sun(sd.get_point(100,600), 40, 100, 20)
     change_part_day()
 
     print(part_of_day)
-    if part_of_day in ('night', 'evening'):
+
+    if part_of_day in ('morning'):
         snow_falling = True
-        step = 0
-    elif part_of_day in ('morning'):
-        if tick % 24 == 0:
-            # sd.clear_screen()
-            step += 24
-        pt_rainbow.draw_rainbow(x=750, y=100, radius=400, width=10, game_tick=tick, grow_step=step)
-        snow_falling = False
+        sun_color = sd.COLOR_ORANGE
+
     elif part_of_day in ('afternoon'):
-        pt_rainbow.draw_rainbow(x=750, y=100, radius=700, width=10, game_tick=tick, )
-    # else:
-    #     pt_rainbow.draw_rainbow(x=750, y=100, radius=900, width=6, game_tick=tick, )
+
+        sun_color = sd.COLOR_YELLOW
+        if tick < 380:
+            snow_falling = False
+        else:
+            snow_falling = True
+    elif part_of_day == 'evening':
+        sun_next_point = sd.get_point(-500, -500)
+
+    elif part_of_day == 'night':
+        sun_next_point = sd.get_point(-500, -500)
+
+    if part_of_day == 'morning' and tick % 5 == 0:
+        size_step += 4
+
+    sun_next_point = pt_sun.draw_sun(start_point=sun_next_point, radius=250, length=400, rays_count=36,
+                                     move_step=5, size_step=size_step, color=sun_color)
+
+    if part_of_day == 'afternoon':
+        pt_rainbow.draw_rainbow(x=500, y=-100, radius=500, width=10, game_tick=tick, )
 
     pt_snowfall.draw_snowflake(roof_point_list, falling=snow_falling)
 
@@ -185,7 +193,9 @@ while True:
                         building_start_point.y + 1 + building_size[1] // 2,
                         tick)
 
-    # sd.sleep(0.03)
+    pt_tree.draw_simetric_branches(point=root_point[0][0], angle=90, length=root_point[0][1], set_day=part_of_day)
+
+    sd.sleep(0.03)
 
     tick += 1
 

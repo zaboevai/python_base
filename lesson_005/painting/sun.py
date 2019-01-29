@@ -1,33 +1,57 @@
 import simple_draw as sd
 
 
-def draw_sun(start_point, radius=40, length=100, angle_step=20, color=sd.COLOR_YELLOW):
+tick = 0
+sun_start_point = sd.get_point(100, 100)
+size_step = 0
 
-    step = angle_step
-    for i in range(0, 18):
+
+def draw_sun(start_point,
+             radius=40,
+             length=100,
+             rays_count=9,
+             move_step=1,
+             size_step=1,
+             color=sd.COLOR_YELLOW):
+
+    rays_angle = 360 // rays_count
+    point = start_point
+
+    sd.circle(center_position=point, radius=length, width=0, color=sd.background_color)
+
+    if point.y < sd.resolution[1]:
+        next_point = sd.get_point(point.x+move_step, point.y+move_step)
+    else:
+        next_point = point
+
+    rays_step = rays_angle
+
+    for i in range(0, rays_count):
         length_rays = length
-        vector = sd.get_vector(start_point, 5+step, length_rays)
-        vector.draw(color=sd.background_color)
-        # if i == 0:
-        #     vector = sd.get_vector(start_point, 0, sd.random_number(radius, length))
-        # else:
+        if i % sd.random_number(1, 3) == 0:
+            length_rays = 0
 
-        if i % sd.random_number(1, 5) == 0:
-            length_rays = length_rays // 1.5
-            print(i)
+        vector = sd.get_vector(start_point=next_point, angle=rays_step, length= length_rays - size_step, width=2)
+        rays_step += rays_angle
+        vector.draw(color=color)
 
-        vector = sd.get_vector(start_point, 5+step, length_rays)
-        step += angle_step
-        vector.draw(color=sd.COLOR_YELLOW)
+    sd.circle(center_position=next_point, radius=radius + 20 - size_step, width=0, color=sd.background_color)
 
-    sd.circle(center_position=start_point, radius=radius, width=0, color=color)
+    sd.circle(center_position=next_point, radius=radius - size_step, width=0, color=color)
+
+    return next_point
 
 
 if __name__ == '__main__':
     while True:
         sd.start_drawing()
-
-        draw_sun(sd.get_point(400, 400))
+        tick +=1
+        if tick % 5 == 0:
+        # #     move_step += move_step
+            size_step += 2
+        #     i = size_step
+        sun_start_point = draw_sun(start_point=sun_start_point, radius=100, length=200, rays_count=9,
+                                    move_step=2, size_step=size_step, game_tick=tick, color=sd.COLOR_YELLOW)
 
         sd.sleep(0.2)
         sd.finish_drawing()
