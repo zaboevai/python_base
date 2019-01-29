@@ -41,7 +41,6 @@ global background_color
 background_color = sd.COLOR_BLACK
 sd.background_color = background_color
 
-
 pt_snowfall.snowflakes_count = 30
 snow_falling = True
 snowflakes = {}
@@ -126,35 +125,22 @@ def change_part_day():
     if tick == 0:
         background_color = (109, 147, 176)
         part_of_day = 'morning'
+    elif tick in (201, 400):
+        background_color = (109, 147, 171)
+        part_of_day = 'afternoon'
 
-    # elif tick == 100:
-    #     background_color = (51, 51, 51)
-    # elif tick == 150:
-    #     background_color = (65, 96, 120)
-    # elif tick == 200:
-    #     background_color = (33, 44, 100)
-    #
-    # elif tick == 300:
-    #     background_color = (24, 217, 255)
-    #     part_of_day = 'afternoon'
-    #
-    # elif tick == 500:
-    #     background_color = (209, 221, 230)
-    #     part_of_day = 'evening'
-    # # elif tick == 550:
-    # #     background_color = (109, 147, 176)
-    # # elif tick == 600:
-    # #     background_color = (65, 96, 120)
-    # # elif tick == 750:
-    # #     background_color = (51, 51, 51)
-    # elif tick == 800:
-    #     background_color = sd.COLOR_BLACK
-    #     part_of_day = 'night'
+    elif tick in (401, 600):
+        background_color = sd.COLOR_DARK_BLUE
+        part_of_day = 'evening'
+    elif tick in (601, 800):
+        background_color = sd.COLOR_BLACK
+        part_of_day = 'night'
 
     if sd.background_color != background_color:
         sd.background_color = background_color
         pt_snowfall.background_color = background_color
         sd.clear_screen()
+
 
 step = 0
 
@@ -190,10 +176,10 @@ while True:
     snowflakes = {k: v for k, v in snowflakes.items() if k not in snowflakes_remove}
 
     draw_ground()
-    draw_house()
 
-    for root_param in root_point:
-        pt_tree.draw_simetric_branches(point=root_param[0], angle=90, length=root_param[1], set_day=part_of_day)
+    pt_tree.draw_simetric_branches(point=root_point[1][0], angle=90, length=root_point[1][1], set_day=part_of_day)
+
+    draw_house()
 
     pt_smile.draw_smile(building_start_point.x + 1 + building_size[0] // 2,
                         building_start_point.y + 1 + building_size[1] // 2,

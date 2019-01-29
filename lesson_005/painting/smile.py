@@ -2,32 +2,40 @@
 
 import simple_draw as sd
 
-SMILE_SIZE = 40
-SMILE_COLOR = sd.COLOR_YELLOW
-OCULUS_COLOR = sd.COLOR_WHITE
-BEARD_COLOR = sd.COLOR_BLACK
+smile_size = 40
+smile_color = sd.COLOR_YELLOW
+oculus_color = sd.COLOR_WHITE
+beard_color = sd.COLOR_BLACK
 
-eyeball_radius = round(SMILE_SIZE * 0.3)
-eye_radius = round(SMILE_SIZE * 0.1)
+eyeball_radius = round(smile_size * 0.3)
+eye_radius = round(smile_size * 0.1)
 oculus_radius = eyeball_radius + 1
+
 
 
 def blink_eye(left_eye_point, right_eye_point, blink_time=0):
     if right_eye_point:
-        sd.circle(center_position=right_eye_point, radius=eyeball_radius, color=SMILE_COLOR, width=0)
+        sd.circle(center_position=right_eye_point, radius=eyeball_radius, color=smile_color, width=0)
         sd.circle(center_position=right_eye_point, radius=oculus_radius, color=sd.COLOR_BLACK, width=1)
         sd.sleep(blink_time)
 
     if left_eye_point:
-        sd.circle(center_position=left_eye_point, radius=eyeball_radius, color=SMILE_COLOR, width=0)
+        sd.circle(center_position=left_eye_point, radius=eyeball_radius, color=smile_color, width=0)
         sd.circle(center_position=left_eye_point, radius=oculus_radius, color=sd.COLOR_BLACK, width=1)
 
 
 def draw_smile(x, y, game_tick=0):
 
+    body_list_point = (sd.get_point(x - smile_size*1.4, y - smile_size*1.75),
+                       sd.get_point(x + smile_size*1.4, y - smile_size*1.75),
+                       sd.get_point(x+smile_size//2, y-smile_size//2),
+                       sd.get_point(x-smile_size//2, y-smile_size//2))
+
+    sd.polygon(body_list_point, sd.COLOR_DARK_PURPLE, width=0)
+
     # рисуем лицо
     face_point = sd.get_point(x=x, y=y)
-    sd.circle(center_position=face_point, radius=SMILE_SIZE, color=SMILE_COLOR, width=0)
+    sd.circle(center_position=face_point, radius=smile_size, color=smile_color, width=0)
 
     # рисуем глаза
 
@@ -35,8 +43,8 @@ def draw_smile(x, y, game_tick=0):
     right_oculus_point = sd.get_point(x=x+oculus_distance, y=y+oculus_distance)
     left_oculus_point = sd.get_point(x=x-oculus_distance, y=y+oculus_distance)
 
-    sd.circle(center_position=right_oculus_point, radius=eyeball_radius, color=OCULUS_COLOR, width=0)
-    sd.circle(center_position=left_oculus_point, radius=eyeball_radius, color=OCULUS_COLOR, width=0)
+    sd.circle(center_position=right_oculus_point, radius=eyeball_radius, color=oculus_color, width=0)
+    sd.circle(center_position=left_oculus_point, radius=eyeball_radius, color=oculus_color, width=0)
 
     right_eye_point = sd.get_point(x=x+oculus_distance, y=y+oculus_distance)
     left_eye_point = sd.get_point(x=x-oculus_distance, y=y+oculus_distance)
@@ -50,8 +58,8 @@ def draw_smile(x, y, game_tick=0):
 
     # рисуем душки очков
     # центральная часть
-    point1 = sd.get_point(round(right_oculus_point.x - SMILE_SIZE / 4), right_oculus_point.y)
-    point2 = sd.get_point(round(left_oculus_point.x + SMILE_SIZE / 4), left_oculus_point.y)
+    point1 = sd.get_point(round(right_oculus_point.x - smile_size / 4), right_oculus_point.y)
+    point2 = sd.get_point(round(left_oculus_point.x + smile_size / 4), left_oculus_point.y)
     sd.line(point1, point2, sd.COLOR_DARK_ORANGE, width=3)
 
     # левая часть
@@ -65,12 +73,12 @@ def draw_smile(x, y, game_tick=0):
     sd.line(point1, point2, sd.COLOR_DARK_ORANGE, width=3)
 
     # рисуем бороду
-    step = SMILE_SIZE // 10
+    step = smile_size // 10
     beard_step = 0
     beard_y_pos = y
-    beard_length = (SMILE_SIZE - round(SMILE_SIZE * (3 / 7)))
+    beard_length = (smile_size - round(smile_size * (3 / 7)))
 
-    for i in range(x - SMILE_SIZE-1, x + SMILE_SIZE + 1, step):
+    for i in range(x - smile_size - 1, x + smile_size + 1, step):
 
         if i < x:
             beard_step += step
@@ -79,13 +87,13 @@ def draw_smile(x, y, game_tick=0):
 
         point_start = sd.get_point(i, beard_y_pos)
         point_end = sd.get_point(i, beard_y_pos-beard_length-beard_step)
-        sd.line(point_start, point_end, BEARD_COLOR, width=step)
+        sd.line(point_start, point_end, beard_color, width=step)
 
     # рисуем улыбку
-    step = SMILE_SIZE // 10
-    smile_step = SMILE_SIZE // 10
+    step = smile_size // 10
+    smile_step = smile_size // 10
     smile_y_pos = y-5
-    smile_length = (SMILE_SIZE - round(SMILE_SIZE * (6 / 7)))
+    smile_length = (smile_size - round(smile_size * (6 / 7)))
 
     for i in range(x-smile_length-1, x+smile_length+1, step):
 
@@ -99,9 +107,9 @@ def draw_smile(x, y, game_tick=0):
         sd.line(point_start, point_end, sd.COLOR_RED, width=step)
 
     # рисуем волосы
-    sd.vector(sd.get_point(x - 30, y + SMILE_SIZE - 3), 0, 60, sd.COLOR_BLACK, width=5)
-    sd.vector(sd.get_point(x - 30, y + SMILE_SIZE - 7), 10, 60, sd.COLOR_BLACK, width=5)
-    sd.vector(sd.get_point(x - 30, y + SMILE_SIZE + 7), -10, 60, sd.COLOR_BLACK, width=5)
+    sd.vector(sd.get_point(x - 30, y + smile_size - 3), 0, 60, sd.COLOR_BLACK, width=5)
+    sd.vector(sd.get_point(x - 30, y + smile_size - 7), 10, 60, sd.COLOR_BLACK, width=5)
+    sd.vector(sd.get_point(x - 30, y + smile_size + 7), -10, 60, sd.COLOR_BLACK, width=5)
 
     if game_tick % 40 <= 3:
         blink_eye(left_eye_point, right_eye_point)

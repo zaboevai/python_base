@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
         draw_sun(sd.get_point(400, 400))
 
-        # sd.sleep(0.2)
+        sd.sleep(0.2)
         sd.finish_drawing()
 
         if sd.user_want_exit():
