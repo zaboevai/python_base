@@ -19,8 +19,6 @@
 # пример см. lesson_005/results/04_painting.jpg
 # Приправить своей фантазией по вкусу (коты? коровы? люди? трактор? что придумается)
 
-# TODO здесь ваш код
-
 # Усложненное задание (делать по желанию)
 # Анимировать картину.
 # Пусть слева идет снегопад, радуга переливается цветами, смайлик моргает, солнце крутит лучами, етс.
@@ -30,10 +28,11 @@
 import simple_draw as sd
 from painting import smile as pt_smile, \
                      snowfall as pt_snowfall, \
-                     building as pt_wall, \
+                     building as pt_building, \
                      tree as pt_tree, \
                      rainbow as pt_rainbow, \
                      sun as pt_sun
+
 
 sd.resolution = (1200, 800)
 
@@ -52,64 +51,24 @@ tick = 0
 
 sun_start_point = (-100, -100)
 
-building_size = (480, 240)
-building_start_point = sd.get_point(x=300, y=10)
+pt_building.building_start_point = sd.get_point(x=300, y=10)
+pt_building.building_size = (480, 240)
 
-root_point = ((sd.get_point(950, 20),  building_size[1] / 1.5 - sd.random_number(10, 30)),
-              (sd.get_point(200, 10),  building_size[1] / 2 - sd.random_number(10, 30)))
+pt_building.roof_point_list = [sd.get_point
+                               (pt_building.building_start_point.x+1,
+                                pt_building.building_start_point.y+1 + pt_building.building_size[1]),
 
-pt_wall.wall_size = building_size
+                               sd.get_point
+                               (pt_building.building_start_point.x+1 + pt_building.building_size[0] // 2,
+                                pt_building.building_start_point.y+1 + pt_building.building_size[1] + pt_building.building_size[1]),
 
-roof_point_list = [sd.get_point
-                   (building_start_point.x+1,
-                    building_start_point.y+1 + building_size[1]),
+                               sd.get_point
+                               (pt_building.building_start_point.x+1 + pt_building.building_size[0],
+                                pt_building.building_start_point.y+1 + pt_building.building_size[1]),
+                               ]
 
-                   sd.get_point
-                   (building_start_point.x+1 + building_size[0] // 2,
-                    building_start_point.y+1 + building_size[1] + building_size[1]),
-
-                   sd.get_point
-                   (building_start_point.x+1 + building_size[0],
-                    building_start_point.y+1 + building_size[1]),
-                   ]
-
-
-def draw_ground():
-    # рисуем землю
-    sd.rectangle(sd.get_point(0, 0), sd.get_point(sd.resolution[0], 40), sd.COLOR_WHITE)
-    sd.rectangle(sd.get_point(0, 0), sd.get_point(sd.resolution[0], 30), sd.COLOR_DARK_ORANGE)
-
-def draw_house():
-
-    # рисуем стену здания
-    pt_wall.draw_wall(pos_x=building_start_point.x, pos_y=building_start_point.y)
-
-    # рисуем крышу здания
-    sd.polygon(point_list=roof_point_list, color=sd.COLOR_DARK_GREEN, width=0)
-    sd.polygon(point_list=roof_point_list, color=sd.COLOR_BLACK, width=1)
-
-    # рисуем окно на крыше
-    sd.circle(sd.get_point(building_start_point.x+1 + building_size[0]//2,
-                           building_start_point.y + 1 + building_size[1] + building_size[1] // 2),
-              30, color=sd.COLOR_DARK_YELLOW, width=0)
-
-    sd.circle(sd.get_point(building_start_point.x+1 + building_size[0]//2,
-                           building_start_point.y + 1 + building_size[1] + building_size[1] // 2),
-              30, color=sd.COLOR_BLACK, width=1)
-
-    # рисуем окно здания
-    x_step = building_size[0] // 4
-    y_step = building_size[1] // 5
-
-    sd.rectangle(sd.get_point(building_start_point.x+1 + x_step, building_start_point.y+1 + y_step),
-                 sd.get_point(building_start_point.x+1 + building_size[0] - x_step,
-                              building_start_point.y+1 + building_size[1] - y_step),
-                 color=sd.COLOR_DARK_YELLOW, width=0)
-
-    sd.rectangle(sd.get_point(building_start_point.x+1 + x_step, building_start_point.y+1 + y_step),
-                 sd.get_point(building_start_point.x+1 + building_size[0] - x_step,
-                              building_start_point.y+1 + building_size[1] - y_step),
-                 color=sd.COLOR_BLACK, width=3)
+root_point = ((sd.get_point(950, 20),  pt_building.building_size [1] / 2 - sd.random_number(10, 30)),
+              (sd.get_point(200, 10),  pt_building.building_size [1] / 2 - sd.random_number(10, 30)))
 
 
 def change_part_day():
@@ -118,6 +77,9 @@ def change_part_day():
     if tick in (0, 200):
         background_color = (109, 147, 176)
         part_of_day = 'morning'
+        snow_falling = True
+        sun_color = sd.COLOR_ORANGE
+
     elif tick in (201, 400):
         background_color = (109, 147, 171)
         part_of_day = 'afternoon'
@@ -135,7 +97,7 @@ def change_part_day():
         sd.clear_screen()
 
 
-step = 0
+step: int = 0
 size_step = 0
 
 sun_point = sd.get_point(sun_start_point[0], sun_start_point[1])
@@ -150,13 +112,14 @@ while True:
 
     change_part_day()
 
-    print(part_of_day)
+    # print(part_of_day)
 
-    if part_of_day in ('morning'):
+    # параметры смены дня
+    if part_of_day == 'morning':
         snow_falling = True
         sun_color = sd.COLOR_ORANGE
 
-    elif part_of_day in ('afternoon'):
+    elif part_of_day == 'afternoon':
 
         sun_color = sd.COLOR_YELLOW
         if tick < 380:
@@ -172,33 +135,39 @@ while True:
     if part_of_day == 'morning' and tick % 5 == 0:
         size_step += 4
 
+    # отображение солнца
     sun_next_point = pt_sun.draw_sun(start_point=sun_next_point, radius=250, length=400, rays_count=36,
                                      move_step=5, size_step=size_step, color=sun_color)
 
+    # отображение радуги
     if part_of_day == 'afternoon':
         pt_rainbow.draw_rainbow(x=500, y=-100, radius=500, width=10, game_tick=tick, )
 
-    pt_snowfall.draw_snowflake(roof_point_list, falling=snow_falling)
+    # отображение снегопада
+    pt_snowfall.draw_snowflake(pt_building.roof_point_list, falling=snow_falling)
 
     # удаление снежинок из словаря
     snowflakes = {k: v for k, v in snowflakes.items() if k not in snowflakes_remove}
 
-    draw_ground()
+    # отображение земли
+    pt_building.draw_ground()
 
+    # отображение 1 дерева
     pt_tree.draw_simetric_branches(point=root_point[1][0], angle=90, length=root_point[1][1], set_day=part_of_day)
 
-    draw_house()
+    # отображение здания
+    pt_building.draw_house()
 
-    pt_smile.draw_smile(building_start_point.x + 1 + building_size[0] // 2,
-                        building_start_point.y + 1 + building_size[1] // 2,
+    # отображение смайлика
+    pt_smile.draw_smile(pt_building.building_start_point.x + 1 + pt_building.building_size[0] // 2,
+                        pt_building.building_start_point.y + 1 + pt_building.building_size[1] // 2,
                         tick)
 
+    # отображение 2 дерева
     pt_tree.draw_simetric_branches(point=root_point[0][0], angle=90, length=root_point[0][1], set_day=part_of_day)
 
     sd.sleep(0.03)
-
     tick += 1
-
     sd.finish_drawing()
 
     if sd.user_want_exit():

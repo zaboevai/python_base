@@ -1,71 +1,62 @@
 # -*- coding: utf-8 -*-
 
 import simple_draw as sd
+from painting import wall as pt_wall
+
+building_start_point = sd.get_point(x=300, y=10)
+building_size = (480, 240)
+pt_wall.wall_size = building_size
+
+roof_point_list = [sd.get_point
+                   (building_start_point.x+1,
+                    building_start_point.y+1 + building_size[1]),
+
+                   sd.get_point
+                   (building_start_point.x+1 + building_size[0] // 2,
+                    building_start_point.y+1 + building_size[1] + building_size[1]),
+
+                   sd.get_point
+                   (building_start_point.x+1 + building_size[0],
+                    building_start_point.y+1 + building_size[1]),
+                   ]
 
 
-wall_size = (400, 400)
-# sd.resolution = wall_size
-# sd.background_color = sd.COLOR_DARK_ORANGE
-
-# размер кирпича
-brick_sizer_x = 40
-brick_sizer_y = 20
-
-half_brick = brick_sizer_x // 2
-
-def draw_wall(pos_x=0, pos_y=0):
-
-    brick_x_count = wall_size[0] // brick_sizer_x  # sd.resolution[0] // x
-    brick_y_count = wall_size[1] // brick_sizer_y  # sd.resolution[1] // y
-
-    start_x = pos_x
-    start_y = pos_y
-
-    for brick_y in range(brick_y_count):
-
-        end_x = start_x + brick_sizer_x
-        end_y = start_y + brick_sizer_y
-
-        # определяем кол-во кирпичей в ряду
-        if brick_y % 2 == 1:
-            x_count += 1
-        else:
-            x_count = brick_x_count
-
-        for brick_x in range(x_count):
-
-            if brick_y % 2 == 1:
-                if brick_x == 0:
-                    start_position = sd.get_point(start_x, start_y)
-                    end_position = sd.get_point(end_x-half_brick, end_y)
-                elif brick_x == x_count-1:
-                    start_position = sd.get_point(start_x-half_brick, start_y)
-                    end_position = sd.get_point(end_x - brick_sizer_x, end_y)
-                else:
-                    start_position = sd.get_point(start_x-half_brick, start_y)
-                    end_position = sd.get_point(end_x-half_brick, end_y)
-            else:
-                start_position = sd.get_point(start_x, start_y)
-                end_position = sd.get_point(end_x, end_y)
-
-            sd.rectangle(left_bottom=start_position, right_top=end_position, color=sd.COLOR_DARK_ORANGE, width=0)
-            sd.rectangle(left_bottom=start_position, right_top=end_position, color=sd.COLOR_BLACK, width=1)
-
-            # двигаем кирпич по x
-            start_x += brick_sizer_x
-            end_x += brick_sizer_x
-
-            # sd.sleep(0.03)
-
-        # возвращаем по х в исходное положение
-        start_x = pos_x
-        end_x = brick_sizer_x
-
-        # двигаем кирпич по y
-        start_y = end_y
-        end_y += brick_sizer_y
-
-    # sd.pause()
+def draw_ground():
+    # рисуем землю
+    sd.rectangle(sd.get_point(0, 0), sd.get_point(sd.resolution[0], 40), sd.COLOR_WHITE)
+    sd.rectangle(sd.get_point(0, 0), sd.get_point(sd.resolution[0], 30), sd.COLOR_DARK_ORANGE)
 
 
-# draw_wall(100, 100)
+def draw_house():
+
+    # рисуем стену здания
+    pt_wall.draw_wall(pos_x=building_start_point.x, pos_y=building_start_point.y)
+
+    # рисуем крышу здания
+    sd.polygon(point_list=roof_point_list, color=sd.COLOR_DARK_GREEN, width=0)
+    sd.polygon(point_list=roof_point_list, color=sd.COLOR_BLACK, width=1)
+
+    # рисуем окно на крыше
+    sd.circle(sd.get_point(building_start_point.x+1 + building_size[0]//2,
+                           building_start_point.y + 1 + building_size[1] + building_size[1] // 2),
+              30, color=sd.COLOR_DARK_YELLOW, width=0)
+
+    sd.circle(sd.get_point(building_start_point.x+1 + building_size[0]//2,
+                           building_start_point.y + 1 + building_size[1] + building_size[1] // 2),
+              30, color=sd.COLOR_BLACK, width=1)
+
+    # рисуем окно здания
+    x_step = building_size[0] // 4
+    y_step = building_size[1] // 5
+
+    sd.rectangle(sd.get_point(building_start_point.x+1 + x_step, building_start_point.y+1 + y_step),
+                 sd.get_point(building_start_point.x+1 + building_size[0] - x_step,
+                              building_start_point.y+1 + building_size[1] - y_step),
+                 color=sd.COLOR_DARK_YELLOW, width=0)
+
+    sd.rectangle(sd.get_point(building_start_point.x+1 + x_step, building_start_point.y+1 + y_step),
+                 sd.get_point(building_start_point.x+1 + building_size[0] - x_step,
+                              building_start_point.y+1 + building_size[1] - y_step),
+                 color=sd.COLOR_BLACK, width=3)
+
+    return roof_point_list
