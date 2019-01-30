@@ -36,7 +36,7 @@ from painting import smile as pt_smile, \
 
 sd.resolution = (1200, 800)
 
-global background_color
+# global background_color
 background_color = sd.COLOR_BLACK
 sd.background_color = background_color
 
@@ -118,7 +118,10 @@ while True:
     if part_of_day == 'morning':
         snow_falling = True
         sun_color = sd.COLOR_ORANGE
-
+        if tick == 0:
+            sun_next_point = sun_point
+            sun_size = 250
+            size_step = 5
     elif part_of_day == 'afternoon':
 
         sun_color = sd.COLOR_YELLOW
@@ -133,10 +136,10 @@ while True:
         sun_next_point = sd.get_point(-500, -500)
 
     if part_of_day == 'morning' and tick % 5 == 0:
-        size_step += 4
+        size_step += 3
 
     # отображение солнца
-    sun_next_point = pt_sun.draw_sun(start_point=sun_next_point, radius=250, length=400, rays_count=36,
+    sun_next_point = pt_sun.draw_sun(start_point=sun_next_point, radius=sun_size, length=400, rays_count=36,
                                      move_step=5, size_step=size_step, color=sun_color)
 
     # отображение радуги
