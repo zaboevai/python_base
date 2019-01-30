@@ -3,6 +3,7 @@
 import simple_draw as sd
 from painting import wall as pt_wall
 
+sd.resolution = (1000, 800)
 building_start_point = sd.get_point(x=300, y=10)
 building_size = (480, 240)
 pt_wall.wall_size = building_size
@@ -59,4 +60,8 @@ def draw_house():
                               building_start_point.y+1 + building_size[1] - y_step),
                  color=sd.COLOR_BLACK, width=3)
 
-    return roof_point_list
+
+if __name__ == '__main__':
+
+    draw_house()
+    sd.pause()

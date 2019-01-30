@@ -59,6 +59,7 @@ def draw_branches(point, angle, length=100):
     length = length * 0.75
     length_deviation = round(length * 0.2)
     length += sd.random_number(0, length_deviation)
+    length = round(length)
 
     next_angle = round(angle + delta)
     draw_branches(next_point, next_angle, length)

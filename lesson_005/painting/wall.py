@@ -13,11 +13,12 @@ brick_sizer_y = 20
 
 half_brick = brick_sizer_x // 2
 
+
 def draw_wall(pos_x=0, pos_y=0):
 
     brick_x_count = wall_size[0] // brick_sizer_x  # sd.resolution[0] // x
     brick_y_count = wall_size[1] // brick_sizer_y  # sd.resolution[1] // y
-
+    x_count = brick_x_count
     start_x = pos_x
     start_y = pos_y
 
@@ -59,13 +60,14 @@ def draw_wall(pos_x=0, pos_y=0):
 
         # возвращаем по х в исходное положение
         start_x = pos_x
-        end_x = brick_sizer_x
 
         # двигаем кирпич по y
         start_y = end_y
         end_y += brick_sizer_y
 
-    # sd.pause()
 
+if __name__ == '__main__':
 
-# draw_wall(100, 100)
+    draw_wall(100, 100)
+
+    sd.pause()

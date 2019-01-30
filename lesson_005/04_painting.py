@@ -50,6 +50,12 @@ part_of_day = ''
 tick = 0
 
 sun_start_point = (-100, -100)
+sun_size = 250
+sun_size_step = 5
+sun_color = sd.COLOR_ORANGE
+
+sun_point = sd.get_point(sun_start_point[0], sun_start_point[1])
+sun_next_point = sun_point
 
 pt_building.building_start_point = sd.get_point(x=300, y=10)
 pt_building.building_size = (480, 240)
@@ -60,7 +66,8 @@ pt_building.roof_point_list = [sd.get_point
 
                                sd.get_point
                                (pt_building.building_start_point.x+1 + pt_building.building_size[0] // 2,
-                                pt_building.building_start_point.y+1 + pt_building.building_size[1] + pt_building.building_size[1]),
+                                pt_building.building_start_point.y+1 + pt_building.building_size[1]
+                                + pt_building.building_size[1]),
 
                                sd.get_point
                                (pt_building.building_start_point.x+1 + pt_building.building_size[0],
@@ -77,8 +84,6 @@ def change_part_day():
     if tick in (0, 200):
         background_color = (109, 147, 176)
         part_of_day = 'morning'
-        snow_falling = True
-        sun_color = sd.COLOR_ORANGE
 
     elif tick in (201, 400):
         background_color = (109, 147, 171)
@@ -96,12 +101,6 @@ def change_part_day():
         pt_snowfall.background_color = background_color
         sd.clear_screen()
 
-
-step: int = 0
-size_step = 0
-
-sun_point = sd.get_point(sun_start_point[0], sun_start_point[1])
-sun_next_point = sun_point
 
 while True:
 
@@ -121,7 +120,7 @@ while True:
         if tick == 0:
             sun_next_point = sun_point
             sun_size = 250
-            size_step = 5
+            sun_size_step = 5
     elif part_of_day == 'afternoon':
 
         sun_color = sd.COLOR_YELLOW
@@ -136,11 +135,11 @@ while True:
         sun_next_point = sd.get_point(-500, -500)
 
     if part_of_day == 'morning' and tick % 5 == 0:
-        size_step += 3
+        sun_size_step += 3
 
     # отображение солнца
     sun_next_point = pt_sun.draw_sun(start_point=sun_next_point, radius=sun_size, length=400, rays_count=36,
-                                     move_step=5, size_step=size_step, color=sun_color)
+                                     move_step=5, size_step=sun_size_step, color=sun_color)
 
     # отображение радуги
     if part_of_day == 'afternoon':

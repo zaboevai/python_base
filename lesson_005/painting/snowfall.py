@@ -18,7 +18,7 @@ snowflakes = {}
 down_snowflakes = {}
 
 ground = 50
-speed = 0
+# speed = 0
 
 surface_list = (sd.get_point(101, 211), sd.get_point(301, 411), sd.get_point(501, 211))
 down_num = 0
@@ -37,7 +37,7 @@ def draw_snowflake(surface_point_list, falling=False):
     if falling and snowflakes_count > len(snowflakes):
         # заполняем словарь с параметрами снежинок
         for i in range(snowflakes_count):
-            y = sd.resolution[1] + 50
+            # y = sd.resolution[1] + 50
             snowflakes[i] = \
                 {'length': sd.random_number(snowflake_size['min'], snowflake_size['max']),
                  'x': sd.random_number(-300, sd.resolution[0]),
@@ -71,11 +71,18 @@ def draw_snowflake(surface_point_list, falling=False):
 
         # снежинки падают на крышу и на землю
         # TODO подумать как можно это оптимизировать, сделать более читаемым
-        if ((snowflake_parameter['x'] - surface_point_list[0].x + 10 > snowflake_parameter['y'] - surface_point_list[0].y and \
-            surface_point_list[0].x <= snowflake_parameter['x'] <= surface_point_list[1].x) or \
-            (surface_point_list[2].x - snowflake_parameter['x'] + 10 > snowflake_parameter['y'] - surface_point_list[0].y and \
-            surface_point_list[1].x <= snowflake_parameter['x'] <= surface_point_list[2].x)) or \
-            snowflake_parameter['y'] < 50:
+        if (
+            (
+             (snowflake_parameter['x'] - surface_point_list[0].x + 10
+              > snowflake_parameter['y'] - surface_point_list[0].y
+                and surface_point_list[0].x <= snowflake_parameter['x'] <= surface_point_list[1].x
+              ) or
+             (surface_point_list[2].x - snowflake_parameter['x'] + 10
+              > snowflake_parameter['y'] - surface_point_list[0].y
+                and surface_point_list[1].x <= snowflake_parameter['x'] <= surface_point_list[2].x
+             )
+            ) or snowflake_parameter['y'] < ground
+           ):
 
             down_snowflakes[down_num] = {'length': snowflake_parameter['length'],
                                          'x': snowflake_parameter['x'],
@@ -83,7 +90,7 @@ def draw_snowflake(surface_point_list, falling=False):
                                          'factor_a': snowflake_parameter['factor_a'],
                                          'factor_b': snowflake_parameter['factor_b'],
                                          'factor_c': snowflake_parameter['factor_c']
-                                          }
+                                         }
             down_num += len(down_snowflakes) + 1
 
             # print(len(down_snowflakes))
@@ -123,7 +130,8 @@ def draw_snowflake(surface_point_list, falling=False):
 
 if __name__ == '__main__':
 
-    snowflakes_count = 10
+    snowflakes_count = 100
+    falling = True
 
     while True:
 
@@ -134,14 +142,13 @@ if __name__ == '__main__':
         sd.line(surface_list[0], surface_list[1])
         sd.line(surface_list[1], surface_list[2])
 
-        # if tick > 100:
-        #     draw_snowflake(surface_list, False)
-        # else:
-        draw_snowflake(surface_list, True)
+        draw_snowflake(surface_list, falling)
 
         if tick % 100 == 0:
             sd.clear_screen()
 
+        if tick == 100:
+            falling = False
 
         sd.finish_drawing()
 
