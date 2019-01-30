@@ -25,4 +25,5 @@ my_list.extend(soviet_house1_room2.folks)
 my_list.extend(soviet_house2_room1.folks)
 my_list.extend(soviet_house2_room2.folks)
 
+# TODO Не соблюден формат вывода требуемый в задании
 print(inhabitant.join(my_list))

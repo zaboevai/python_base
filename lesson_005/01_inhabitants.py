@@ -11,3 +11,5 @@ inhabitant = ', '.join(rm1.folks)
 print('В комнате room_1 живут:', inhabitant)
 inhabitant = ', '.join(rm2.folks)
 print('В комнате room_2 живут:', inhabitant)
+
+# Зачет!
