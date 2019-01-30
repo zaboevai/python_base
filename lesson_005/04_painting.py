@@ -54,6 +54,7 @@ sun_start_point = (-100, -100)
 pt_building.building_start_point = sd.get_point(x=300, y=10)
 pt_building.building_size = (480, 240)
 
+# TODO Код необходимо отформатировать, чтобы не было строк длинной больше 120 символов
 pt_building.roof_point_list = [sd.get_point
                                (pt_building.building_start_point.x+1,
                                 pt_building.building_start_point.y+1 + pt_building.building_size[1]),
@@ -77,6 +78,8 @@ def change_part_day():
     if tick in (0, 200):
         background_color = (109, 147, 176)
         part_of_day = 'morning'
+        # TODO 2 строки ниже не влияют ни на что, по этому их нужно удалить.
+        # TODO Pycharm их даже выделяет серым по этому.
         snow_falling = True
         sun_color = sd.COLOR_ORANGE
 
@@ -139,6 +142,15 @@ while True:
         size_step += 3
 
     # отображение солнца
+    # TODO Переменные sun_size и sun_color при определенном стечении
+    # TODO обстоятельств могут быть еще не созданы и тогда получится, что
+    # TODO переменная будет использоваться раньше чем она была объявлена. Так
+    # TODO быть не должно.
+    # TODO Одно из возможных решений данной проблемы это объявить в начале
+    # TODO программы начальные значения для этих двух переменных.
+    # TODO P.S. Хочу обратить внимание, что pycharm уведомляет о совершении
+    # TODO этой ошибки при помощи выделия перменной коричневым цветом.
+    # TODO Необходимо прислушиваться к советам среды разработки.
     sun_next_point = pt_sun.draw_sun(start_point=sun_next_point, radius=sun_size, length=400, rays_count=36,
                                      move_step=5, size_step=size_step, color=sun_color)
 
