@@ -1,26 +1,26 @@
 def take_bun():
-    return 'Кладем булочку'
+    print('Кладем булочку')
 
 
 def take_chop():
-    return 'Кладем котлетку'
+    print('Кладем котлетку')
 
 
 def take_cucumber():
-    return 'Добавляем тоненько нарезанных огурчиков'
+    print('Добавляем тоненько нарезанных огурчиков')
 
 
 def take_tomato():
-    return 'Добавляем слой тоненько нарезанных помидоров'
+    print('Добавляем слой тоненько нарезанных помидоров')
 
 
 def take_mayonnaise():
-    return 'Майонез по вкусу'
+    print('Майонез по вкусу')
 
 
 def take_ketchup():
-    return 'Кечуп по вкусу'
+    print('Кечуп по вкусу')
 
 
 def take_chease():
-    return 'Сверху ломтик сыра'
+    print('Сверху ломтик сыра')

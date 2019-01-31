@@ -21,31 +21,31 @@ from my_burger import take_bun, take_chop, take_cucumber, take_tomato, take_mayo
 
 def cook_burger():
 
-    burger_list = [take_bun(),
-                   take_chop(),
-                   take_chease(),
-                   take_chop(),
-                   take_chease(),
-                   take_cucumber(),
-                   take_tomato(),
-                   take_mayonnaise(),
-                   take_ketchup(),
-                   take_bun(), ]
+    print('\nРецепт двойного чизбургера: \n')
 
-    print('\nРецепт двойного чизбургера: \n ' + '\n '.join(burger_list))
+    take_bun()
+    take_chop()
+    take_chease()
+    take_chop()
+    take_chease()
+    take_cucumber()
+    take_tomato()
+    take_mayonnaise()
+    take_ketchup()
+    take_bun()
 
 
 def cook_my_burger():
-    my_burger_list = [take_bun(),
-                      take_mayonnaise(),
-                      take_chop(),
-                      take_chease(),
-                      take_cucumber(),
-                      take_tomato(),
-                      take_ketchup(),
-                      take_bun(), ]
 
-    print('\nРецепт любимого бургера: \n ' + '\n '.join(my_burger_list))
+    print('\nРецепт любимого бургера: \n ')
+    take_bun()
+    take_mayonnaise()
+    take_chop()
+    take_chease()
+    take_cucumber()
+    take_tomato()
+    take_ketchup()
+    take_bun()
 
 
 cook_burger()
