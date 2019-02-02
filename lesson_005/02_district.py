@@ -24,3 +24,5 @@ my_list.extend(soviet_house2_room1.folks)
 my_list.extend(soviet_house2_room2.folks)
 
 print('На районе живут', inhabitant.join(my_list))
+
+# Зачет!
