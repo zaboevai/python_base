@@ -50,3 +50,5 @@ def cook_my_burger():
 
 cook_burger()
 cook_my_burger()
+
+# Зачет!
