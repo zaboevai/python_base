@@ -45,16 +45,41 @@
 
 from mastermind_engine import make_number, check_number
 from termcolor import cprint
+from random import randint as rnd
 
-result = {}
+
+result = {'bulls': 0, 'cows': 0}
 count = 0
 
+
+def bot_player(bulls, cows):
+
+    number = []
+
+    if bulls == 0:
+        for i in range(4):
+            if i == 0:
+                number.append(rnd(1, 9))
+            else:
+                number.append(rnd(0, 9))
+    return number
+
+
 while True:
+
     if count == 0:
+        is_bot = True if input('Доверите игру БОТУ? (y/n)') in ('Y', 'y', 'д', 'Д') else False
         cprint('Число загадано', 'green')
         cprint(make_number(), 'green')
 
-    chk_number = input('Укажите число: ')
+    if is_bot:
+        print('Укажите число: ')
+        chk_number = bot_player(result['bulls'], result['cows'])
+    else:
+        chk_number = input('Укажите число: ')
+
+    print(chk_number)
+
     result = check_number(chk_number)
     cprint('быки - ' + str(result['bulls']) + ' коровы - ' + str(result['cows']), 'blue')
     count += 1
@@ -63,6 +88,7 @@ while True:
         cprint('!!! ПОБЕДА !!!', 'red')
         cprint('Кол-во попыток: ' + str(count), 'red')
         result_ask = input('Хотите еще партию? (y/n)')
+
         if result_ask in ('Y', 'y', 'д', 'Д'):
             count = 0
             continue
