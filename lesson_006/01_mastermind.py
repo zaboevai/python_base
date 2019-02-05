@@ -76,7 +76,12 @@ while True:
         print('Укажите число: ')
         chk_number = bot_player(result['bulls'], result['cows'])
     else:
-        chk_number = input('Укажите число: ')
+        while True:
+            chk_number = input('Укажите число: ')
+            if chk_number.isdigit() and len(chk_number) == 4:
+                break
+            else:
+                cprint('По условиям игры необходимо указать 4х значное число.', 'red')
 
     print(chk_number)
 
