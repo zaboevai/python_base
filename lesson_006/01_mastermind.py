@@ -5,7 +5,7 @@
 #
 # Правила:
 # Компьютер загадывает четырехзначное число, все цифры которого различны
-# (первая цифра числа отлична от нуля). Игроку необходимо разгадать задуманное число.
+# (первая цифра числа отлична от нуля). Игроку необходимо nразгадать задуманное число.
 # Игрок вводит четырехзначное число c неповторяющимися цифрами,
 # компьютер сообщают о количестве «быков» и «коров» в названном числе
 # «бык» — цифра есть в записи задуманного числа и стоит в той же позиции,
@@ -52,16 +52,15 @@ result = {'bulls': 0, 'cows': 0}
 count = 0
 
 
-def bot_player(bulls, cows):
+def bot_player():
 
     number = []
 
-    if bulls == 0:
-        for i in range(4):
-            if i == 0:
-                number.append(rnd(1, 9))
-            else:
-                number.append(rnd(0, 9))
+    for i in range(4):
+        if i == 0:
+            number.append(rnd(1, 9))
+        else:
+            number.append(rnd(0, 9))
     return number
 
 
@@ -74,7 +73,7 @@ while True:
 
     if is_bot:
         print('Укажите число: ')
-        chk_number = bot_player(result['bulls'], result['cows'])
+        chk_number = bot_player()
     else:
         while True:
             chk_number = input('Укажите число: ')
