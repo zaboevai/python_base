@@ -47,9 +47,9 @@ from mastermind_engine import make_number, check_number
 from termcolor import cprint
 from random import randint as rnd
 
-
 result = {'bulls': 0, 'cows': 0}
 count = 0
+is_bot = False
 
 
 def bot_player():
@@ -67,6 +67,10 @@ def bot_player():
 while True:
 
     if count == 0:
+        cprint('***********************', 'magenta')
+        cprint('*** "Быки и Коровы" ***', 'magenta')
+        cprint('***********************', 'magenta')
+
         is_bot = True if input('Доверите игру БОТУ? (y/n)') in ('Y', 'y', 'д', 'Д') else False
         cprint('Число загадано', 'green')
         cprint(make_number(), 'green')
