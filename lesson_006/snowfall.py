@@ -3,26 +3,22 @@
 import simple_draw as sd
 
 sd.resolution = (1200, 800)
-
 snowflake_size = {'min': 5, 'max': 20}
 
 _snowflakes = {}
-_down_snowflakes = {}
-num_remove_snowflake = []
+_down_snowflakes = []
 
 
 def create_snowflakes(snowflakes_count=1):
-    global _snowflakes
+    global _snowflakes, _down_snowflakes
 
     new_snowflakes = {}
     y = 700
     len_dict = 0
-    print(_snowflakes.keys())
 
     for key, value in _snowflakes.items():
         new_snowflakes[len_dict] = value
         len_dict += 1
-    print(new_snowflakes.keys())
 
     for i in range(snowflakes_count):
         new_snowflakes[len_dict + i] = {'length': sd.random_number(snowflake_size['min'], snowflake_size['max']),
@@ -33,16 +29,12 @@ def create_snowflakes(snowflakes_count=1):
                                         'factor_c': sd.random_number(1, 120)
                                         }
 
-    # TODO Подумать как правильно заполнять словарь
-    print(new_snowflakes.keys())
-
     _snowflakes.update(new_snowflakes)
-    print(_snowflakes)
+    _down_snowflakes = []
 
 
 def remove_snowflakes(num_snowflake):
     global _snowflakes
-
     _snowflakes = {k: v for k, v in _snowflakes.items() if k not in num_snowflake}
 
 
@@ -63,11 +55,9 @@ def move_snowflakes():
         snowflake_parameter['y'] -= snowflake_size['max'] + 1 - snowflake_parameter['length']
 
 
-def check_down_snowflakes():
-    global num_remove_snowflake
-
+def get_down_snowflakes():
     for snowflake_num, snowflake_parameter in _snowflakes.items():
         if snowflake_parameter['y'] < 0:
-            num_remove_snowflake.append(snowflake_num)
+            _down_snowflakes.append(snowflake_num)
 
-    return True if len(num_remove_snowflake) != 0 else False
+    return _down_snowflakes
