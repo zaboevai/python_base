@@ -10,6 +10,10 @@ _down_snowflakes = []
 
 
 def create_snowflakes(snowflakes_count=1):
+    # TODO Списки и словари можно менять из функций без использования global
+    # TODO global нужен только тогда, когда необходимо присвоить глобальной
+    # TODO переменной новое значение. Вообще global использование global это
+    # TODO друной тон, в реальных проектах его не используют.
     global _snowflakes, _down_snowflakes
 
     new_snowflakes = {}
