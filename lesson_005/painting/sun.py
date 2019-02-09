@@ -7,7 +7,7 @@ sun_size_step = 5
 
 
 def draw_sun(start_point,
-             radius=40,
+             radius=0,
              length=100,
              rays_count=9,
              move_step=1,
@@ -16,13 +16,13 @@ def draw_sun(start_point,
 
     rays_angle = 360 // rays_count
     point = start_point
-
+    print(radius)
     sd.circle(center_position=point, radius=length, width=0, color=sd.background_color)
 
-    if point.y < sd.resolution[1]:
-        next_point = sd.get_point(point.x+move_step, point.y+move_step)
-    else:
-        next_point = point
+    # if point.y < sd.resolution[1]:
+    next_point = sd.get_point(point.x+move_step, point.y+move_step)
+    # else:
+    #     next_point = point
 
     rays_step = rays_angle
 
