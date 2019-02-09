@@ -30,7 +30,7 @@ def draw_snowflake(surface_point_list, falling=False):
     y = sd.resolution[1] + 50
 
     if not falling:
-        speed = sd.random_number(0, 5)
+        speed = sd.random_number(0, 3)
     else:
         speed = 0
 
