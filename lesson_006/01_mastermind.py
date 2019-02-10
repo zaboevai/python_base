@@ -52,6 +52,9 @@ count = 0
 is_bot = False
 
 
+# TODO Код функций make_number и bot_player почти идентичен. Нужно выделить из
+# TODO них общую часть в отдельную функцию и использовать ее.
+# TODO Функции
 def bot_player():
 
     number = []
