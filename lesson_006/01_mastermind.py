@@ -43,28 +43,16 @@
 # Это пример применения SOLID принципа (см https://goo.gl/GFMoaI) в архитектуре программ.
 # Точнее, в этом случае важен принцип единственной ответственности - https://goo.gl/rYb3hT
 
-from mastermind_engine import make_number, check_number
+from mastermind_engine import make_number, check_number, generate_number
 from termcolor import cprint
-from random import randint as rnd
 
 result = {'bulls': 0, 'cows': 0}
 count = 0
 is_bot = False
 
 
-# TODO Код функций make_number и bot_player почти идентичен. Нужно выделить из
-# TODO них общую часть в отдельную функцию и использовать ее.
-# TODO Функции
 def bot_player():
-
-    number = []
-
-    for i in range(4):
-        if i == 0:
-            number.append(rnd(1, 9))
-        else:
-            number.append(rnd(0, 9))
-    return number
+    return generate_number()
 
 
 while True:

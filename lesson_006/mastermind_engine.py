@@ -3,19 +3,23 @@ from random import randint as rnd
 _numbers = []
 
 
-def make_number():
-    global _numbers
-    _numbers = []
+def generate_number():
+    number = []
     for i in range(4):
         if i == 0:
-            _numbers.append(rnd(1, 9))
+            number.append(rnd(1, 9))
         else:
-            _numbers.append(rnd(0, 9))
+            number.append(rnd(0, 9))
+    return number
+
+
+def make_number():
+    _numbers.clear()
+    _numbers.extend(generate_number())
     return _numbers
 
 
 def check_number(chk_number):
-
     result = {'bulls': 0, 'cows': 0}
     chk_numbers = []
 
