@@ -10,12 +10,6 @@ _down_snowflakes = []
 
 
 def create_snowflakes(snowflakes_count=1):
-    # TODO Списки и словари можно менять из функций без использования global
-    # TODO global нужен только тогда, когда необходимо присвоить глобальной
-    # TODO переменной новое значение. Вообще global использование global это
-    # TODO друной тон, в реальных проектах его не используют.
-    global _snowflakes, _down_snowflakes
-
     new_snowflakes = {}
     y = 700
     len_dict = 0
@@ -34,12 +28,13 @@ def create_snowflakes(snowflakes_count=1):
                                         }
 
     _snowflakes.update(new_snowflakes)
-    _down_snowflakes = []
+    _down_snowflakes.clear()
 
 
 def remove_snowflakes(num_snowflake):
-    global _snowflakes
-    _snowflakes = {k: v for k, v in _snowflakes.items() if k not in num_snowflake}
+    _new_snowflakes = {k: v for k, v in _snowflakes.items() if k not in num_snowflake}
+    _snowflakes.clear()
+    _snowflakes.update(_new_snowflakes)
 
 
 def draw_snowflakes(color=sd.COLOR_WHITE):
