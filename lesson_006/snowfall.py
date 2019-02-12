@@ -39,7 +39,7 @@ def remove_snowflakes(num_snowflake):
 
 def draw_snowflakes(color=sd.COLOR_WHITE):
     for snowflake_num, snowflake_parameter in _snowflakes.items():
-        start_point = sd.get_point(snowflake_parameter['x'], snowflake_parameter['y'])
+        start_point = sd.get_point(x=snowflake_parameter['x'], y=snowflake_parameter['y'])
         sd.snowflake(center=start_point,
                      length=snowflake_parameter['length'],
                      color=color,

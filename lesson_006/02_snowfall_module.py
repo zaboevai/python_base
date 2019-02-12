@@ -29,20 +29,20 @@ from snowfall import create_snowflakes, \
 
 snowflakes_count = 5
 
-create_snowflakes(snowflakes_count)
+create_snowflakes(snowflakes_count=snowflakes_count)
 
 while True:
 
     sd.start_drawing()
-    draw_snowflakes(sd.background_color)
+    draw_snowflakes(color=sd.background_color)
     move_snowflakes()
-    draw_snowflakes(sd.COLOR_WHITE)
+    draw_snowflakes(color=sd.COLOR_WHITE)
 
     down_snowflakes = get_down_snowflakes()
 
     if len(down_snowflakes) > 0:
-        remove_snowflakes(down_snowflakes)
-        create_snowflakes(len(down_snowflakes))
+        remove_snowflakes(num_snowflake=down_snowflakes)
+        create_snowflakes(snowflakes_count=len(down_snowflakes))
 
     sd.sleep(0.05)
     sd.finish_drawing()

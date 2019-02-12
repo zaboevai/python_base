@@ -1,6 +1,6 @@
 from random import randint as rnd
 
-_numbers = []
+_hidden_numbers = []
 
 
 def generate_number():
@@ -14,21 +14,21 @@ def generate_number():
 
 
 def make_number():
-    _numbers.clear()
-    _numbers.extend(generate_number())
-    return _numbers
+    _hidden_numbers.clear()
+    _hidden_numbers.extend(generate_number())
+    return _hidden_numbers
 
 
-def check_number(chk_number):
+def check_number(number):
     result = {'bulls': 0, 'cows': 0}
     chk_numbers = []
 
-    for char in map(int, chk_number):
+    for char in map(int, number):
         chk_numbers.append(char)
 
-    for pos, number in enumerate(_numbers):
-        for chk_pos, chk_number in enumerate(chk_numbers):
-            if number == chk_number:
+    for pos, hidden_number in enumerate(_hidden_numbers):
+        for chk_pos, number in enumerate(chk_numbers):
+            if hidden_number == number:
                 if pos == chk_pos:
                     result['bulls'] += 1
                     continue

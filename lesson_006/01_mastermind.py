@@ -68,18 +68,18 @@ while True:
 
     if is_bot:
         print('Укажите число: ')
-        chk_number = bot_player()
+        user_number = bot_player()
     else:
         while True:
-            chk_number = input('Укажите число: ')
-            if chk_number.isdigit() and len(chk_number) == 4:
+            user_number = input('Укажите число: ')
+            if user_number.isdigit() and len(user_number) == 4:
                 break
             else:
                 cprint('По условиям игры необходимо указать 4х значное число.', 'red')
 
-    print(chk_number)
+    print(user_number)
 
-    result = check_number(chk_number)
+    result = check_number(number=user_number)
     cprint('быки - ' + str(result['bulls']) + ' коровы - ' + str(result['cows']), 'blue')
     count += 1
 
