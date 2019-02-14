@@ -51,14 +51,6 @@ count = 0
 is_bot = False
 
 
-# TODO В данном случае функция bot_player не нужна и к тому же еще имеет
-# TODO неудачное название, потому что не отражает своего назначения. Функции
-# TODO всегда, что-то деалают и по этому они должны иметь в названии глагол,
-# TODO для того, чтобы было понятно, что они делают.
-def bot_player():
-    return generate_number()
-
-
 while True:
 
     if count == 0:
@@ -72,7 +64,7 @@ while True:
 
     if is_bot:
         print('Укажите число: ')
-        user_number = bot_player()
+        user_number = generate_number()
     else:
         while True:
             user_number = input('Укажите число: ')
