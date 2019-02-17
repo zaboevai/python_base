@@ -89,3 +89,5 @@ while True:
             continue
         else:
             break
+
+# Зачет!
