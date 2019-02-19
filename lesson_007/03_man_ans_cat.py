@@ -37,9 +37,10 @@ class Man:
         self.cat = []
 
     def __str__(self):
-        return 'Я - {}, сытость {}, у меня есть кошка {}'.format(self.name,
-                                                                 self.fullness,
-                                                                 ', '.join(self.cat) if self.cat else 'в "мечтах"')
+        return 'Я - {}, сытость {}, {}'.format(self.name,
+                                               self.fullness,
+                                               'у меня есть котики: '+', '.join(self.cat)
+                                               if self.cat else 'мечтаю завести котиков')
 
     def eat(self):
         if self.house.food >= 10:
@@ -51,40 +52,38 @@ class Man:
 
     def work(self):
         cprint('{} сходил на работу'.format(self.name), color='magenta')
-        self.house.money += 50
+        self.house.money += 150
         self.fullness -= 10
 
     def clean_house(self):
         cprint('{} почистил дом'.format(self.name), color='magenta')
-        self.house.mud = 0
-        self.fullness -= 10
+        self.house.mud -= 100
+        self.fullness -= 20
 
     def watch_mtv(self):
         cprint('{} смотрел MTV целый день'.format(self.name), color='magenta')
         self.fullness -= 10
 
     def shopping(self):
-        # TODO переделать покупку еды
-        # TODO покупать еду кошкам исходя из их кол-ва
-        money_need = 0
-        if self.house.cat_food <= 10:
-            money_need += 50
-        elif self.house.food <= 10:
-            money_need += 50
 
-        if self.house.money >= money_need:
-            if self.house.food <= 10:
-                self.house.money -= 50
-                self.house.food += 50
-                cprint('{} сходил в магазин за едой'.format(self.name), color='magenta')
-            elif self.house.cat_food <= 10:
-                self.house.cat_food += 50
-                self.house.money -= 50
-                cprint('{} сходил в магазин за едой'.format(self.name), color='magenta')
+        if self.house.food <= 10 and self.house.money >= 50:
+            self.house.money -= 50
+            self.house.food += 50
+            cprint('{} сходил в магазин себе за едой'.format(self.name), color='magenta')
 
-            self.fullness -= 10
-        else:
-            cprint('{} деньги кончились!'.format(self.name), color='red')
+        cat_food_need = len(self.cat) * 50
+
+        if self.cat and self.house.cat_food <= len(self.cat) * 10:
+            if cat_food_need <= self.house.money:
+                self.house.cat_food += cat_food_need
+                self.house.money -= cat_food_need
+                cprint('{} сходил в магазин за едой кошкам'.format(self.name), color='magenta')
+            elif cat_food_need >= self.house.money:
+                self.house.cat_food += self.house.money
+                self.house.money = 0
+                cprint('{} сходил в магазин за едой кошкам на последние деньги'.format(self.name), color='magenta')
+
+        self.fullness -= 10
 
     def go_to_the_house(self, house):
         self.house = house
@@ -105,9 +104,9 @@ class Man:
             self.eat()
         elif self.house.money < 100:
             self.work()
-        elif self.house.food < 10 or self.house.cat_food < 10:
+        elif self.house.food <= 10 or (self.cat and self.house.cat_food <= len(self.cat) * 10):
             self.shopping()
-        elif self.house.mud > 50:
+        elif self.fullness > 20 and self.house.mud >= 100:
             self.clean_house()
         elif dice == 1:
             self.watch_mtv()
@@ -131,6 +130,7 @@ class House:
                                                                                              self.money,
                                                                                              self.mud)
 
+
 class Cat:
 
     def __init__(self, name):
@@ -142,32 +142,33 @@ class Cat:
         return 'Я котик - {}, сытость {}'.format(self.name, self.fullness)
 
     def eat(self):
-        cprint('Котик {} покушал'.format(self.name), color='cyan')
         self.fullness += 20
         self.house.cat_food -= 10
+        cprint('Котик {} покушал, сытость {}'.format(self.name, self.fullness), color='cyan')
 
     def play(self):
-        cprint('Котик {} поиграл'.format(self.name), color='cyan')
         self.fullness -= 10
         self.house.mud += 5
+        cprint('Котик {} поиграл, сытость {}'.format(self.name, self.fullness), color='cyan')
 
     def sleep(self):
-        cprint('Котик {} поспал'.format(self.name), color='cyan')
         self.fullness -= 10
         self.house.mud += 5
+        cprint('Котик {} поспал, сытость {}'.format(self.name, self.fullness), color='cyan')
 
     def tear_wallpaper(self):
-        cprint('Котик {} драл обои'.format(self.name), color='cyan')
         self.fullness -= 10
         self.house.mud += 5
+        cprint('Котик {} драл обои, сытость {}'.format(self.name, self.fullness), color='cyan')
 
     def settle_in_the_house(self, house):
-        cprint('Котик {} переехал в дом'.format(self.name), color='cyan')
         self.house = house
+        cprint('Котик {} переехал в дом'.format(self.name, self.fullness), color='cyan')
 
     def feces(self):
         self.house.mud += 20
-        cprint('Котик {} нагадил'.format(self.name), color='cyan')
+        self.fullness -= 10
+        cprint('Котик {} нагадил, сытость {}'.format(self.name, self.fullness), color='cyan')
 
     def act(self):
         dice = randint(1, 6)
@@ -179,9 +180,9 @@ class Cat:
             elif dice == 1:
                 self.play()
             elif dice == 2:
-                self.feces
+                self.feces()
             elif dice == 3:
-                self.tear_wallpaper
+                self.tear_wallpaper()
             else:
                 self.sleep()
         else:
@@ -190,14 +191,15 @@ class Cat:
             elif self.fullness <= 30:
                 dice = randint(1, 6)
                 if dice == 1:
-                    cprint('Котик {} не поймал мышь'.format(self.name), color='yellow')
                     self.fullness -= 10
+                    cprint('Уличный котик {} НЕ поймал мышь, сытость {}'.format(self.name, self.fullness), color='yellow')
                 else:
-                    cprint('Котик {} поймал мышь'.format(self.name), color='yellow')
                     self.fullness += 20
+                    cprint('Уличный котик {} поймал мышь, сытость {}'.format(self.name, self.fullness), color='yellow')
+
             else:
-                cprint('Котик {} ходит бродит'.format(self.name), color='yellow')
                 self.fullness -= 10
+                cprint('Уличный котик {} ходит бродит, сытость {}'.format(self.name, self.fullness), color='yellow')
 
 
 sweet_home = House()
@@ -225,7 +227,7 @@ for day in map(str, range(1, 366)):
     man.act()
     print(man)
 
-    if man.house.money // (len(man.cat) if len(man.cat) != 0 else 1) >= 300:
+    if man.house.money // (len(man.cat)+1) >= 200:
         if len(street_cats) > 0:
             some_cat = choice(street_cats)
             home_cats.append(some_cat)
