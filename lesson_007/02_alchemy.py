@@ -32,6 +32,11 @@ class Water:
         return self.name
 
     def __add__(self, other):
+        # TODO Данная реализация сравнения имеет право на сущестование, но все
+        # TODO же лучше производить проверку при помощи isinstance().
+        # TODO Потому что сейчас при операции сравнения происходит создание
+        # TODO ни где потом не используемых объектов, так делать не хорошо.
+        # TODO Пример: isinstance(1, int)
         if other == Air():
             substance = Storm()
         elif other == Fire():
@@ -58,6 +63,11 @@ class Fire:
         return self.name
 
     def __add__(self, other):
+        # TODO Данная реализация сравнения имеет право на сущестование, но все
+        # TODO же лучше производить проверку при помощи isinstance().
+        # TODO Потому что сейчас при операции сравнения происходит создание
+        # TODO ни где потом не используемых объектов, так делать не хорошо.
+        # TODO Пример: isinstance(1, int)
         if other == Air():
             substance = Lightning()
         elif other == Water():
@@ -84,7 +94,11 @@ class Air:
         return self.name
 
     def __add__(self, other):
-
+        # TODO Данная реализация сравнения имеет право на сущестование, но все
+        # TODO же лучше производить проверку при помощи isinstance().
+        # TODO Потому что сейчас при операции сравнения происходит создание
+        # TODO ни где потом не используемых объектов, так делать не хорошо.
+        # TODO Пример: isinstance(1, int)
         if other == Water():
             substance = Dust()
         elif other == Fire():
@@ -108,6 +122,11 @@ class Earth:
         return self.name
 
     def __add__(self, other):
+        # TODO Данная реализация сравнения имеет право на сущестование, но все
+        # TODO же лучше производить проверку при помощи isinstance().
+        # TODO Потому что сейчас при операции сравнения происходит создание
+        # TODO ни где потом не используемых объектов, так делать не хорошо.
+        # TODO Пример: isinstance(1, int)
         if other == Water():
             substance = Dirt()
         elif other == Fire():
@@ -175,6 +194,11 @@ class Iron:
         return self.name
 
     def __add__(self, other):
+        # TODO Данная реализация сравнения имеет право на сущестование, но все
+        # TODO же лучше производить проверку при помощи isinstance().
+        # TODO Потому что сейчас при операции сравнения происходит создание
+        # TODO ни где потом не используемых объектов, так делать не хорошо.
+        # TODO Пример: isinstance(1, int)
         if other == Water():
             substance = Rust()
         elif other == Fire():

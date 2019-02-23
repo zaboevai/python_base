@@ -70,7 +70,7 @@ class Snowflake:
                                     }
         self.down_snowflakes.clear()
 
-
+# TODO Не длжно быть закоментированных и не использованных кусков кода в программе
 # flake = Snowflake(count=1)
 #
 # while True:
