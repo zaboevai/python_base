@@ -33,7 +33,9 @@ class Man:
     def __init__(self, name):
         self.name = name
         self.fullness = 50
+        # TODO Логичней будет указывать дом при создании экземпляра класса
         self.house = None
+        # TODO Имя переменной должно отражать, что котов несколько
         self.cat = []
 
     def __str__(self):
@@ -85,6 +87,8 @@ class Man:
 
         self.fullness -= 10
 
+    # TODO Лучше назвать метод move_in_house. Не нужно переписывать прям все
+    # TODO все из переводчика =)
     def go_to_the_house(self, house):
         self.house = house
         self.fullness -= 10
@@ -120,6 +124,8 @@ class House:
 
     def __init__(self):
         self.food = 50
+        # TODO Деньги зарабатывает, тратит и хранит человек, а не его квартира.
+        # TODO По этому правильней перести этот атрибут в класс Man
         self.money = 100
         self.mud = 20
         self.cat_food = 0
@@ -161,6 +167,8 @@ class Cat:
         self.house.mud += 5
         cprint('Котик {} драл обои, сытость {}'.format(self.name, self.fullness), color='cyan')
 
+    # TODO Лучше назвать метод settle_in_house. Не нужно переписывать прям все
+    # TODO все из переводчика =)
     def settle_in_the_house(self, house):
         self.house = house
         cprint('Котик {} переехал в дом'.format(self.name, self.fullness), color='cyan')
@@ -171,6 +179,8 @@ class Cat:
         cprint('Котик {} нагадил, сытость {}'.format(self.name, self.fullness), color='cyan')
 
     def act(self):
+        # TODO Данный ментод нужно переработать, он содержит слишком много
+        # TODO условий + они ещё и вложены друг в друга.
         dice = randint(1, 6)
         if self.house:
             if self.fullness < 0:
