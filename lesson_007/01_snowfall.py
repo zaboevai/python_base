@@ -53,11 +53,6 @@ class Snowflake:
                 self.down_snowflakes.append(snowflake_num)
         return self.down_snowflakes
 
-    def remove_snowflakes(self, num_fall_snowflakes):
-        new_snowflakes = {k: v for k, v in self.snowflakes.items() if k not in num_fall_snowflakes}
-        self.snowflakes.clear()
-        self.snowflakes.update(new_snowflakes)
-
     def append_snowflakes(self, fallen_flakes):
         for num in fallen_flakes:
             self.snowflakes[num] = {
@@ -70,32 +65,6 @@ class Snowflake:
                                     }
         self.down_snowflakes.clear()
 
-# TODO Не длжно быть закоментированных и не использованных кусков кода в программе
-# flake = Snowflake(count=1)
-#
-# while True:
-#     flake.clear_previous_picture()
-#     flake.move()
-#     flake.draw()
-#     if flake.can_fall():
-#         break
-#     sd.sleep(0.1)
-#     if sd.user_want_exit():
-#         break
-
-# шаг 2: создать снегопад - список объектов Снежинка в отдельном списке, обработку примерно так:
-# flakes = get_flakes(count=N)  # создать список снежинок
-# while True:
-#     for flake in flakes:
-#         flake.clear_previous_picture()
-#         flake.move()
-#         flake.draw()
-#     fallen_flakes = get_fallen_flakes()  # подчитать сколько снежинок уже упало
-#     if fallen_flakes:
-#         append_flakes(count=fallen_flakes)  # добавить еще сверху
-#     sd.sleep(0.1)
-#     if sd.user_want_exit():
-#         break
 
 flake = Snowflake(count=10)
 
@@ -116,6 +85,3 @@ while True:
 
     if sd.user_want_exit():
         break
-
-
-# sd.pause()
