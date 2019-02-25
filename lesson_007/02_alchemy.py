@@ -32,18 +32,13 @@ class Water:
         return self.name
 
     def __add__(self, other):
-        # TODO Данная реализация сравнения имеет право на сущестование, но все
-        # TODO же лучше производить проверку при помощи isinstance().
-        # TODO Потому что сейчас при операции сравнения происходит создание
-        # TODO ни где потом не используемых объектов, так делать не хорошо.
-        # TODO Пример: isinstance(1, int)
-        if other == Air():
+        if isinstance(other, Air):
             substance = Storm()
-        elif other == Fire():
+        elif isinstance(other, Fire):
             substance = Steam()
-        elif other == Earth():
+        elif isinstance(other, Earth):
             substance = Dirt()
-        elif other == Iron():
+        elif isinstance(other, Iron):
             substance = Rust()
         else:
             substance = None
@@ -63,18 +58,13 @@ class Fire:
         return self.name
 
     def __add__(self, other):
-        # TODO Данная реализация сравнения имеет право на сущестование, но все
-        # TODO же лучше производить проверку при помощи isinstance().
-        # TODO Потому что сейчас при операции сравнения происходит создание
-        # TODO ни где потом не используемых объектов, так делать не хорошо.
-        # TODO Пример: isinstance(1, int)
-        if other == Air():
+        if isinstance(other, Air):
             substance = Lightning()
-        elif other == Water():
+        elif isinstance(other, Water):
             substance = Steam()
-        elif other == Earth():
+        elif isinstance(other, Earth):
             substance = Lava()
-        elif other == Iron():
+        elif isinstance(other, Iron):
             substance = Ingot()
         else:
             substance = None
@@ -94,16 +84,11 @@ class Air:
         return self.name
 
     def __add__(self, other):
-        # TODO Данная реализация сравнения имеет право на сущестование, но все
-        # TODO же лучше производить проверку при помощи isinstance().
-        # TODO Потому что сейчас при операции сравнения происходит создание
-        # TODO ни где потом не используемых объектов, так делать не хорошо.
-        # TODO Пример: isinstance(1, int)
-        if other == Water():
+        if isinstance(other, Water):
             substance = Dust()
-        elif other == Fire():
+        elif isinstance(other, Fire):
             substance = Lightning()
-        elif other == Earth():
+        elif isinstance(other, Earth):
             substance = Dust()
         else:
             substance = None
@@ -122,16 +107,11 @@ class Earth:
         return self.name
 
     def __add__(self, other):
-        # TODO Данная реализация сравнения имеет право на сущестование, но все
-        # TODO же лучше производить проверку при помощи isinstance().
-        # TODO Потому что сейчас при операции сравнения происходит создание
-        # TODO ни где потом не используемых объектов, так делать не хорошо.
-        # TODO Пример: isinstance(1, int)
-        if other == Water():
+        if isinstance(other, Water):
             substance = Dirt()
-        elif other == Fire():
+        elif isinstance(other, Fire):
             substance = Lava()
-        elif other == Air():
+        elif isinstance(other, Air):
             substance = Dust()
         elif other == Iron():
             substance = Ore()
@@ -194,16 +174,11 @@ class Iron:
         return self.name
 
     def __add__(self, other):
-        # TODO Данная реализация сравнения имеет право на сущестование, но все
-        # TODO же лучше производить проверку при помощи isinstance().
-        # TODO Потому что сейчас при операции сравнения происходит создание
-        # TODO ни где потом не используемых объектов, так делать не хорошо.
-        # TODO Пример: isinstance(1, int)
-        if other == Water():
+        if isinstance(other, Water):
             substance = Rust()
-        elif other == Fire():
+        elif isinstance(other, Fire):
             substance = Ingot()
-        elif other == Earth():
+        elif isinstance(other, Earth):
             substance = Ore()
         else:
             substance = None
