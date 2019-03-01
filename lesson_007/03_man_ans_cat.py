@@ -29,25 +29,21 @@ from termcolor import cprint
 
 
 class Man:
-    # TODO Делать дом атрибутом класса не правильно, потому что гипотетически
-    # TODO может быть создано несколько экземпляров класса Man и все эти люди должны
-    # TODO жить в разных домах.
-    # TODO Необходимо сделать house атрибутом экземпляра класса (как было
-    # TODO раньше) и просто производить его инициализацию в init, а не через setter
-    house = None
 
-    def __init__(self, name):
+    def __init__(self, name, house=None):
         self.name = name
+        self.house = house
         self.fullness = 50
         self.money = 100
         self.cats = []
 
     def __str__(self):
-        return 'Я - {}, сытость {}, денег осталось {}, {}'.format(self.name,
-                                                                  self.fullness,
-                                                                  self.money,
-                                                                  'у меня есть котики: '+', '.join(self.cats)
-                                                                  if self.cats else 'мечтаю завести котиков')
+        return 'Я - {}, живу {}, сытость {}, денег осталось {}, {}'.format(
+              self.name,
+              'в доме' if self.house else 'на улице',
+              self.fullness,
+              self.money,
+              'у меня есть котики: '+', '.join(self.cats) if self.cats else 'мечтаю завести котиков')
 
     def eat(self):
         if self.house.food >= 10:
@@ -103,24 +99,24 @@ class Man:
         cprint('{} подобрал котика {} в дом'.format(self.name, cat.name), color='magenta')
 
     def act(self):
-        if self.fullness <= 0:
-            cprint('{} умер...'.format(self.name), color='red')
-            return
-        dice = randint(1, 6)
-        if self.fullness < 20:
-            self.eat()
-        elif self.money < 100:
-            self.work()
-        elif self.house.food <= 10 or (self.cats and self.house.cat_food <= len(self.cats) * 10):
-            self.shopping()
-        elif self.fullness > 20 and self.house.mud >= 100:
-            self.clean_house()
-        elif dice == 1:
-            self.watch_mtv()
-        elif dice == 2:
-            self.eat()
-        else:
-            self.work()
+            if self.fullness <= 0:
+                cprint('{} умер...'.format(self.name), color='red')
+                return
+            dice = randint(1, 6)
+            if self.fullness < 20:
+                self.eat()
+            elif self.money < 100:
+                self.work()
+            elif self.house.food <= 10 or (self.cats and self.house.cat_food <= len(self.cats) * 10):
+                self.shopping()
+            elif self.fullness > 20 and self.house.mud >= 100:
+                self.clean_house()
+            elif dice == 1:
+                self.watch_mtv()
+            elif dice == 2:
+                self.eat()
+            else:
+                self.work()
 
 
 class House:
@@ -138,13 +134,13 @@ class House:
 
 class Cat:
 
-    def __init__(self, name):
+    def __init__(self, name, house=None):
         self.name = name
         self.fullness = randint(1, 6) * 10
-        self.house = None
+        self.house = house
 
     def __str__(self):
-        return 'Я котик - {}, сытость {}'.format(self.name, self.fullness)
+        return 'Я {} котик - {}, сытость {}'.format('домашний' if self.house else 'уличный',self.name, self.fullness)
 
     def eat(self):
 
@@ -152,7 +148,9 @@ class Cat:
             if self.house.cat_food > 0:
                 self.fullness += 20
                 self.house.cat_food -= 10
-                cprint('Котик {} покушал, сытость {}'.format(self.name, self.fullness), color='cyan')
+                cprint('{} котик {} покушал, сытость {}'.format('Домашний' if self.house else 'уличный',
+                                                                self.name,
+                                                                self.fullness), color='cyan')
         else:
             dice = randint(1, 6)
             if dice == 1:
@@ -165,13 +163,17 @@ class Cat:
     def play(self):
         self.fullness -= 10
         self.house.mud += 5
-        cprint('Котик {} поиграл, сытость {}'.format(self.name, self.fullness), color='cyan')
+        cprint('{} котик {} поиграл, сытость {}'.format('Домашний' if self.house else 'уличный',
+                                                        self.name,
+                                                        self.fullness), color='cyan')
 
     def sleep(self):
         if self.house:
             self.fullness -= 10
             self.house.mud += 5
-            cprint('Котик {} поспал, сытость {}'.format(self.name, self.fullness), color='cyan')
+            cprint('{} котик {} поспал, сытость {}'.format('Домашний' if self.house else 'уличный',
+                                                           self.name,
+                                                           self.fullness), color='cyan')
         else:
             self.fullness -= 10
             cprint('Уличный котик {} спит, сытость {}'.format(self.name, self.fullness), color='yellow')
@@ -179,16 +181,20 @@ class Cat:
     def tear_wallpaper(self):
         self.fullness -= 10
         self.house.mud += 5
-        cprint('Котик {} драл обои, сытость {}'.format(self.name, self.fullness), color='cyan')
+        cprint('{} котик {} драл обои, сытость {}'.format('Домашний' if self.house else 'уличный',
+                                                          self.name,
+                                                          self.fullness), color='cyan')
 
     def settle_in_house(self, house):
         self.house = house
-        cprint('Котик {} переехал в дом'.format(self.name, self.fullness), color='cyan')
+        cprint('Котик {} переехал в дом'.format(self.name, self.fullness), color='white')
 
     def feces(self):
         self.house.mud += 20
         self.fullness -= 10
-        cprint('Котик {} нагадил, сытость {}'.format(self.name, self.fullness), color='cyan')
+        cprint('{} котик {} нагадил, сытость {}'.format('Домашний' if self.house else 'уличный',
+                                                        self.name,
+                                                        self.fullness), color='cyan')
 
     def act(self):
         dice = randint(1, 6)
@@ -208,45 +214,57 @@ class Cat:
 
 sweet_home = House()
 print(sweet_home)
-man = Man('Кузьма')
+
+man = Man(name='Кузьма', house=sweet_home)
 print(man)
 
-street_cats = [Cat('Барсик'),
-               Cat('Рыжик'),
-               Cat('Пончик'),
-               Cat('Адольф'),
-               Cat('Матильда'),
-               ]
+street_cats = [
+    Cat('Барсик'),
+    Cat('Рыжик'),
+    Cat('Пончик'),
+    Cat('Матильда'),
+]
 
-home_cats = []
+home_cats = [Cat(name='Хрящик', house=sweet_home),]
 
 for cat in street_cats:
     print(cat)
 
-man.move_in_house(sweet_home)
+for cat in home_cats:
+    print(cat)
 
 for day in map(str, range(1, 366)):
     cprint('=== день '+day+' ===', color='red')
 
-    man.act()
-    print(man)
+    if man.house:
+        if day == 1 and home_cats:
+            for cat in home_cats:
+                man.cats.append(cat.name)
 
-    if man.money // (len(man.cats) + 1) >= 200:
-        if len(street_cats) > 0:
-            some_cat = choice(street_cats)
-            home_cats.append(some_cat)
-            man.pick_a_cat(some_cat)
-            some_cat.settle_in_house(sweet_home)
-            street_cats.remove(some_cat)
+        man.act()
+        print(man)
+
+        if man.money // (len(man.cats) + 1) >= 200:
+            if len(street_cats) > 0:
+                some_cat = choice(street_cats)
+                home_cats.append(some_cat)
+                man.pick_a_cat(some_cat)
+                some_cat.settle_in_house(sweet_home)
+                street_cats.remove(some_cat)
+    else:
+        man.move_in_house(sweet_home)
+        '''приручаем котиков живущих в доме'''
+        if home_cats:
+            for cat in home_cats:
+                man.cats.append(cat.name)
+
+    print(sweet_home)
 
     for cat in street_cats:
         cat.act()
 
     for cat in home_cats:
         cat.act()
-
-    print(sweet_home)
-
 
 cprint('**********************', color='magenta')
 cprint('Итоги года:', color='magenta')
@@ -266,3 +284,5 @@ cprint('**********************', color='magenta')
 # Им всем вместе так же надо прожить 365 дней.
 
 # (Можно определить критическое количество котов, которое может прокормить человек...)
+
+# Зачет!
