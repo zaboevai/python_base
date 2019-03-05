@@ -8,12 +8,10 @@ import simple_draw as sd
 #  - отработку изменений координат
 #  - отрисовку
 
+sd.resolution = (1200, 800)
 
-# TODO Класс должен представлять 1 снежинку, а снегопад с его логикой.
-# TODO То есть логика создания снегопада должна быть вынесена из класса и
-# TODO реализована вне его.
 class Snowflake:
-    y = 600
+    y = sd.resolution[1]
     snowflake_size = {'min': 5, 'max': 20}
 
     def __init__(self):
@@ -39,7 +37,7 @@ class Snowflake:
         return {
             'length': sd.random_number(self.snowflake_size['min'], self.snowflake_size['max']),
             'x': sd.random_number(0, sd.resolution[0]),
-            'y': self.y,
+            'y': sd.randint(self.y-100, self.y+100),
             'factor_a': sd.random_number(1, 10) / 10,
             'factor_b': sd.random_number(1, 10) / 10,
             'factor_c': sd.random_number(1, 120)
@@ -47,7 +45,7 @@ class Snowflake:
 
 
 snowflakes = {}
-snowflakes_count = 10
+snowflakes_count = 20
 
 for i in range(snowflakes_count):
     flake = Snowflake()
