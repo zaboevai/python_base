@@ -33,7 +33,11 @@ class Snowflake:
         self.parameter['x'] += sd.random_number(0, 2)
         self.parameter['y'] -= self.snowflake_size['max'] + 1 - self.parameter['length']
 
+    # TODO При помощи данной нотации могут объявляться только стандартные
+    # TODO магические методы. Свои методы нельзя так называть. В данном случае
+    # TODO лучше всего просто перенести данный код в init
     def __create_snowflake__(self):
+        # TODO Все эти параметры правильнее будет представить как атрибуты класса
         return {
             'length': sd.random_number(self.snowflake_size['min'], self.snowflake_size['max']),
             'x': sd.random_number(0, sd.resolution[0]),
