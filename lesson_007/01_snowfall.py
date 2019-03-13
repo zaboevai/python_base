@@ -44,7 +44,7 @@ class Snowflake:
 def run_snowfall(snowflakes_count=0):
     """Запуск снегопада"""
     if len(snowflakes) != snowflakes_count:
-        snowflakes[len(snowflakes)-1+1] = Snowflake()
+        snowflakes[len(snowflakes)] = Snowflake()
 
     for num, snowflake in snowflakes.items():
         snowflake.hide()
