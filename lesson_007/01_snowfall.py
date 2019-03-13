@@ -9,65 +9,64 @@ import simple_draw as sd
 #  - отрисовку
 
 sd.resolution = (1200, 800)
+snowflakes = {}
+tick = 0
+
 
 class Snowflake:
-    y = sd.resolution[1]
-    snowflake_size = {'min': 5, 'max': 20}
+    size = {'min': 5, 'max': 20}
 
     def __init__(self):
-        self.parameter = self.__create_snowflake__()
+        self.length = sd.random_number(Snowflake.size['min'], Snowflake.size['max'])
+        self.x = sd.random_number(0, sd.resolution[0])
+        self.y = sd.randint(sd.resolution[1] - 100, sd.resolution[1] + 100)
+        self.factor_a = sd.random_number(1, 10) / 10
+        self.factor_b = sd.random_number(1, 10) / 10
+        self.factor_c = sd.random_number(1, 120)
 
     def draw(self, color=sd.COLOR_WHITE):
-        start_point = sd.get_point(x=self.parameter['x'], y=self.parameter['y'])
+        start_point = sd.get_point(x=self.x, y=self.y)
         sd.snowflake(center=start_point,
-                     length=self.parameter['length'],
+                     length=self.length,
                      color=color,
-                     factor_a=self.parameter['factor_a'],
-                     factor_b=self.parameter['factor_b'],
-                     factor_c=self.parameter['factor_c'])
+                     factor_a=self.factor_a,
+                     factor_b=self.factor_b,
+                     factor_c=self.factor_c)
 
-    def clear(self, color=sd.background_color):
+    def hide(self, color=sd.background_color):
         self.draw(color)
 
     def move(self):
-        self.parameter['x'] += sd.random_number(0, 2)
-        self.parameter['y'] -= self.snowflake_size['max'] + 1 - self.parameter['length']
-
-    # TODO При помощи данной нотации могут объявляться только стандартные
-    # TODO магические методы. Свои методы нельзя так называть. В данном случае
-    # TODO лучше всего просто перенести данный код в init
-    def __create_snowflake__(self):
-        # TODO Все эти параметры правильнее будет представить как атрибуты класса
-        return {
-            'length': sd.random_number(self.snowflake_size['min'], self.snowflake_size['max']),
-            'x': sd.random_number(0, sd.resolution[0]),
-            'y': sd.randint(self.y-100, self.y+100),
-            'factor_a': sd.random_number(1, 10) / 10,
-            'factor_b': sd.random_number(1, 10) / 10,
-            'factor_c': sd.random_number(1, 120)
-        }
+        self.x += sd.random_number(0, 2)
+        self.y -= Snowflake.size['max'] + 1 - self.length
 
 
-snowflakes = {}
-snowflakes_count = 20
-
-for i in range(snowflakes_count):
-    flake = Snowflake()
-    snowflakes[i] = flake
-
-while True:
-    sd.start_drawing()
+def run_snowfall(snowflakes_count=0):
+    """Запуск снегопада"""
+    if len(snowflakes) != snowflakes_count:
+        snowflakes[len(snowflakes)] = Snowflake()
 
     for num, snowflake in snowflakes.items():
-        snowflake.clear()
+        snowflake.hide()
         snowflake.move()
         snowflake.draw()
 
-        if snowflake.parameter['y'] < 0:
+        if snowflake.y < 0:
             snowflakes[num] = Snowflake()
 
-    sd.sleep(0.05)
-    sd.finish_drawing()
 
-    if sd.user_want_exit():
-        break
+if __name__ == '__main__':
+    while True:
+        tick += 1
+        sd.start_drawing()
+
+        if tick < 50:
+            run_snowfall(snowflakes_count=20)
+        elif tick > 50:
+            run_snowfall(snowflakes_count=50)
+
+        sd.sleep(0.05)
+        sd.finish_drawing()
+
+        if sd.user_want_exit():
+            break
