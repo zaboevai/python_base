@@ -70,3 +70,5 @@ if __name__ == '__main__':
 
         if sd.user_want_exit():
             break
+
+# Зачет!
