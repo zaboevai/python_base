@@ -44,47 +44,34 @@ from random import randint
 
 
 class House:
-    # TODO Атрибуты класса необходимо использовать только если нужно сохранить
-    # TODO какую-то общую информацию для всех классов. В данном случае
-    # TODO citizen правильней сделать атрибутом экземпляра класса.
-    citizen = 0
 
     def __init__(self):
         self.money = 100
         self.eat = 50
         self.mud = 0
+        self.citizen = 0
 
     def __str__(self):
         return 'В доме жителей {}, еды {}, денег {}, грязи {}'.format(self.citizen, self.eat, self.money, self.mud)
 
 
 class Human:
-    # TODO Атрибуты класса необходимо использовать только если нужно сохранить
-    # TODO какую-то общую информацию для всех классов. В данном случае
-    # TODO is_live правильней сделать атрибутом экземпляра класса. Ведь гибель
-    # TODO одночего человека не должна вести к смерти всех остальных.
-    is_live = True
-    # TODO Все люди могут потреблять различное колличество еды, по этому
-    # TODO total_eating необходимо сделать атрибутом экземпляра класса.
-    total_eating = 0
 
     def __init__(self, name, house, color):
         self.name = name
+        self.is_live = True
+        self.total_eating = 0
         self.house = house
+        self.house.citizen += 1
         self.fullness = 30
         self.happyness = 100
         self.color = color
-        house.citizen += 1
 
     def __str__(self):
         if self.is_live:
             return '{}, сытость {}, счастье {}'.format(self.name, self.fullness, self.happyness)
         else:
             return '{} умер(ла)'.format(self.name)
-
-    def act(self):
-        if self.fullness < 30 and self.house.eat > 0:
-            self.eat()
 
     def eat(self):
         need_food = 30 - self.fullness
@@ -96,14 +83,10 @@ class Human:
 
 
 class Husband(Human):
-    # TODO Атрибуты класса необходимо использовать только если нужно сохранить
-    # TODO какую-то общую информацию для всех классов. В данном случае
-    # TODO total_money правильней сделать атрибутом экземпляра класса
-    total_money = 0
 
     def __init__(self, name, house, color):
         super().__init__(name=name, house=house, color=color)
-        self.color = color
+        self.total_money = 0
 
     def __str__(self):
         return super().__str__() + ', всего заработано {}'.format(self.total_money)
@@ -112,19 +95,21 @@ class Husband(Human):
 
         if self.is_live:
             dice = randint(1, 2)
-            if self.house.mud >= 90:
-                self.happyness -= 10
             if self.fullness < 0 or self.happyness < 10:
                 self.is_live = False
+                self.house.citizen -= 1
                 cprint('{} не выжила'.format(self.name), color='red')
             elif self.fullness < 30 and self.house.eat > 0:
-                super().act()
+                super().eat()
             elif self.house.money == 0:
                 self.work()
             elif dice == 1:
                 self.work()
             elif dice == 2:
                 self.gaming()
+
+            if self.house.mud >= 90:
+                self.happyness -= 10
 
     def work(self):
         self.fullness -= 10
@@ -139,14 +124,10 @@ class Husband(Human):
 
 
 class Wife(Human):
-    # TODO Атрибуты класса необходимо использовать только если нужно сохранить
-    # TODO какую-то общую информацию для всех классов. В данном случае
-    # TODO fur_coat_count правильней сделать атрибутом экземпляра класса
-    fur_coat_count = 0
 
     def __init__(self, name, house, color):
         super().__init__(name=name, house=house, color=color)
-        self.color = color
+        self.fur_coat_count = 0
 
     def __str__(self):
         return super().__str__() + ', кол-во шуб {}'.format(self.fur_coat_count)
@@ -154,28 +135,32 @@ class Wife(Human):
     def act(self):
 
         if self.is_live:
-            if self.house.mud >= 90:
-                self.happyness -= 10
             if self.fullness < 0 or self.happyness < 10:
                 self.is_live = False
+                self.house.citizen -= 1
                 cprint('{} не выжила'.format(self.name), color='red')
             elif self.fullness < 30 and self.house.eat > 0:
-                super().act()
+                super().eat()
+            elif self.house.eat < 30:
+                self.shopping()
+            elif self.house.mud >= 90:
+                self.clean_house()
             elif self.house.money >= 350 + 30 * self.house.citizen:
                 self.buy_fur_coat()
-            elif self.house.mud >= 100:
-                self.clean_house()
             else:
                 self.shopping()
 
+            if self.house.mud >= 90:
+                self.happyness -= 10
+
     def shopping(self):
         self.fullness -= 10
-        money_need = 30 * self.house.citizen - self.house.eat
-        if self.house.money >= money_need:
-            self.house.eat += money_need
-            self.house.money -= money_need
+        need_food = 30 * self.house.citizen - self.house.eat
+        if self.house.money >= need_food:
+            self.house.eat += need_food
+            self.house.money -= need_food
             cprint('{} купила еды'.format(self.name), color=self.color)
-        elif self.house.money <= money_need:
+        elif self.house.money <= need_food:
             self.house.eat += self.house.money
             self.house.money -= self.house.money
             cprint('{} купила еды на последние деньги'.format(self.name), color=self.color)
