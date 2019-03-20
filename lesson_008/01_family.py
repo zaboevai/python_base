@@ -196,12 +196,12 @@ class Wife(Human):
 
 
 class Cat:
-    is_live = True
-    total_eating = 0
 
     def __init__(self, name, house, color):
         self.name = name
         self.fullness = 30
+        self.is_live = True
+        self.total_eating = 0
         self.house = house
         self.house.cats += 1
         self.color = color
@@ -226,16 +226,16 @@ class Cat:
                 self.soil()
 
     def eat(self):
-        cats_eat_neded = 30 - self.fullness
-        if self.house.cats_eat >= cats_eat_neded:
-            self.house.cats_eat -= cats_eat_neded
-            self.fullness += cats_eat_neded * 2
-            self.total_eating += cats_eat_neded
+        cats_eat_needed = 30 - self.fullness
+        if self.house.cats_eat >= cats_eat_needed:
+            self.house.cats_eat -= cats_eat_needed
+            self.fullness += cats_eat_needed * 2
+            self.total_eating += cats_eat_needed
             cprint('котик {} покушал, всего съедено {}'.format(self.name, self.total_eating), color=self.color)
-        elif self.house.cats_eat < cats_eat_neded:
+        elif self.house.cats_eat < cats_eat_needed:
             self.house.cats_eat -= self.house.cats_eat
             self.fullness += self.house.cats_eat * 2
-            self.total_eating += cats_eat_neded
+            self.total_eating += cats_eat_needed
             cprint('котик {} съел остатки, всего съедено {}'.format(self.name, self.total_eating), color=self.color)
 
     def sleep(self):
