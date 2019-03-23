@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from termcolor import cprint
-from random import randint
+from random import randint, choice
 
 
 ######################################################## Часть первая
@@ -83,10 +83,12 @@ class Human:
 
 
 class Husband(Human):
+    male_name = ['Игорь', 'Иван', 'Николай', 'Петр', 'Андрей', 'Павел', ]
 
-    def __init__(self, name, house, color):
-        super().__init__(name=name, house=house, color=color)
+    def __init__(self, name=None, house=None, color='blue'):
+        self.name = name if name else choice(Husband.male_name)
         self.total_money = 0
+        super().__init__(name=self.name, house=house, color=color)
 
     def __str__(self):
         return super().__str__() + ', всего заработано {}'.format(self.total_money)
@@ -124,9 +126,11 @@ class Husband(Human):
 
 
 class Wife(Human):
+    female_name = ['Оля', 'Катя', 'Таня', 'Вера', 'Света', 'Юля', ]
 
-    def __init__(self, name, house, color):
-        super().__init__(name=name, house=house, color=color)
+    def __init__(self, name=None, house=None, color='cyan'):
+        self.name = name if name else choice(Wife.female_name)
+        super().__init__(name=self.name, house=house, color=color)
         self.fur_coat_count = 0
 
     def __str__(self):
@@ -179,9 +183,11 @@ class Wife(Human):
 
 
 class Child(Human):
+    names = ['Вася' , 'Сергей']
 
-    def __init__(self, name, house, color):
-        super().__init__(name=name, house=house, color=color)
+    def __init__(self, name=None, house=None, color='green'):
+        self.name = name if name else choice(Child.names)
+        super().__init__(name=self.name, house=house, color=color)
 
     def __str__(self):
         return super().__str__()
@@ -200,33 +206,60 @@ class Child(Human):
         cprint('{} поспал'.format(self.name), color=self.color)
 
 
-home = House()
-serge = Husband(name='Сережа', house=home, color='cyan')
-masha = Wife(name='Маша', house=home, color='magenta')
-kolya = Child(name='Коля', house=home, color='blue')
+class Family:
 
-print(serge)
-print(masha)
-print(kolya)
-print(home)
+    def __init__(self, house=None, child_count=None, cats_count=None):
+        self.husband = Husband(house=house)
+        self.wife = Wife(house=house)
+        self.childrens = []
+        for child in range(child_count):
+            self.childrens.append(Child(house=house, color='green'))
 
-for day in range(365):
-    cprint('================== День {} =================='.format(day + 1), color='red')
-    serge.act()
-    masha.act()
-    kolya.act()
-    home.mud += 5
-    cprint(serge, color='white')
-    cprint(masha, color='white')
-    cprint(kolya, color='white')
-    cprint(home, color='white')
+    def __str__(self):
+        return f'Семья состоит из: \n {self.husband} \n {self.wife} \n {self.childrens[0]}'
 
-print('\n Итого за год:')
-print('  1) заработано:', serge.total_money, ';')
-print('  2) куплено шуб:', masha.fur_coat_count, ';')
-print('  3) {} съел:'.format(serge.name), serge.total_eating, ';')
-print('  4) {} съела:'.format(masha.name), masha.total_eating, ';')
-print('  5) {} съел:'.format(kolya.name), kolya.total_eating, ';')
+    def act(self):
+        self.husband.act()
+        self.wife.act()
+        for child in self.childrens:
+            child.act()
+
+
+class LifeSimulator:
+
+    def __init__(self):
+        self.home = House()
+        self.family = Family(house=self.home, child_count=1)
+        print(self.family)
+
+    def run(self, days=365):
+        for day in range(days):
+            self.home.mud += 5
+            cprint('================== День {} =================='.format(day + 1), color='red')
+            self.family.act()
+            print('\nИтоги дня:')
+            print(self.family.husband)
+            print(self.family.wife)
+            print(self.family.childrens[0])
+            print(self.home)
+
+    def report(self):
+        cprint('\n====================================', color='red')
+        print('Итого за год:')
+        print('  1) заработано:', self.family.husband.total_money, ';')
+        print('  2) куплено шуб:', self.family.wife.fur_coat_count, ';')
+        print('  3) {} съел:'.format(self.family.husband.name), self.family.husband.total_eating, ';')
+        print('  4) {} съела:'.format(self.family.wife.name), self.family.wife.total_eating, ';')
+        print('  5) {} съел:'.format(self.family.childrens[0].name), self.family.childrens[0].total_eating, ';')
+        cprint('====================================', color='red')
+
+
+if __name__ == '__main__':
+
+    game = LifeSimulator()
+    game.run()
+    game.report()
+
 
 ######################################################## Часть вторая
 #
