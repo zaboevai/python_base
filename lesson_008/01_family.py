@@ -99,7 +99,7 @@ class Husband(Human):
                 self.is_live = False
                 self.house.citizen -= 1
                 cprint('{} не выжила'.format(self.name), color='red')
-            elif self.fullness < 30 and self.house.eat > 0:
+            elif self.fullness <= 10 and self.house.eat > 0:
                 super().eat()
             elif self.house.money == 0:
                 self.work()
@@ -139,7 +139,7 @@ class Wife(Human):
                 self.is_live = False
                 self.house.citizen -= 1
                 cprint('{} не выжила'.format(self.name), color='red')
-            elif self.fullness < 30 and self.house.eat > 0:
+            elif self.fullness <= 10 and self.house.eat > 0:
                 super().eat()
             elif self.house.eat < 30:
                 self.shopping()
@@ -178,21 +178,47 @@ class Wife(Human):
         cprint('{} прибралась'.format(self.name), color=self.color)
 
 
+class Child(Human):
+
+    def __init__(self, name, house, color):
+        super().__init__(name=name, house=house, color=color)
+
+    def __str__(self):
+        return super().__str__()
+
+    def act(self):
+        if self.fullness <= 20:
+            self.eat()
+        else:
+            self.sleep()
+
+    def eat(self):
+        super().eat()
+
+    def sleep(self):
+        self.fullness -= 10
+        cprint('{} поспал'.format(self.name), color=self.color)
+
+
 home = House()
 serge = Husband(name='Сережа', house=home, color='cyan')
 masha = Wife(name='Маша', house=home, color='magenta')
+kolya = Child(name='Коля', house=home, color='blue')
 
 print(serge)
 print(masha)
+print(kolya)
 print(home)
 
 for day in range(365):
     cprint('================== День {} =================='.format(day + 1), color='red')
     serge.act()
     masha.act()
+    kolya.act()
     home.mud += 5
     cprint(serge, color='white')
     cprint(masha, color='white')
+    cprint(kolya, color='white')
     cprint(home, color='white')
 
 print('\n Итого за год:')
@@ -200,6 +226,7 @@ print('  1) заработано:', serge.total_money, ';')
 print('  2) куплено шуб:', masha.fur_coat_count, ';')
 print('  3) {} съел:'.format(serge.name), serge.total_eating, ';')
 print('  4) {} съела:'.format(masha.name), masha.total_eating, ';')
+print('  5) {} съел:'.format(kolya.name), kolya.total_eating, ';')
 
 ######################################################## Часть вторая
 #
