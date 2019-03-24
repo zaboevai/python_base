@@ -44,14 +44,14 @@ from random import randint
 
 
 class House:
-    citizen = 0
-    cats = 0
 
     def __init__(self):
         self.money = 100
         self.eat = 50
         self.cats_eat = 30
         self.mud = 0
+        self.citizen = 0
+        self.cats = 0
 
     def __str__(self):
         return 'В доме: жителей {}, еды {}, денег {}, грязи {}, котиков {}, кошачьей еды {}'.format(self.citizen,
@@ -63,16 +63,16 @@ class House:
 
 
 class Human:
-    is_live = True
-    total_eating = 0
 
     def __init__(self, name, house, color):
         self.name = name
+        self.is_live = True
+        self.total_eating = 0
         self.house = house
+        self.house.citizen += 1
         self.fullness = 30
         self.happyness = 100
         self.color = color
-        house.citizen += 1
 
     def __str__(self):
         if self.is_live:
@@ -94,11 +94,10 @@ class Human:
 
 
 class Husband(Human):
-    total_money = 0
 
     def __init__(self, name, house, color):
         super().__init__(name=name, house=house, color=color)
-        self.color = color
+        self.total_money = 0
 
     def __str__(self):
         return super().__str__() + ', всего заработано {}'.format(self.total_money)
@@ -138,11 +137,10 @@ class Husband(Human):
 
 
 class Wife(Human):
-    fur_coat_count = 0
 
     def __init__(self, name, house, color):
         super().__init__(name=name, house=house, color=color)
-        self.color = color
+        self.fur_coat_count = 0
 
     def __str__(self):
         return super().__str__() + ', кол-во шуб {}'.format(self.fur_coat_count)
@@ -163,7 +161,7 @@ class Wife(Human):
             elif self.house.money >= 350 + 30 * self.house.citizen:
                 self.buy_fur_coat()
             else:
-                super().stroking_cat()
+                self.shopping()
 
             if self.house.mud >= 90:
                 self.happyness -= 10
