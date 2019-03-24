@@ -74,12 +74,15 @@ class Human:
             return '{} умер(ла)'.format(self.name)
 
     def eat(self):
-        need_food = 30 - self.fullness
-        need_food = need_food if self.house.eat > need_food else self.house.eat
-        self.fullness += need_food
-        self.house.eat -= need_food
-        self.total_eating += need_food
-        cprint('{} покушал, всего съедено {}'.format(self.name, self.total_eating), color=self.color)
+        if self.house.eat > 0:
+            need_food = 30 - self.fullness
+            need_food = need_food if self.house.eat > need_food else self.house.eat
+            self.fullness += need_food
+            self.house.eat -= need_food
+            self.total_eating += need_food
+            cprint('{} покушал, всего съедено {}'.format(self.name, self.total_eating), color=self.color)
+        else:
+            cprint('НЕТ ЕДЫ !', color='red')
 
 
 class Husband(Human):
@@ -198,7 +201,7 @@ class Child(Human):
                 self.is_live = False
                 self.house.citizen -= 1
                 cprint('{} не выжила'.format(self.name), color='red')
-            elif self.fullness <= 20:
+            elif self.fullness <= 20 and self.house.eat > 0:
                 self.eat()
             else:
                 self.sleep()
@@ -241,18 +244,24 @@ class FamilySimulator:
         self.family = Family(house=self.home, child_count=child_count)
         self.year_day = 0
         self.year = 2019
-        print(self.family)
+
+    def __str__(self):
+        return str(self.family) + '\n' + str(self.home)
 
     def run_game(self, days=365):
         for day in range(days):
             self.year_day += 1
             cprint(f'================== день {self.year_day} год {self.year} ==================', color='red')
-            self.run_day()
-            self.day_report()
-            if self.year_day == 365:
-                self.year_report()
-                self.year_day = 0
-                self.year += 1
+            if self.home.citizen == 0:
+                cprint('НИКТО НЕ ВЫЖИЛ', color='red')
+                break
+            else:
+                self.run_day()
+                self.day_report()
+                if self.year_day == 365:
+                    self.year_report()
+                    self.year_day = 0
+                    self.year += 1
 
     def run_day(self):
         self.home.mud += 5
@@ -304,7 +313,7 @@ if __name__ == '__main__':
                 child_count = get_digit_input('Укажите кол-во детей:')
                 cprint('\nСемья создана', color='magenta')
                 game = FamilySimulator(child_count=child_count)
-                print('')
+                print(game)
                 if child_count:
                     days_count = get_digit_input('Укажите кол-во дней:')
                     game.run_game(days=days_count)
