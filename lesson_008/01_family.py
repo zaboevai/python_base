@@ -91,7 +91,7 @@ class Husband(Human):
         super().__init__(name=self.name, house=house, color=color)
 
     def __str__(self):
-        return super().__str__() + ', всего заработано {}'.format(self.total_money)
+        return 'муж ' + super().__str__() + ', всего заработано {}'.format(self.total_money)
 
     def act(self):
 
@@ -134,7 +134,7 @@ class Wife(Human):
         self.fur_coat_count = 0
 
     def __str__(self):
-        return super().__str__() + ', кол-во шуб {}'.format(self.fur_coat_count)
+        return 'жена ' + super().__str__() + ', кол-во шуб {}'.format(self.fur_coat_count)
 
     def act(self):
 
@@ -183,20 +183,25 @@ class Wife(Human):
 
 
 class Child(Human):
-    names = ['Вася' , 'Сергей']
+    names = Husband.male_name + Wife.female_name
 
     def __init__(self, name=None, house=None, color='green'):
         self.name = name if name else choice(Child.names)
         super().__init__(name=self.name, house=house, color=color)
 
     def __str__(self):
-        return super().__str__()
+        return 'ребенок ' + super().__str__()
 
     def act(self):
-        if self.fullness <= 20:
-            self.eat()
-        else:
-            self.sleep()
+        if self.is_live:
+            if self.fullness < 0 or self.happyness < 0:
+                self.is_live = False
+                self.house.citizen -= 1
+                cprint('{} не выжила'.format(self.name), color='red')
+            elif self.fullness <= 20:
+                self.eat()
+            else:
+                self.sleep()
 
     def eat(self):
         super().eat()
@@ -211,55 +216,101 @@ class Family:
     def __init__(self, house=None, child_count=None, cats_count=None):
         self.husband = Husband(house=house)
         self.wife = Wife(house=house)
-        self.childrens = []
+        self.children = []
         for child in range(child_count):
-            self.childrens.append(Child(house=house, color='green'))
+            self.children.append(Child(house=house, color='green'))
 
     def __str__(self):
-        return f'Семья состоит из: \n {self.husband} \n {self.wife} \n {self.childrens[0]}'
+        child_desc = '\n '.join(map(str, self.children))
+        return f'Семья состоит из: \n {self.husband} \n {self.wife} \n {child_desc}'
 
     def act(self):
         self.husband.act()
         self.wife.act()
-        for child in self.childrens:
+        for child in self.children:
             child.act()
 
 
-class LifeSimulator:
+class FamilySimulator:
+    '''
+        Симулятор жизни 1 семьи, кол-во детей и дней не ограничено
+    '''
 
-    def __init__(self):
+    def __init__(self, child_count=0):
         self.home = House()
-        self.family = Family(house=self.home, child_count=1)
+        self.family = Family(house=self.home, child_count=child_count)
+        self.year_day = 0
+        self.year = 2019
         print(self.family)
 
-    def run(self, days=365):
+    def run_game(self, days=365):
         for day in range(days):
-            self.home.mud += 5
-            cprint('================== День {} =================='.format(day + 1), color='red')
-            self.family.act()
-            print('\nИтоги дня:')
-            print(self.family.husband)
-            print(self.family.wife)
-            print(self.family.childrens[0])
-            print(self.home)
+            self.year_day += 1
+            cprint(f'================== день {self.year_day} год {self.year} ==================', color='red')
+            self.run_day()
+            self.day_report()
+            if self.year_day == 365:
+                self.year_report()
+                self.year_day = 0
+                self.year += 1
 
-    def report(self):
+    def run_day(self):
+        self.home.mud += 5
+        self.family.act()
+
+    def day_report(self):
+        print('\nИтоги дня:')
+        print(self.family.husband)
+        print(self.family.wife)
+        for child in self.family.children:
+            print(child)
+        print(self.home)
+
+    def year_report(self):
         cprint('\n====================================', color='red')
+        i = 4
         print('Итого за год:')
         print('  1) заработано:', self.family.husband.total_money, ';')
         print('  2) куплено шуб:', self.family.wife.fur_coat_count, ';')
-        print('  3) {} съел:'.format(self.family.husband.name), self.family.husband.total_eating, ';')
-        print('  4) {} съела:'.format(self.family.wife.name), self.family.wife.total_eating, ';')
-        print('  5) {} съел:'.format(self.family.childrens[0].name), self.family.childrens[0].total_eating, ';')
+        print('  3) муж {} съел:'.format(self.family.husband.name), self.family.husband.total_eating, ';')
+        print('  4) жена {} съела:'.format(self.family.wife.name), self.family.wife.total_eating, ';')
+        for child in self.family.children:
+            i += 1
+            print('  {}) ребенок {} съел:'.format(i, child.name), child.total_eating, ';')
         cprint('====================================', color='red')
 
 
+def get_digit_input(text):
+    while True:
+        user_input = input(text)
+        if user_input.isdigit():
+            break
+        else:
+            cprint('Ошибка: Введите число !', color='red')
+    return int(user_input)
+
+
 if __name__ == '__main__':
+    is_first_start = True
+    is_begin = False
 
-    game = LifeSimulator()
-    game.run()
-    game.report()
-
+    while True:
+        if is_first_start:
+            cprint('\n *** Симулятор жизни семьи ***', color='magenta')
+            is_begin = True if input('Играем ? (y/n):') in ('Д', 'д', 'Y', 'y', '') else False
+            is_first_start = False
+        else:
+            if is_begin:
+                child_count = get_digit_input('Укажите кол-во детей:')
+                cprint('\nСемья создана', color='magenta')
+                game = FamilySimulator(child_count=child_count)
+                print('')
+                if child_count:
+                    days_count = get_digit_input('Укажите кол-во дней:')
+                    game.run_game(days=days_count)
+                    is_first_start = True
+            else:
+                break
 
 ######################################################## Часть вторая
 #
