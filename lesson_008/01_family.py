@@ -114,7 +114,7 @@ class Husband(Human):
             if self.fullness < 0 or self.happyness < 10:
                 self.is_live = False
                 self.house.citizen -= 1
-                cprint('{} не выжила'.format(self.name), color='red')
+                cprint('{} не выжил'.format(self.name), color='red')
             elif self.fullness <= 10 and self.house.eat > 0:
                 super().eat()
             elif self.house.money == 0:
@@ -269,7 +269,7 @@ class Child(Human):
             if self.fullness < 0 or self.happyness < 0:
                 self.is_live = False
                 self.house.citizen -= 1
-                cprint('{} не выжила'.format(self.name), color='red')
+                cprint('{} не выжил(а)'.format(self.name), color='red')
             elif self.fullness <= 20 and self.house.eat > 0:
                 self.eat()
             else:
@@ -310,9 +310,9 @@ class Family:
 
 
 class FamilySimulator:
-    '''
-        Симулятор жизни 1 семьи, кол-во детей и дней не ограничено
-    '''
+    """
+        Симулятор жизни 1 семьи, кол-во детей, котов и дней не ограничено
+    """
 
     def __init__(self, child_count=0, cats_count=0):
         self.home = House()
@@ -328,7 +328,7 @@ class FamilySimulator:
             self.year_day += 1
             cprint(f'================== день {self.year_day} год {self.year} ==================', color='red')
             if self.home.citizen == 0:
-                cprint('НИКТО НЕ ВЫЖИЛ', color='red')
+                cprint('НИКТО НЕ ВЫЖИЛ ИЗ ЛЮДЕЙ', color='red')
                 break
             else:
                 self.run_day()
@@ -393,15 +393,14 @@ if __name__ == '__main__':
                 child_count = get_digit_input('Укажите кол-во детей:')
                 if child_count:
                     cats_count = get_digit_input('Укажите кол-во кошек:')
-
-                    cprint('\nСемья создана', color='magenta')
-                    game = FamilySimulator(child_count=child_count, cats_count=cats_count)
-                    print(game)
-
-                if child_count and cats_count:
-                    days_count = get_digit_input('Укажите кол-во дней:')
-                    game.run_game(days=days_count)
-                    is_first_start = True
+                    if cats_count:
+                        cprint('\nСемья создана', color='magenta')
+                        game = FamilySimulator(child_count=child_count, cats_count=cats_count)
+                        print(game)
+                        days_count = get_digit_input('Укажите кол-во дней:')
+                        if days_count:
+                            game.run_game(days=days_count)
+                            is_first_start = True
             else:
                 break
 
