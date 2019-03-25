@@ -161,7 +161,7 @@ class Wife(Human):
                 cprint('{} не выжила'.format(self.name), color='red')
             elif self.fullness <= 10 and self.house.eat > 0:
                 super().eat()
-            elif self.house.eat < 30 or self.house.cats_eat < 30:
+            elif self.house.eat < 30 or (self.house.cats != 0 and self.house.cats_eat < 30):
                 self.shopping()
             elif self.house.mud >= 90:
                 self.clean_house()
