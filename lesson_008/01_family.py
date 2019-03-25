@@ -201,9 +201,10 @@ class Wife(Human):
 
 
 class Cat:
+    cats_name = ['Барсик', 'Бродяга', 'Пушок', 'Гав', 'Черныш', 'Пират', ]
 
-    def __init__(self, name, house, color):
-        self.name = name
+    def __init__(self, name=None, house=None, color=None):
+        self.name = name if name else choice(Cat.cats_name)
         self.fullness = 30
         self.is_live = True
         self.total_eating = 0
@@ -290,16 +291,22 @@ class Family:
         self.children = []
         for child in range(child_count):
             self.children.append(Child(house=house, color='green'))
+        self.cats = []
+        for cat in range(cats_count):
+            self.cats.append(Cat(house=house, color='yellow'))
 
     def __str__(self):
         child_desc = '\n '.join(map(str, self.children))
-        return f'Семья состоит из: \n {self.husband} \n {self.wife} \n {child_desc}'
+        cats_desc = '\n '.join(map(str, self.cats))
+        return f'Семья состоит из: \n {self.husband} \n {self.wife} \n {child_desc} \n {cats_desc}'
 
     def act(self):
         self.husband.act()
         self.wife.act()
         for child in self.children:
             child.act()
+        for cat in self.cats:
+            cat.act()
 
 
 class FamilySimulator:
@@ -307,9 +314,9 @@ class FamilySimulator:
         Симулятор жизни 1 семьи, кол-во детей и дней не ограничено
     '''
 
-    def __init__(self, child_count=0):
+    def __init__(self, child_count=0, cats_count=0):
         self.home = House()
-        self.family = Family(house=self.home, child_count=child_count)
+        self.family = Family(house=self.home, child_count=child_count, cats_count=cats_count)
         self.year_day = 0
         self.year = 2019
 
@@ -341,6 +348,8 @@ class FamilySimulator:
         print(self.family.wife)
         for child in self.family.children:
             print(child)
+        for cat in self.family.cats:
+            print(cat)
         print(self.home)
 
     def year_report(self):
@@ -354,6 +363,9 @@ class FamilySimulator:
         for child in self.family.children:
             i += 1
             print('  {}) ребенок {} съел:'.format(i, child.name), child.total_eating, ';')
+        for cat in self.family.cats:
+            i += 1
+            print('  {}) котик {} съел:'.format(i, cat.name), cat.total_eating, ';')
         cprint('====================================', color='red')
 
 
@@ -379,10 +391,14 @@ if __name__ == '__main__':
         else:
             if is_begin:
                 child_count = get_digit_input('Укажите кол-во детей:')
-                cprint('\nСемья создана', color='magenta')
-                game = FamilySimulator(child_count=child_count)
-                print(game)
                 if child_count:
+                    cats_count = get_digit_input('Укажите кол-во кошек:')
+
+                    cprint('\nСемья создана', color='magenta')
+                    game = FamilySimulator(child_count=child_count, cats_count=cats_count)
+                    print(game)
+
+                if child_count and cats_count:
                     days_count = get_digit_input('Укажите кол-во дней:')
                     game.run_game(days=days_count)
                     is_first_start = True
