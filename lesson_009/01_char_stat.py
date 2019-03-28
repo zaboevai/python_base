@@ -23,14 +23,14 @@ import pprint
 # +---------+----------+
 # Ширину таблицы подберите по своему вкусу
 
-class SymbolStat:
+class CharStat:
 
     def __init__(self, file_path):
         self.file_path = file_path
         self.dir_path = os.path.dirname(self.file_path)
         self.file_name = None
         self.stat = {}
-        self.sum_symbols = 0
+        self.count_char = 0
         print(file_path)
         if zipfile.is_zipfile(file_path):
             self.unzip()
@@ -47,7 +47,7 @@ class SymbolStat:
     def print_result(self):
         res = 'Итого'
         print('+', f'{chr(45):-^9}', '+', f'{chr(45):-^10}', '+', sep='')
-        print('|', f'{res: ^9}', '|', f'{self.sum_symbols: ^10}', '|', sep='')
+        print('|', f'{res: ^9}', '|', f'{self.count_char: ^10}', '|', sep='')
         print('+', f'{chr(45):-^9}', '+', f'{chr(45):-^10}', '+', sep='')
 
     def print_body(self):
@@ -82,12 +82,12 @@ class SymbolStat:
                             self.stat[ord(char)] += 1
                         else:
                             self.stat[ord(char)] = 1
-                        self.sum_symbols += 1
+                        self.count_char += 1
 
         return self.stat
 
 
 if __name__ == '__main__':
     src_file_path = './python_snippets/voyna-i-mir.txt.zip'
-    war_and_peace = SymbolStat(file_path=src_file_path)
+    war_and_peace = CharStat(file_path=src_file_path)
     war_and_peace.print_stat()
