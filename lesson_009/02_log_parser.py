@@ -28,28 +28,51 @@ class LogParser:
         if file_out:
             self.file_out = file_out
         else:
-            self.file_out = file_inc + '.analyzed'
+            self.file_out = file_inc
         print(self.file_out)
         self.stat = {}
 
-
     def line_parsing(self, line=None):
-        date, res = line.split(']')
+        date, res = line.split('] ')
         date = date.replace('[', '')
         date, time = date.split(' ')
         dt = []
         dt.extend(date.split('-'))
         dt.extend(time.split(':'))
-        sec = dt[-1].split('.')
         dt.pop()
-        dt.extend(sec)
         dt = tuple(map(int, dt))
         dt = datetime.datetime(*dt)
         return dt, res
 
     def get_stat(self):
-        for line in self.file_inc:
-            dt, res = self.line_parsing(line)
-            if dt.year in self.stat
+        with open(self.file_inc, 'r') as file:
+            for line in file:
+                dt, res = map(str, self.line_parsing(line))
+                res = res.replace(chr(10), '')
+                if res == 'NOK':
+                    if dt in self.stat:
+                       self.stat[dt] += 1
+                    else:
+                       self.stat[dt] = 1
+
+        return self.stat
+
+    def print_stat(self):
+        for date, cnt in self.stat.items():
+            print(date, '  ', cnt)
+
+    def write_stat(self, file_out=None):
+        if not file_out:
+            self.file_out = file_out
+        # TODO доделать запись результата в файл
+        with open(file=self.file_out, mode='w+') as file:
+            for date, cnt in self.stat.items():
+                print(date, '  ', cnt)
+                file.write(date+' '+cnt)
+
+
 if __name__ == '__main__':
-    test = LogParser('lesson_009/events.txt')
+    test = LogParser('events.txt', 'res.txt')
+    test.get_stat()
+    test.print_stat()
+    test.write_stat()
