@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import zipfile, os, datetime
+import datetime
 
 # Имеется файл events.txt вида:
 #
@@ -23,16 +23,12 @@ import zipfile, os, datetime
 
 class LogParser:
 
-    def __init__(self, file_inc=None, file_out=None):
-        self.file_inc = file_inc
-        if file_out:
-            self.file_out = file_out
-        else:
-            self.file_out = file_inc
-        print(self.file_out)
-        self.stat = {}
+    def __init__(self, file_in=None, file_out=None):
+        self.file_in = file_in
+        self.file_out = file_out
+        self.nok_stat = {}
 
-    def line_parsing(self, line=None):
+    def _line_parsing(self, line=None):
         date, res = line.split('] ')
         date = date.replace('[', '')
         date, time = date.split(' ')
@@ -44,35 +40,35 @@ class LogParser:
         dt = datetime.datetime(*dt)
         return dt, res
 
-    def get_stat(self):
-        with open(self.file_inc, 'r') as file:
+    def get(self):
+        with open(self.file_in, 'r') as file:
             for line in file:
-                dt, res = map(str, self.line_parsing(line))
+                dt, res = map(str, self._line_parsing(line))
                 res = res.replace(chr(10), '')
                 if res == 'NOK':
-                    if dt in self.stat:
-                       self.stat[dt] += 1
+                    if dt in self.nok_stat:
+                        self.nok_stat[dt] += 1
                     else:
-                       self.stat[dt] = 1
+                        self.nok_stat[dt] = 1
 
-        return self.stat
+        return self.nok_stat
 
-    def print_stat(self):
-        for date, cnt in self.stat.items():
+    def print(self):
+        for date, cnt in self.nok_stat.items():
             print(date, '  ', cnt)
 
-    def write_stat(self, file_out=None):
-        if not file_out:
-            self.file_out = file_out
-        # TODO доделать запись результата в файл
-        with open(file=self.file_out, mode='w+') as file:
-            for date, cnt in self.stat.items():
-                print(date, '  ', cnt)
-                file.write(date+' '+cnt)
+    def write(self):
+        if not self.nok_stat:
+            self.get()
+
+        if not self.file_out:
+            self.file_out = self.file_in + '.nok'
+
+        with open(file=self.file_out, mode='w', encoding='utf8') as file:
+            for date, cnt in self.nok_stat.items():
+                file.write(date + ' ' + str(cnt) + '\n')
 
 
 if __name__ == '__main__':
-    test = LogParser('events.txt', 'res.txt')
-    test.get_stat()
-    test.print_stat()
-    test.write_stat()
+    parsed_log = LogParser('events.txt')
+    parsed_log.write()
