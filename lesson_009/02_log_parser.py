@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import datetime
+import os
 
 # Имеется файл events.txt вида:
 #
@@ -26,49 +26,35 @@ class LogParser:
     def __init__(self, file_in=None, file_out=None):
         self.file_in = file_in
         self.file_out = file_out
-        self.nok_stat = {}
-
-    def _line_parsing(self, line=None):
-        date, res = line.split('] ')
-        date = date.replace('[', '')
-        date, time = date.split(' ')
-        dt = []
-        dt.extend(date.split('-'))
-        dt.extend(time.split(':'))
-        dt.pop()
-        dt = tuple(map(int, dt))
-        dt = datetime.datetime(*dt)
-        return dt, res
-
-    def get(self):
-        with open(self.file_in, 'r') as file:
-            for line in file:
-                dt, res = map(str, self._line_parsing(line))
-                res = res.replace(chr(10), '')
-                if res == 'NOK':
-                    if dt in self.nok_stat:
-                        self.nok_stat[dt] += 1
-                    else:
-                        self.nok_stat[dt] = 1
-
-        return self.nok_stat
-
-    def print(self):
-        for date, cnt in self.nok_stat.items():
-            print(date, '  ', cnt)
-
-    def write(self):
-        if not self.nok_stat:
-            self.get()
-
+        self.log_stat = {}
         if not self.file_out:
             self.file_out = self.file_in + '.nok'
 
-        with open(file=self.file_out, mode='w', encoding='utf8') as file:
-            for date, cnt in self.nok_stat.items():
+    def line_parsing(self, line=None):
+        date, time, res = line.split(' ')
+        dt = date+' '+time[:5]+time[-1:]
+        return dt, res
+
+    def parse(self):
+        with open(self.file_in, 'r') as file:
+            for line in file:
+                dt, res = self.line_parsing(line)
+                res = res.replace(chr(10), '')
+                if res == 'NOK':
+                    if dt in self.log_stat.keys():
+                        self.log_stat[dt] += 1
+                    else:
+                        if self.log_stat:
+                            self.write()
+                            self.log_stat = {}
+                        self.log_stat[dt] = 1
+
+    def write(self):
+        with open(file=self.file_out, mode='a', encoding='utf8') as file:
+            for date, cnt in self.log_stat.items():
                 file.write(date + ' ' + str(cnt) + '\n')
 
 
 if __name__ == '__main__':
-    parsed_log = LogParser('events.txt')
-    parsed_log.write()
+    log = LogParser('events.txt')
+    log.parse()
