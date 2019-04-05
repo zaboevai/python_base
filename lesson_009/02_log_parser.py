@@ -32,6 +32,7 @@ class LogParser:
 
     def line_parsing(self, line=None):
         date, time, res = line.split(' ')
+        # TODO Между арфметическими операциями всегда должны присутствовать пробелы
         dt = date+' '+time[:5]+time[-1:]
         return dt, res
 
@@ -39,9 +40,13 @@ class LogParser:
         with open(self.file_in, 'r') as file:
             for line in file:
                 dt, res = self.line_parsing(line)
+                # TODO Лучше использовать экранированные последовательности,
+                # TODO (\n). Не все могут помнить коды символов, но все знают,
+                # TODO что значит \n
                 res = res.replace(chr(10), '')
                 if res == 'NOK':
                     if dt in self.log_stat.keys():
+                        # TODO Необходимо использовать setdefault, чтобы упросить код
                         self.log_stat[dt] += 1
                     else:
                         if self.log_stat:
@@ -52,6 +57,7 @@ class LogParser:
     def write(self):
         with open(file=self.file_out, mode='a', encoding='utf8') as file:
             for date, cnt in self.log_stat.items():
+                # TODO Лучше будет использовать f строки, тогда будет нагляднее
                 file.write(date + ' ' + str(cnt) + '\n')
 
 
