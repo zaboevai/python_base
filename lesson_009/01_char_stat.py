@@ -71,7 +71,7 @@ class CharStat:
             for line in file:
                 for char in line:
                     if char.isalpha():
-                        if self.stat.setdefault(char, 1) == self.stat[char]:
+                        if self.stat.setdefault(char, 0) == self.stat[char]:
                             self.stat[char] += 1
         return self.stat
 
