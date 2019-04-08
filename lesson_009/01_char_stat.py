@@ -25,6 +25,13 @@ import pprint
 
 class CharStat:
 
+    # TODO Раз реализовано немного больше чем указано в задании, то необходимо
+    # TODO передавать немного больше аргументов (path_to_archive, path_to_file,
+    # TODO filename_in_archive).
+    # TODO Это необходимо, чтобы извлечение файла из архива было более
+    # TODO правильным и корректно обрабатывалась ситуация, когда в архиве может
+    # TODO быть несколько файлов можно было проверить есть в архиве нужный
+    # TODO файл или нет.
     def __init__(self, file_path):
         self.file_path = file_path
         self.dir_path = os.path.dirname(self.file_path)
@@ -38,6 +45,8 @@ class CharStat:
             self.file_name = os.path.basename(file_path)
 
     def print_header(self):
+        # TODO Это лишнее усложение, не нужно текст заголовка выносить в
+        # TODO отедельную переменную
         header = ('буква', 'кол-во')
         print(f'')
         print('+', f'{chr(45):-^9}', '+', f'{chr(45):-^10}', '+', sep='')
@@ -45,6 +54,8 @@ class CharStat:
         print('+', f'{chr(45):-^9}', '+', f'{chr(45):-^10}', '+', sep='')
 
     def print_result(self):
+        # TODO Это лишнее усложение, не нужно текст заголовка выносить в
+        # TODO отедельную переменную
         res = 'Итого'
         print('+', f'{chr(45):-^9}', '+', f'{chr(45):-^10}', '+', sep='')
         print('|', f'{res: ^9}', '|', f'{self.count_char: ^10}', '|', sep='')
@@ -55,6 +66,8 @@ class CharStat:
             self.get_stat()
 
         for char, cnt in sorted(self.stat.items()):
+            # TODO Пробельный символ, это не часть алфавита, это условие не
+            # TODO имеет смысла
             if char == 10:
                 symbol = 'enter'
             else:
@@ -78,7 +91,12 @@ class CharStat:
             for line in file:
                 for char in line:
                     if char.isalpha():
+                        # TODO Обратите внимание на метод словрей setdefault
+                        # TODO с его помощью можно упростить код и избавиться
+                        # TODO от данного условия
                         if ord(char) in self.stat:
+                            # TODO Строка может быть ключом словаря, нет ни
+                            # TODO какого смысла хранить код символа, а не сроку
                             self.stat[ord(char)] += 1
                         else:
                             self.stat[ord(char)] = 1

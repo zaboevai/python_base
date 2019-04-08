@@ -59,11 +59,15 @@ class FileSorter:
             shutil.copy2(src=src, dst=dst)
 
     def arrange(self):
+        # TODO Корректность переданных аргументов необходимо прояверять сразу,
+        # TODO а не когда уже выполняется бизнеслогика
         if not self.src:
             print('Не указан каталог источник.')
         elif not self.dst:
             print('Не указан каталог назначения.')
         else:
+            # TODO Данную нотацию недопустимо использовать в python,
+            # TODO необходимо вседа помнить про PEP8
             for dirPath, dirNames, fileNames in os.walk(self.src):
                 for file in fileNames:
                     file_mtime = os.path.getmtime(os.path.join(dirPath, file))
