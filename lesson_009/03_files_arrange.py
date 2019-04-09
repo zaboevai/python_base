@@ -43,6 +43,10 @@ class FileSorter:
     def __init__(self, src=None, dst=None):
         self.src = os.path.normpath(src) if src else None
         self.dst = os.path.normpath(dst) if dst else None
+        if not self.src:
+            print('Не указан каталог источник.')
+        elif not self.dst:
+            print('Не указан каталог назначения.')
 
     def get_dirs(self, mtime=None):
         file_mdate = time.gmtime(mtime)
@@ -59,24 +63,17 @@ class FileSorter:
             shutil.copy2(src=src, dst=dst)
 
     def arrange(self):
-        # TODO Корректность переданных аргументов необходимо прояверять сразу,
-        # TODO а не когда уже выполняется бизнеслогика
-        if not self.src:
-            print('Не указан каталог источник.')
-        elif not self.dst:
-            print('Не указан каталог назначения.')
-        else:
-            # TODO Данную нотацию недопустимо использовать в python,
-            # TODO необходимо вседа помнить про PEP8
-            for dirPath, dirNames, fileNames in os.walk(self.src):
-                for file in fileNames:
-                    file_mtime = os.path.getmtime(os.path.join(dirPath, file))
+        if self.src and self.dst:
+            for dir_path, dir_names, file_names in os.walk(self.src):
+                for file in file_names:
+                    file_mtime = os.path.getmtime(os.path.join(dir_path, file))
                     file_dst = self.get_dirs(file_mtime)
                     self.make_dirs(file_dst)
 
                     file_dst = os.path.join(file_dst, file)
-                    file_src = os.path.join(dirPath, file)
+                    file_src = os.path.join(dir_path, file)
                     self.copy_file(src=file_src, dst=file_dst)
+
             if os.path.exists(self.dst):
                 print('Сортировка завершена успешно.', self.dst)
             else:
@@ -86,7 +83,6 @@ class FileSorter:
 if __name__ == '__main__':
     src_dir = '/home/andrey/Pictures'
     dst_dir = '/home/andrey/Pictures/sorted'
-
     files = FileSorter(src=src_dir, dst=dst_dir)
     files.arrange()
 
