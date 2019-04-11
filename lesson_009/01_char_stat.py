@@ -28,23 +28,23 @@ class CharStat:
         self.stat = {}
         self.is_data_ready = False
 
-        self.path_to_file = path_to_file
-        self.path_to_archive = path_to_archive
-        self.filename_in_archive = filename_in_archive
         if path_to_file:
+            self.path_to_file = path_to_file
             if self.check_path_to_file():
-                self.path_to_file = path_to_file
                 self.file_name = os.path.basename(path_to_file)
                 self.is_data_ready = True
         else:
+            self.path_to_archive = path_to_archive
+            self.filename_in_archive = filename_in_archive
             if path_to_archive or filename_in_archive:
-
                 if self.check_archive():
                     self.zfile = None
                     self.path_to_file = path_to_archive
                     self.file_name = filename_in_archive
                     self.unzip()
                     self.is_data_ready = True
+            else:
+                cprint('Файл не найден', color='red')
 
         if self.is_data_ready:
             print('Данные готовы к обработке.')
@@ -128,7 +128,7 @@ class CharStat:
 
 
 if __name__ == '__main__':
-    src_file_path = None#'./python_snippets/voyna-i-mir.txt'
+    src_file_path = './python_snippets/voyna-i-mir.txt'
     path_to_archive = './python_snippets/voyna-i-mir.txt.zip'
     filename_in_archive = 'voyna-i-mir.txt'
 
