@@ -24,9 +24,18 @@ import pprint
 # Ширину таблицы подберите по своему вкусу
 
 class CharStat:
+    # TODO Аргумент path_to_file должен использоваться в том случае, если
+    # TODO программа должна работать с незапакованным файлом.
+    # TODO Пример: path_to_file = '/home/ivan/war.txt'
+    # TODO Аргументы filename_in_archive и path_to_archive должны
+    # TODO использоваться если файл необходимо извлечь из архива
+    # TODO Пример: path_to_archive = '/home/ivan/war.zip'
+    # TODO filename_in_archive = war.txt
     def __init__(self, path_to_file, path_to_archive, filename_in_archive):
         self.path_to_file = path_to_file
         self.stat = {}
+        # TODO Такие объемные вычисления лучше вынести в отдельную функцию и
+        # TODO ее вызывать из __init__
         if zipfile.is_zipfile(path_to_file):
             self.zfile = zipfile.ZipFile(self.path_to_file, 'r')
             if self.find_file(filename_in_archive):
@@ -71,6 +80,15 @@ class CharStat:
             for line in file:
                 for char in line:
                     if char.isalpha():
+                        # Пример
+                        # >>> data = {}
+                        # >>> data['k'] = data.setdefault('k', 0) + 1
+                        # >>> data
+                        # {'k': 1}
+                        # >>> data['k'] = data.setdefault('k', 0) + 1
+                        # >>> data
+                        # {'k': 2}
+                        # TODO Данная проверка не нужна
                         if self.stat.setdefault(char, 0) == self.stat[char]:
                             self.stat[char] += 1
         return self.stat

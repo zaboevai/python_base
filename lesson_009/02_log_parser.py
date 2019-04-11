@@ -48,6 +48,8 @@ class LogParser:
                     if dt not in self.log_stat.keys():
                         self.write()
                         self.log_stat = {}
+                    # TODO Данная проверка не нужна, пример правильного
+                    # TODO использования setdefault привел в задани 01
                     if self.log_stat.setdefault(dt, 0) == self.log_stat[dt]:
                         self.log_stat[dt] += 1
 
