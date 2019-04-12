@@ -40,20 +40,14 @@ class FileSorter:
     Сортировка происходит по дате модификации файла в виде "/dst/year/month"
     Сортировка происходит с учетом подкаталогов.
     """
-    def __init__(self, src=None, dst=None):
-        # TODO Сейчас одни и теже данные проверяются 2 раза, необходимо
-        # TODO избавиться от лишней проверки (если аргумент не валиден нужно не
-        # TODO возвращать None, а возбуждать исключение).
-        # TODO Альтернативным вариантом будет сделать все аргументы
-        # TODO обязательными и этот вариант будет самым правильным, потому что
-        # TODO аргументы по сути обязательные.
-        self.src = os.path.normpath(src) if src else None
-        self.dst = os.path.normpath(dst) if dst else None
-        # TODO Необходимо возбуждать исключение, которое будет сообщать о том,
-        # TODO что аргументы невалидны
-        if not self.src:
+    def __init__(self, src, dst):
+        if src:
+            self.src = os.path.normpath(src)
+        else:
             print('Не указан каталог источник.')
-        elif not self.dst:
+        if dst:
+            self.dst = os.path.normpath(dst)
+        else:
             print('Не указан каталог назначения.')
 
     def get_dirs(self, mtime=None):
@@ -71,22 +65,20 @@ class FileSorter:
             shutil.copy2(src=src, dst=dst)
 
     def arrange(self):
-        # TODO От этой проверки нужно будет избавиться, она будет не нужна
-        if self.src and self.dst:
-            for dir_path, dir_names, file_names in os.walk(self.src):
-                for file in file_names:
-                    file_mtime = os.path.getmtime(os.path.join(dir_path, file))
-                    file_dst = self.get_dirs(file_mtime)
-                    self.make_dirs(file_dst)
+        for dir_path, dir_names, file_names in os.walk(self.src):
+            for file in file_names:
+                file_mtime = os.path.getmtime(os.path.join(dir_path, file))
+                file_dst = self.get_dirs(file_mtime)
+                self.make_dirs(file_dst)
 
-                    file_dst = os.path.join(file_dst, file)
-                    file_src = os.path.join(dir_path, file)
-                    self.copy_file(src=file_src, dst=file_dst)
+                file_dst = os.path.join(file_dst, file)
+                file_src = os.path.join(dir_path, file)
+                self.copy_file(src=file_src, dst=file_dst)
 
-            if os.path.exists(self.dst):
-                print('Сортировка завершена успешно.', self.dst)
-            else:
-                print('Ошибка! Проверьте пути к каталогам.', self.src, self.dst)
+        if os.path.exists(self.dst):
+            print('Сортировка завершена успешно.', self.dst)
+        else:
+            print('Ошибка! Проверьте пути к каталогам.', self.src, self.dst)
 
 
 if __name__ == '__main__':
