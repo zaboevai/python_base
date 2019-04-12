@@ -137,3 +137,5 @@ if __name__ == '__main__':
                              filename_in_archive=filename_in_archive)
 
     war_and_peace.print_stat()
+
+# Зачет!
