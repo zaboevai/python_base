@@ -59,3 +59,5 @@ class LogParser:
 if __name__ == '__main__':
     log = LogParser('events.txt')
     log.parse()
+
+# Зачет!
