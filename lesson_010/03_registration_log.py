@@ -21,5 +21,50 @@
 # - поле емейл НЕ содержит @ и .(точку): NotEmailError (кастомное исключение)
 # - поле возраст НЕ является числом от 10 до 99: ValueError
 # Вызов метода обернуть в try-except.
+line_cont = 0
 
-# TODO здесь ваш код
+
+class NotNameError(Exception):
+    pass
+
+
+class NotEmailError(Exception):
+    pass
+
+
+def check_line_log(line):
+    name, email, age = line.split(' ')
+    print(line, '1' if name and email and age else '0')
+    if name and email and age:
+        if name.isalpha():
+            if '@' in email and '.' in email:
+                if 10 <= int(age) <= 99:
+                    return f'{name:<10} {email:<30} {age}\n'
+                else:
+                    raise ValueError('поле возраст НЕ является числом от 10 до 99')
+            else:
+                raise NotEmailError('поле емейл НЕ содержит @ и .(точку)')
+        else:
+            raise NotNameError('поле имени содержит НЕ только буквы')
+    else:
+        raise ValueError('НЕ присутсвуют все три поля')
+
+
+with open('registrations.txt', mode='r', encoding='utf8') as file:
+    with open('registrations_good.log', mode='w', encoding='utf8') as good_log:
+        with open('registrations_bad.log', mode='w', encoding='utf8') as bad_log:
+            for file_line in file:
+                line_cont += 1
+                line = file_line[:-1].strip()
+                try:
+                    good_line = check_line_log(line)
+                    good_log.write(good_line)
+                except ValueError as exc:
+                    if 'unpack' in exc.args[0]:
+                        bad_log.write(f'{line_cont:<5} {line:<40} НЕ присутсвуют все три поля\n')
+                    else:
+                        bad_log.write(f'{line_cont:<5} {line:<40} {exc}\n')
+                except NotEmailError as exc:
+                    bad_log.write(f'{line_cont:<5} {line:<40} {exc}\n')
+                except NotNameError as exc:
+                    bad_log.write(f'{line_cont:<5} {line:<40} {exc}\n')
