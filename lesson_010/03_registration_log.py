@@ -35,7 +35,11 @@ class NotEmailError(Exception):
 def check_line_log(line):
     name, email, age = line.split(' ')
     print(line, '1' if name and email and age else '0')
+    # TODO В данной проверке нет необходимости, потому если строка не будет
+    # TODO содержать всех необходимых данных, то интерпретатор сам возбудит
+    # TODO исключение в строке 36
     if name and email and age:
+        # TODO Проверки лучше вынесли в отдельные функции
         if name.isalpha():
             if '@' in email and '.' in email:
                 if 10 <= int(age) <= 99:
@@ -59,6 +63,8 @@ with open('registrations.txt', mode='r', encoding='utf8') as file:
                 try:
                     good_line = check_line_log(line)
                     good_log.write(good_line)
+                # TODO Обработка всех исключений практически идентична, лучше
+                # TODO будет в одном except перехватывать несколько исключений
                 except ValueError as exc:
                     if 'unpack' in exc.args[0]:
                         bad_log.write(f'{line_cont:<5} {line:<40} НЕ присутсвуют все три поля\n')

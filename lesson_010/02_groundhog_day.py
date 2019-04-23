@@ -70,3 +70,5 @@ with open('02_error.log', mode='w') as file:
             file.write('\n')
 
 # https://goo.gl/JnsDqu
+
+# Зачет!
