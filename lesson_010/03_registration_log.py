@@ -21,7 +21,8 @@
 # - поле емейл НЕ содержит @ и .(точку): NotEmailError (кастомное исключение)
 # - поле возраст НЕ является числом от 10 до 99: ValueError
 # Вызов метода обернуть в try-except.
-line_cont = 0
+
+from os import path
 
 
 class NotNameError(Exception):
@@ -32,39 +33,87 @@ class NotEmailError(Exception):
     pass
 
 
-def check_line_log(line):
-    name, email, age = line.split(' ')
-    print(line, '1' if name and email and age else '0')
-    if name and email and age:
-        if name.isalpha():
-            if '@' in email and '.' in email:
-                if 10 <= int(age) <= 99:
-                    return f'{name:<10} {email:<30} {age}\n'
-                else:
-                    raise ValueError('поле возраст НЕ является числом от 10 до 99')
-            else:
-                raise NotEmailError('поле емейл НЕ содержит @ и .(точку)')
+class FileNotFound(Exception):
+    pass
+
+
+class EmailRegistrationLog:
+
+    def __init__(self, path_to_log, path_to_parsed_log, path_to_error_log=None):
+
+        if path_to_log and path.isfile(path_to_log):
+            self.log_path = path_to_log
+            self.log_file = None
         else:
+            raise FileNotFound('Файл лога не укзан !')
+
+        if path_to_parsed_log:
+            self.path_to_parsed_log = path_to_parsed_log
+            self.parsed_file = None
+        else:
+            raise FileNotFound('Файл для выгрузки результата не указан !')
+
+        self.path_to_error_log = path_to_error_log
+        self.errors_file = None
+        self.line_cont = 0
+
+    def check_name(self, name):
+        if not name.isalpha():
             raise NotNameError('поле имени содержит НЕ только буквы')
-    else:
-        raise ValueError('НЕ присутсвуют все три поля')
 
+    def is_email(self, email):
+        if not '@' in email and '.' in email:
+            raise NotEmailError('поле емейл НЕ содержит @ и .(точку)')
 
-with open('registrations.txt', mode='r', encoding='utf8') as file:
-    with open('registrations_good.log', mode='w', encoding='utf8') as good_log:
-        with open('registrations_bad.log', mode='w', encoding='utf8') as bad_log:
-            for file_line in file:
-                line_cont += 1
-                line = file_line[:-1].strip()
-                try:
-                    good_line = check_line_log(line)
-                    good_log.write(good_line)
-                except ValueError as exc:
+    def check_age_limit(self, age):
+        if age.isdigit() and not 10 <= int(age) <= 99:
+            raise ValueError('поле возраст НЕ является числом от 10 до 99')
+
+    def check_line_log(self, line):
+        name, email, age = line.split(' ')
+        self.check_name(name)
+        self.is_email(email)
+        self.check_age_limit(age)
+        return f'{name:<10} {email:<30} {age}\n'
+
+    def file_init(self):
+        self.log_file = open(self.log_path, mode='r', encoding='utf8')
+        self.parsed_file = open(self.path_to_parsed_log, mode='w', encoding='utf8')
+        self.errors_file = open(self.path_to_error_log, mode='w', encoding='utf8') if self.path_to_error_log else None
+
+    def file_close(self):
+        self.log_file.close()
+        self.parsed_file.close()
+        self.errors_file.close() if self.errors_file else None
+
+    def parse(self):
+        self.file_init()
+        for line in self.log_file:
+            try:
+                self.line_cont += 1
+                line = line[:-1].strip()
+                good_line = self.check_line_log(line)
+                self.parsed_file.write(good_line)
+            except Exception as exc:
+                if self.path_to_error_log:
                     if 'unpack' in exc.args[0]:
-                        bad_log.write(f'{line_cont:<5} {line:<40} НЕ присутсвуют все три поля\n')
+                        self.errors_file.write(f'{self.line_cont:<5} {line:<40} НЕ присутсвуют все три поля\n')
                     else:
-                        bad_log.write(f'{line_cont:<5} {line:<40} {exc}\n')
-                except NotEmailError as exc:
-                    bad_log.write(f'{line_cont:<5} {line:<40} {exc}\n')
-                except NotNameError as exc:
-                    bad_log.write(f'{line_cont:<5} {line:<40} {exc}\n')
+                        self.errors_file.write(f'{self.line_cont:<5} {line:<40} {exc} {exc.args}\n')
+        self.file_close()
+
+
+if __name__ == '__main__':
+
+    log_path = 'registrations.txt'
+    parsed_log_path = 'registrations_good.log'
+    error_log_path = 'registrations_bad.log'
+
+    try:
+        log = EmailRegistrationLog(path_to_log=log_path,
+                                   path_to_parsed_log=parsed_log_path,
+                                   path_to_error_log=error_log_path,
+                                   )
+        log.parse()
+    except FileNotFound as exc:
+        print(exc)
