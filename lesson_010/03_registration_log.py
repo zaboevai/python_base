@@ -43,6 +43,10 @@ def check_age_limit(age):
 def check_line_log(line):
     name, email, age = line.split(' ')
 
+    # TODO Все 3 проверки должны быть вынесены в отдельные функции. Если данные
+    # TODO корректны функции ничего не возвращают и просто завершают свою
+    # TODO работу, а если данные ошибочны то выбрасывают исключение. Таким
+    # TODO образом количество кода сильно сократится и не нужны будут условия.
     if name.isalpha():
         if is_email(email):
             if check_age_limit(age):
@@ -67,6 +71,7 @@ with open(log_path, mode='r', encoding='utf8') as file:
                 line = file_line[:-1].strip()
                 try:
                     good_line = check_line_log(line)
+                # TODO Необходимо перезватывать Exception, а не BaseException
                 except BaseException as exc:
                     if 'unpack' in exc.args[0]:
                         bad_log.write(f'{line_cont:<5} {line:<40} НЕ присутсвуют все три поля\n')
