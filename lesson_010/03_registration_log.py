@@ -42,7 +42,7 @@ class EmailRegistrationLog:
     def __init__(self, path_to_log, path_to_parsed_log, path_to_error_log=None):
 
         if path_to_log and path.isfile(path_to_log):
-            self.log_path = path_to_log
+            self.path_log = path_to_log
             self.log_file = None
         else:
             raise FileNotFound('Файл лога не укзан !')
@@ -77,7 +77,7 @@ class EmailRegistrationLog:
         return f'{name:<10} {email:<30} {age}\n'
 
     def file_init(self):
-        self.log_file = open(self.log_path, mode='r', encoding='utf8')
+        self.log_file = open(self.path_log, mode='r', encoding='utf8')
         self.parsed_file = open(self.path_to_parsed_log, mode='w', encoding='utf8')
         self.errors_file = open(self.path_to_error_log, mode='w', encoding='utf8') if self.path_to_error_log else None
 
