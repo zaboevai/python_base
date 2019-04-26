@@ -21,7 +21,8 @@
 # - поле емейл НЕ содержит @ и .(точку): NotEmailError (кастомное исключение)
 # - поле возраст НЕ является числом от 10 до 99: ValueError
 # Вызов метода обернуть в try-except.
-line_cont = 0
+
+from os import path
 
 
 class NotNameError(Exception):
@@ -32,50 +33,87 @@ class NotEmailError(Exception):
     pass
 
 
-def is_email(email):
-    return '@' in email and '.' in email
+class FileNotFound(Exception):
+    pass
 
 
-def check_age_limit(age):
-    return 10 <= int(age) <= 99
+class EmailRegistrationLog:
 
+    def __init__(self, path_to_log, path_to_parsed_log, path_to_error_log=None):
 
-def check_line_log(line):
-    name, email, age = line.split(' ')
-
-    # TODO Все 3 проверки должны быть вынесены в отдельные функции. Если данные
-    # TODO корректны функции ничего не возвращают и просто завершают свою
-    # TODO работу, а если данные ошибочны то выбрасывают исключение. Таким
-    # TODO образом количество кода сильно сократится и не нужны будут условия.
-    if name.isalpha():
-        if is_email(email):
-            if check_age_limit(age):
-                return f'{name:<10} {email:<30} {age}\n'
-            else:
-                raise ValueError('поле возраст НЕ является числом от 10 до 99')
+        if path_to_log and path.isfile(path_to_log):
+            self.log_path = path_to_log
+            self.log_file = None
         else:
+            raise FileNotFound('Файл лога не укзан !')
+
+        if path_to_parsed_log:
+            self.path_to_parsed_log = path_to_parsed_log
+            self.parsed_file = None
+        else:
+            raise FileNotFound('Файл для выгрузки результата не указан !')
+
+        self.path_to_error_log = path_to_error_log
+        self.errors_file = None
+        self.line_cont = 0
+
+    def check_name(self, name):
+        if not name.isalpha():
+            raise NotNameError('поле имени содержит НЕ только буквы')
+
+    def is_email(self, email):
+        if not '@' in email and '.' in email:
             raise NotEmailError('поле емейл НЕ содержит @ и .(точку)')
-    else:
-        raise NotNameError('поле имени содержит НЕ только буквы')
 
+    def check_age_limit(self, age):
+        if age.isdigit() and not 10 <= int(age) <= 99:
+            raise ValueError('поле возраст НЕ является числом от 10 до 99')
 
-log_path = 'registrations.txt'
-bad_log_path = 'registrations_bad.log'
-good_log_path = 'registrations_good.log'
+    def check_line_log(self, line):
+        name, email, age = line.split(' ')
+        self.check_name(name)
+        self.is_email(email)
+        self.check_age_limit(age)
+        return f'{name:<10} {email:<30} {age}\n'
 
-with open(log_path, mode='r', encoding='utf8') as file:
-    with open(good_log_path, mode='w', encoding='utf8') as good_log:
-        with open(bad_log_path, mode='w', encoding='utf8') as bad_log:
-            for file_line in file:
-                line_cont += 1
-                line = file_line[:-1].strip()
-                try:
-                    good_line = check_line_log(line)
-                # TODO Необходимо перезватывать Exception, а не BaseException
-                except BaseException as exc:
+    def file_init(self):
+        self.log_file = open(self.log_path, mode='r', encoding='utf8')
+        self.parsed_file = open(self.path_to_parsed_log, mode='w', encoding='utf8')
+        self.errors_file = open(self.path_to_error_log, mode='w', encoding='utf8') if self.path_to_error_log else None
+
+    def file_close(self):
+        self.log_file.close()
+        self.parsed_file.close()
+        self.errors_file.close() if self.errors_file else None
+
+    def parse(self):
+        self.file_init()
+        for line in self.log_file:
+            try:
+                self.line_cont += 1
+                line = line[:-1].strip()
+                good_line = self.check_line_log(line)
+                self.parsed_file.write(good_line)
+            except Exception as exc:
+                if self.path_to_error_log:
                     if 'unpack' in exc.args[0]:
-                        bad_log.write(f'{line_cont:<5} {line:<40} НЕ присутсвуют все три поля\n')
+                        self.errors_file.write(f'{self.line_cont:<5} {line:<40} НЕ присутсвуют все три поля\n')
                     else:
-                        bad_log.write(f'{line_cont:<5} {line:<40} {exc}\n')
-                else:
-                    good_log.write(good_line)
+                        self.errors_file.write(f'{self.line_cont:<5} {line:<40} {exc} {exc.args}\n')
+        self.file_close()
+
+
+if __name__ == '__main__':
+
+    log_path = 'registrations.txt'
+    parsed_log_path = 'registrations_good.log'
+    error_log_path = 'registrations_bad.log'
+
+    try:
+        log = EmailRegistrationLog(path_to_log=log_path,
+                                   path_to_parsed_log=parsed_log_path,
+                                   path_to_error_log=error_log_path,
+                                   )
+        log.parse()
+    except FileNotFound as exc:
+        print(exc)
