@@ -117,3 +117,5 @@ if __name__ == '__main__':
         log.parse()
     except FileNotFound as exc:
         print(exc)
+
+# Зачет!
