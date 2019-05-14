@@ -29,6 +29,7 @@ class PrimeNumbers:
         self.end = n
 
     def __iter__(self):
+        # TODO Данный метод должен только возвращать объект итератор
         self.prime_numbers = []
         return self
 
