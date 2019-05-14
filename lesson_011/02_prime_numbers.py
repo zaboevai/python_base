@@ -22,13 +22,38 @@ def get_prime_numbers(n):
 
 
 class PrimeNumbers:
-    pass
-    # TODO здесь ваш код
 
+    def __init__(self, n):
+        self.prime_numbers = []
+        self.start = 1
+        self.end = n
+
+    def __iter__(self):
+        self.prime_numbers = []
+        return self
+
+    def __next__(self):
+        self.start += 1
+        for number in range(self.start, self.end+1):
+            for prime in self.prime_numbers:
+                if number % prime == 0:
+                    break
+            else:
+                self.start = number
+                self.prime_numbers.append(self.start)
+                return self.start
+
+        raise StopIteration()
+
+
+# prime_number_iterator = get_prime_numbers(n=10000)
+# for number in prime_number_iterator:
+#     pass #print(number)
 
 prime_number_iterator = PrimeNumbers(n=10000)
 for number in prime_number_iterator:
     print(number)
+
 
 
 # TODO после подтверждения части 1 преподователем, можно делать
@@ -37,13 +62,13 @@ for number in prime_number_iterator:
 # Распечатать все простые числа до 10000 в столбик
 
 
-def prime_numbers_generator(n):
-    pass
-    # TODO здесь ваш код
-
-
-for number in prime_numbers_generator(n=10000):
-    print(number)
+# def prime_numbers_generator(n):
+#     pass
+#     # TODO здесь ваш код
+#
+#
+# for number in prime_numbers_generator(n=10000):
+#     print(number)
 
 
 # Усложненное задание (делать по желанию)
