@@ -14,6 +14,9 @@ from lesson_004 import shapes
 #
 # Функция-фабрика должна принимать параметр n - количество сторон.
 
+class NotExpectedPolygon(Exception):
+    pass
+
 
 def get_polygon(n):
     if n == 3:
@@ -25,11 +28,14 @@ def get_polygon(n):
     elif n == 6:
         return shapes.draw_hexagon
     else:
-        return shapes.draw_hexagon
+        raise NotExpectedPolygon(
+            f'Ошибка в <{get_polygon.__name__}>: разрешено кол-во сторон для ввода n = (3, 4, 5, 6), введено = <{n}>')
 
 
-draw_triangle = get_polygon(n=4)
-print(draw_triangle)
-draw_triangle(start_point=sd.get_point(150, 150), angle=13, length=200)
+try:
+    draw_figure = get_polygon(n=5)
+    draw_figure(start_point=sd.get_point(150, 150), angle=13, length=200)
+except NotExpectedPolygon as exc:
+    print(exc)
 
 sd.pause()
