@@ -29,6 +29,9 @@ class PrimeNumbers:
         self.end = n
 
     def __iter__(self):
+        # TODO Для того, чтобы повторные обходы итератора начинались сначала,
+        # TODO нужно ещё атрибут self.start привести в изначальное состояние
+        self.start = 1
         self.prime_numbers = []
         return self
 
