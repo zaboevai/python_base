@@ -7,10 +7,23 @@
 # Формат лога: <имя функции> <параметры вызова> <тип ошибки> <текст ошибки>
 # Лог файл открывать каждый раз при ошибке в режиме 'a'
 
-
 def log_errors(func):
-    pass
-    # TODO здесь ваш код
+    log_name = 'function_errors.log'
+
+    def func_fact(*args, **kwargs):
+        param = []
+        param.extend([arg for arg in args])
+        param.extend([f'{key}={value}' for key, value in kwargs.items()])
+
+        try:
+            res = func(*args, **kwargs)
+            return res
+        except (ZeroDivisionError, ValueError) as exc:
+            with open(file=log_name, mode='a', encoding='utf8') as file:
+                file.write(f'{func.__name__:<15} {param.__str__():<40} {exc.__class__.__name__:<20} {str(exc):<10}\n')
+            raise exc
+
+    return func_fact
 
 
 # Проверить работу на следующих функциях
@@ -43,8 +56,8 @@ for line in lines:
         check_line(line)
     except Exception as exc:
         print(f'Invalid format: {exc}')
-perky(param=42)
 
+perky(param=42)
 
 # Усложненное задание (делать по желанию).
 # Написать декоратор с параметром - именем файла
@@ -52,4 +65,3 @@ perky(param=42)
 # @log_errors('function_errors.log')
 # def func():
 #     pass
-
