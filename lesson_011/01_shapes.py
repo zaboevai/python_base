@@ -40,3 +40,5 @@ polygon = create_polygon(n=9)
 polygon(start_point=sd.get_point(200, 50), angle=0, length=100)
 
 sd.pause()
+
+# Зачет!

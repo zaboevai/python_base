@@ -65,3 +65,5 @@ if __name__ == '__main__':
         print(f'[{group_time}] {event_count}')
 
     log_file.write_result()
+
+# Зачет!

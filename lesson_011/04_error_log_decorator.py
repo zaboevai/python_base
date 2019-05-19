@@ -12,6 +12,9 @@ def log_errors(func):
     log_name = 'function_errors.log'
 
     def func_fact(*args, **kwargs):
+        # TODO Лучше эти вычисления перенести в блок except, чтобы декоратор
+        # TODO не тормозил выполнение декорируемой функции если ошибка не
+        # TODO возникает.
         param = []
         param.extend([arg for arg in args])
         param.extend([f'{key}={value}' for key, value in kwargs.items()])
