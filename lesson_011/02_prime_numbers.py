@@ -45,10 +45,10 @@ class PrimeNumbers:
 
         raise StopIteration()
 
-
-prime_number_iterator = PrimeNumbers(n=10000)
-for number in prime_number_iterator:
-    print(number)
+#
+# prime_number_iterator = PrimeNumbers(n=10000)
+# for number in prime_number_iterator:
+#     print(number)
 
 
 # Часть 2
@@ -67,9 +67,9 @@ def prime_numbers_generator(n):
             yield number
 
 
-number_generator = prime_numbers_generator(n=10000)
-for number in number_generator:
-    print(number)
+# number_generator = prime_numbers_generator(n=10000)
+# for number in number_generator:
+#     print(number)
 
 
 # Усложненное задание (делать по желанию)
@@ -89,8 +89,8 @@ def lucky_prime_numbers_generator(n):
                 break
         else:
             prime_numbers.append(number)
-            lucky_nmb_len = len(str(number)) - 1
-            cnt = lucky_nmb_len // 2 if lucky_nmb_len % 2 == 0 else 0
+            lucky_nmb_len = len(str(number))
+            cnt = (lucky_nmb_len-1) // 2 if lucky_nmb_len % 2 != 0 else lucky_nmb_len // 2
 
             if cnt:
                 left_path, right_path = str(number)[:cnt], str(number)[-cnt:]
