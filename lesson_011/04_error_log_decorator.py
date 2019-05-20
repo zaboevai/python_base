@@ -29,13 +29,13 @@
 
 
 def log_errors(fn=None):
-    def log_errors(func):
+    def func_decoration(func):
         if fn:
             log_name = fn
         else:
             log_name = 'function_errors.log'
 
-        def func_fact(*args, **kwargs):
+        def logging(*args, **kwargs):
             try:
                 res = func(*args, **kwargs)
                 return res
@@ -48,9 +48,8 @@ def log_errors(fn=None):
                 with open(file=log_name, mode='a', encoding='utf8') as file:
                     file.write(f'{func.__name__:<15} {param.__str__():<40} {exc.__class__.__name__:<20} {str(exc):<10}\n')
                 raise exc
-
-        return func_fact
-    return log_errors
+        return logging
+    return func_decoration
 
 
 # Проверить работу на следующих функциях
@@ -62,6 +61,7 @@ def perky(param):
 @log_errors(fn='function_errors2.log')
 def perky_with_fn(param):
     return param / 0
+
 
 @log_errors()
 def check_line(line):
@@ -96,4 +96,7 @@ except Exception as exc:
 # Усложненное задание (делать по желанию).
 # Написать декоратор с параметром - именем файла
 
-perky_with_fn(param=55)
+try:
+    perky_with_fn(param=55)
+except Exception as exc:
+    print(exc)
