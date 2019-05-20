@@ -8,35 +8,62 @@
 # Лог файл открывать каждый раз при ошибке в режиме 'a'
 
 
-def log_errors(func):
-    log_name = 'function_errors.log'
+# def log_errors(func):
+#     log_name = 'function_errors.log'
+#
+#     def func_fact(*args, **kwargs):
+#         try:
+#             res = func(*args, **kwargs)
+#             return res
+#         except (ZeroDivisionError, ValueError) as exc:
+#
+#             param = []
+#             param.extend([arg for arg in args])
+#             param.extend([f'{key}={value}' for key, value in kwargs.items()])
+#
+#             with open(file=log_name, mode='a', encoding='utf8') as file:
+#                 file.write(f'{func.__name__:<15} {param.__str__():<40} {exc.__class__.__name__:<20} {str(exc):<10}\n')
+#             raise exc
+#
+#     return func_fact
 
-    def func_fact(*args, **kwargs):
-        # TODO Лучше эти вычисления перенести в блок except, чтобы декоратор
-        # TODO не тормозил выполнение декорируемой функции если ошибка не
-        # TODO возникает.
-        param = []
-        param.extend([arg for arg in args])
-        param.extend([f'{key}={value}' for key, value in kwargs.items()])
 
-        try:
-            res = func(*args, **kwargs)
-            return res
-        except (ZeroDivisionError, ValueError) as exc:
-            with open(file=log_name, mode='a', encoding='utf8') as file:
-                file.write(f'{func.__name__:<15} {param.__str__():<40} {exc.__class__.__name__:<20} {str(exc):<10}\n')
-            raise exc
+def log_errors(fn=None):
+    def log_errors(func):
+        if fn:
+            log_name = fn
+        else:
+            log_name = 'function_errors.log'
 
-    return func_fact
+        def func_fact(*args, **kwargs):
+            try:
+                res = func(*args, **kwargs)
+                return res
+            except (ZeroDivisionError, ValueError) as exc:
+
+                param = []
+                param.extend([arg for arg in args])
+                param.extend([f'{key}={value}' for key, value in kwargs.items()])
+
+                with open(file=log_name, mode='a', encoding='utf8') as file:
+                    file.write(f'{func.__name__:<15} {param.__str__():<40} {exc.__class__.__name__:<20} {str(exc):<10}\n')
+                raise exc
+
+        return func_fact
+    return log_errors
 
 
 # Проверить работу на следующих функциях
-@log_errors
+@log_errors()
 def perky(param):
     return param / 0
 
 
-@log_errors
+@log_errors(fn='function_errors2.log')
+def perky_with_fn(param):
+    return param / 0
+
+@log_errors()
 def check_line(line):
     name, email, age = line.split(' ')
     if not name.isalpha():
@@ -60,13 +87,13 @@ for line in lines:
         check_line(line)
     except Exception as exc:
         print(f'Invalid format: {exc}')
-perky(param=42)
 
+try:
+    perky(param=42)
+except Exception as exc:
+    print(exc)
 
 # Усложненное задание (делать по желанию).
 # Написать декоратор с параметром - именем файла
-#
-# @log_errors('function_errors.log')
-# def func():
-#     pass
 
+perky_with_fn(param=55)

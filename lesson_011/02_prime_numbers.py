@@ -91,10 +91,8 @@ def lucky_prime_numbers_generator(n):
                 break
         else:
             prime_numbers.append(number)
-            lucky_nmb_len = len(str(number)) - 1
-            # TODO Некорректно реализована проверка. Текущая реализация
-            # TODO отсеивает число 11
-            cnt = lucky_nmb_len // 2 if lucky_nmb_len % 2 == 0 else 0
+            lucky_nmb_len = len(str(number))
+            cnt = (lucky_nmb_len-1) // 2 if lucky_nmb_len % 2 != 0 else lucky_nmb_len // 2
 
             if cnt:
                 left_path, right_path = str(number)[:cnt], str(number)[-cnt:]
