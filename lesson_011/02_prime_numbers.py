@@ -91,6 +91,9 @@ def lucky_prime_numbers_generator(n):
                 break
         else:
             prime_numbers.append(number)
+            # TODO Нужно использовать функцию из второй части задания.
+            # TODO Посути нужно просто фильтровать результаты выдаваемые
+            # TODO функцией prime_numbers_generator.
             lucky_nmb_len = len(str(number))
             cnt = (lucky_nmb_len-1) // 2 if lucky_nmb_len % 2 != 0 else lucky_nmb_len // 2
 
