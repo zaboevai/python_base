@@ -28,52 +28,39 @@
 #     return func_fact
 
 
-# TODO Имена аргументов функции должны отражать их назнчение и иметь
-# TODO говорящие название.
-def log_errors(fn=None):
-    def func_decoration(func):
-        # TODO Проще будет у аргумента fn указать значение по умолчанию не
-        # TODO None, а 'function_errors.log'. Тогда это условие не нужно будет.
-        if fn:
-            log_name = fn
-        else:
-            log_name = 'function_errors.log'
-
-        def logging(*args, **kwargs):
+def write_errors_to_file(file_path='func_errors.log'):
+    def write_errors_to_file_wrap(func):
+        def write_errors(*args, **kwargs):
             try:
-                # TODO Не нужно сохранять значение во временную переменную,
-                # TODO если значение ни как не обрабатывается.
-                res = func(*args, **kwargs)
-                return res
+                return func(*args, **kwargs)
             except (ZeroDivisionError, ValueError) as exc:
-
                 param = []
                 param.extend([arg for arg in args])
                 param.extend([f'{key}={value}' for key, value in kwargs.items()])
 
-                with open(file=log_name, mode='a', encoding='utf8') as file:
-                    # TODO Длинна строки не должна превышать 120 символов, а в
-                    # TODO идеале 79 символов
-                    file.write(f'{func.__name__:<15} {param.__str__():<40} {exc.__class__.__name__:<20} {str(exc):<10}\n')
-                # TODO В данном случае можно написать просто raise и тогда
-                # TODO будет снова выброшено перехваченое исключение
-                raise exc
-        return logging
-    return func_decoration
+                with open(file=file_path, mode='a', encoding='utf8') as file:
+                    file.write(f'{func.__name__:<15} '
+                               f'{param.__str__():<40} '
+                               f'{exc.__class__.__name__:<20} '
+                               f'{str(exc):<10}\n')
+                raise
+
+        return write_errors
+    return write_errors_to_file_wrap
 
 
 # Проверить работу на следующих функциях
-@log_errors()
+@write_errors_to_file()
 def perky(param):
     return param / 0
 
 
-@log_errors(fn='function_errors2.log')
+@write_errors_to_file(file_path='my_func_errors.log')
 def perky_with_fn(param):
     return param / 0
 
 
-@log_errors()
+@write_errors_to_file(file_path='my_func_errors.log')
 def check_line(line):
     name, email, age = line.split(' ')
     if not name.isalpha():
