@@ -28,8 +28,12 @@
 #     return func_fact
 
 
+# TODO Имена аргументов функции должны отражать их назнчение и иметь
+# TODO говорящие название.
 def log_errors(fn=None):
     def func_decoration(func):
+        # TODO Проще будет у аргумента fn указать значение по умолчанию не
+        # TODO None, а 'function_errors.log'. Тогда это условие не нужно будет.
         if fn:
             log_name = fn
         else:
@@ -37,6 +41,8 @@ def log_errors(fn=None):
 
         def logging(*args, **kwargs):
             try:
+                # TODO Не нужно сохранять значение во временную переменную,
+                # TODO если значение ни как не обрабатывается.
                 res = func(*args, **kwargs)
                 return res
             except (ZeroDivisionError, ValueError) as exc:
@@ -46,7 +52,11 @@ def log_errors(fn=None):
                 param.extend([f'{key}={value}' for key, value in kwargs.items()])
 
                 with open(file=log_name, mode='a', encoding='utf8') as file:
+                    # TODO Длинна строки не должна превышать 120 символов, а в
+                    # TODO идеале 79 символов
                     file.write(f'{func.__name__:<15} {param.__str__():<40} {exc.__class__.__name__:<20} {str(exc):<10}\n')
+                # TODO В данном случае можно написать просто raise и тогда
+                # TODO будет снова выброшено перехваченое исключение
                 raise exc
         return logging
     return func_decoration
