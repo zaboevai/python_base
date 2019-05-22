@@ -84,27 +84,19 @@ for number in number_generator:
 
 
 def lucky_prime_numbers_generator(n):
-    prime_numbers = []
-    for number in range(2, n + 1):
-        for prime in prime_numbers:
-            if number % prime == 0:
-                break
-        else:
-            prime_numbers.append(number)
-            # TODO Нужно использовать функцию из второй части задания.
-            # TODO Посути нужно просто фильтровать результаты выдаваемые
-            # TODO функцией prime_numbers_generator.
-            lucky_nmb_len = len(str(number))
-            cnt = (lucky_nmb_len-1) // 2 if lucky_nmb_len % 2 != 0 else lucky_nmb_len // 2
 
-            if cnt:
-                left_path, right_path = str(number)[:cnt], str(number)[-cnt:]
+    for number in prime_numbers_generator(n):
+        lucky_nmb_len = len(str(number))
+        cnt = (lucky_nmb_len-1) // 2 if lucky_nmb_len % 2 != 0 else lucky_nmb_len // 2
 
-                left_nmb_sum = sum([int(num) for num in left_path])
-                right_nmb_sum = sum([int(num) for num in right_path])
+        if cnt:
+            left_path, right_path = str(number)[:cnt], str(number)[-cnt:]
 
-                if left_nmb_sum == right_nmb_sum:
-                    yield number, left_path, right_path
+            left_nmb_sum = sum([int(num) for num in left_path])
+            right_nmb_sum = sum([int(num) for num in right_path])
+
+            if left_nmb_sum == right_nmb_sum:
+                yield number, left_path, right_path
 
 
 number_generator = lucky_prime_numbers_generator(n=100000)
