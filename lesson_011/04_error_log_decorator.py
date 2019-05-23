@@ -97,3 +97,5 @@ try:
     perky_with_fn(param=55)
 except Exception as exc:
     print(exc)
+
+# Зачет!
