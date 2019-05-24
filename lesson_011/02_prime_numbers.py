@@ -102,3 +102,5 @@ def lucky_prime_numbers_generator(n):
 number_generator = lucky_prime_numbers_generator(n=100000)
 for number, l_path, r_path in number_generator:
     print(f'{number}')
+
+# Зачет!
