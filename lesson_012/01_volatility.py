@@ -65,3 +65,64 @@
 
 
 # TODO написать код в однопоточном/однопроцессорном стиле
+
+import csv
+import os
+from collections import OrderedDict
+from utils import time_track
+
+file = '/home/andrey/PycharmProjects/python_base/lesson_012/trades/TICKER_AFH9.csv'
+
+files = '/home/andrey/PycharmProjects/python_base/lesson_012/trades/'
+tickers = {}
+
+
+@time_track
+def main():
+    for dirpath, dirnames, filenames in os.walk(files):
+        print(len(filenames))
+        for filename in filenames:
+            file_name = os.path.join(dirpath, filename)
+            # print(f'for file {file_name}')
+            with open(file=file_name, mode='r', encoding='utf8') as csv_file:
+                csv_dict = csv.DictReader(csv_file, delimiter=',')
+
+                ticker, prices = set(), []
+
+                for line in csv_dict:
+                    ticker = line['SECID']
+                    prices.append(float(line['PRICE']))
+
+                max_price, min_price = max(prices), min(prices)
+                average_price = (max_price + min_price) / 2
+                volatility = ((max_price - min_price) / average_price) * 100
+
+            tickers[ticker] = volatility
+        ordered_tickers = OrderedDict(sorted(tickers.items(), key=lambda x: x[1], reverse=True))
+
+        zero_volatility = []
+
+        for ticker, volatility in list(ordered_tickers.items()):
+            if volatility == 0:
+                zero_volatility.append(ticker)
+                del ordered_tickers[ticker]
+
+        i = 0
+        print('Максимальная волатильность:')
+        for k, v in ordered_tickers.items():
+            i += 1
+            if i <= 3:
+                print(f'\t{k} - {v} %')
+        i = 0
+        print('Минимальная волатильность:')
+        for k, v in ordered_tickers.items():
+            i += 1
+            if i >= len(ordered_tickers.items())-2:
+                print(f'\t{k} - {v} %')
+
+        print('Нулевая волатильность:')
+        print(f'\t{zero_volatility}')
+
+
+if __name__ == '__main__':
+    main()
