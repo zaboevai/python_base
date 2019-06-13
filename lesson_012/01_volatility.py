@@ -71,58 +71,77 @@ import os
 from collections import OrderedDict
 from utils import time_track
 
-file = '/home/andrey/PycharmProjects/python_base/lesson_012/trades/TICKER_AFH9.csv'
-
-files = '/home/andrey/PycharmProjects/python_base/lesson_012/trades/'
-tickers = {}
+files = '/home/aizab/SkillBoxProjects/python_base/lesson_012/trades'
 
 
-@time_track
-def main():
-    for dirpath, dirnames, filenames in os.walk(files):
-        print(len(filenames))
-        for filename in filenames:
-            file_name = os.path.join(dirpath, filename)
-            # print(f'for file {file_name}')
+class TickerVolatility:
+
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.ticker, self.prices = set(), []
+        self.tickers = {}
+        self.ordered_tickers = {}
+        self.zero_volatility = []
+
+    def _get_file_from_file_list(self):
+        for dirpath, dirnames, filenames in os.walk(self.file_path):
+            for filename in filenames:
+                file_name = os.path.join(dirpath, filename)
+                yield file_name
+
+    def calculate_volatility(self):
+
+        for file_name in self._get_file_from_file_list():
             with open(file=file_name, mode='r', encoding='utf8') as csv_file:
                 csv_dict = csv.DictReader(csv_file, delimiter=',')
-
-                ticker, prices = set(), []
+                self.prices = []
 
                 for line in csv_dict:
-                    ticker = line['SECID']
-                    prices.append(float(line['PRICE']))
+                    self.ticker = line['SECID']
+                    self.prices.append(float(line['PRICE']))
 
-                max_price, min_price = max(prices), min(prices)
+                max_price, min_price = max(self.prices), min(self.prices)
                 average_price = (max_price + min_price) / 2
                 volatility = ((max_price - min_price) / average_price) * 100
 
-            tickers[ticker] = volatility
-        ordered_tickers = OrderedDict(sorted(tickers.items(), key=lambda x: x[1], reverse=True))
+            self.tickers[self.ticker] = volatility
 
-        zero_volatility = []
+        self.ordered_tickers = OrderedDict(sorted(self.tickers.items(), key=lambda x: x[1], reverse=True))
+        self.zero_volatility = []
 
-        for ticker, volatility in list(ordered_tickers.items()):
-            if volatility == 0:
-                zero_volatility.append(ticker)
-                del ordered_tickers[ticker]
+        for k, v in list(self.ordered_tickers.items()):
+            if v == 0:
+                self.zero_volatility.append(k)
+                del self.ordered_tickers[k]
 
+    def print_max_volatility(self, str_count=0):
         i = 0
+        for k, v in self.ordered_tickers.items():
+            i += 1
+            if i <= str_count:
+                print(f'\t{k} - {v} %')
+
+    def print_min_volatility(self, str_count=0):
+        i = 0
+        for k, v in self.ordered_tickers.items():
+            i += 1
+            if i >= len(self.ordered_tickers.items()) - str_count + 1:
+                print(f'\t{k} - {v} %')
+
+    def print_zero_volatility(self):
+        print(f'\t{self.zero_volatility}')
+
+    @time_track
+    def get_result(self, count_max_volatility, count_min_volatility, print_zero_volatility=False):
+        self.calculate_volatility()
         print('Максимальная волатильность:')
-        for k, v in ordered_tickers.items():
-            i += 1
-            if i <= 3:
-                print(f'\t{k} - {v} %')
-        i = 0
+        self.print_max_volatility(str_count=count_max_volatility)
         print('Минимальная волатильность:')
-        for k, v in ordered_tickers.items():
-            i += 1
-            if i >= len(ordered_tickers.items())-2:
-                print(f'\t{k} - {v} %')
-
+        self.print_min_volatility(str_count=count_min_volatility)
         print('Нулевая волатильность:')
-        print(f'\t{zero_volatility}')
+        self.print_zero_volatility() if print_zero_volatility is True else None
 
 
 if __name__ == '__main__':
-    main()
+    tickers_report = TickerVolatility(file_path=files,)
+    tickers_report.get_result(count_max_volatility=5, count_min_volatility=3, print_zero_volatility=True)
