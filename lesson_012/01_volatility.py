@@ -63,20 +63,20 @@
 # Подсказка: нужно последовательно открывать каждый файл, вычитывать данные, высчитывать волатильность и запоминать.
 # Вывод на консоль можно сделать только после обработки всех файлов.
 
-
-# TODO написать код в однопоточном/однопроцессорном стиле
-
 import csv
 import os
 from collections import OrderedDict
 from utils import time_track
 
-files = '/home/aizab/SkillBoxProjects/python_base/lesson_012/trades'
+trade_files = '/home/andrey/PycharmProjects/python_base/lesson_012/trades'
 
 
 class TickerVolatility:
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, min_str_cnt, max_str_cnt, print_zero_tickers=False):
+        self.min_str_cnt = min_str_cnt
+        self.max_str_cnt = max_str_cnt
+        self.print_zero_tickers = print_zero_tickers
         self.file_path = file_path
         self.ticker, self.prices = set(), []
         self.tickers = {}
@@ -114,34 +114,47 @@ class TickerVolatility:
                 self.zero_volatility.append(k)
                 del self.ordered_tickers[k]
 
-    def print_max_volatility(self, str_count=0):
+    def print_max_volatility(self):
         i = 0
-        for k, v in self.ordered_tickers.items():
+        for secid, volatility in self.ordered_tickers.items():
             i += 1
-            if i <= str_count:
-                print(f'\t{k} - {v} %')
+            if i <= self.max_str_cnt:
+                print(f'\t{secid} - {volatility} %')
 
-    def print_min_volatility(self, str_count=0):
+    def print_min_volatility(self):
         i = 0
-        for k, v in self.ordered_tickers.items():
+        for secid, volatility in self.ordered_tickers.items():
             i += 1
-            if i >= len(self.ordered_tickers.items()) - str_count + 1:
-                print(f'\t{k} - {v} %')
+            if i >= len(self.ordered_tickers.items()) - self.min_str_cnt + 1:
+                print(f'\t{secid} - {volatility} %')
 
     def print_zero_volatility(self):
-        print(f'\t{self.zero_volatility}')
+        if self.print_zero_tickers:
+            print(f'\t{sorted(self.zero_volatility)}')
 
     @time_track
-    def get_result(self, count_max_volatility, count_min_volatility, print_zero_volatility=False):
+    def run(self):
+
         self.calculate_volatility()
-        print('Максимальная волатильность:')
-        self.print_max_volatility(str_count=count_max_volatility)
-        print('Минимальная волатильность:')
-        self.print_min_volatility(str_count=count_min_volatility)
-        print('Нулевая волатильность:')
-        self.print_zero_volatility() if print_zero_volatility is True else None
+
+        if self.max_str_cnt:
+            print('Максимальная волатильность:')
+            self.print_max_volatility()
+
+        if self.min_str_cnt:
+            print('Минимальная волатильность:')
+            self.print_min_volatility()
+
+        if self.print_zero_tickers:
+            print('Нулевая волатильность:')
+            self.print_zero_volatility()
 
 
 if __name__ == '__main__':
-    tickers_report = TickerVolatility(file_path=files,)
-    tickers_report.get_result(count_max_volatility=5, count_min_volatility=3, print_zero_volatility=True)
+    tickers_report = TickerVolatility(file_path=trade_files,
+                                      min_str_cnt=3,
+                                      max_str_cnt=3,
+                                      print_zero_tickers=True
+                                      )
+
+    tickers_report.run()
