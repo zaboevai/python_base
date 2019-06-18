@@ -68,6 +68,9 @@ import os
 from collections import OrderedDict
 from utils import time_track
 
+# TODO Для того, чтобы скрипт был более гибкий лучше реализовать динамические
+# TODO вычисление пути до папки trades (при вычислении необходимо опираться на
+# TODO предположение, что папка будет лежать рядом с запускаемым скриптом)
 trade_files = '/home/andrey/PycharmProjects/python_base/lesson_012/trades'
 
 
@@ -77,7 +80,16 @@ class TickerVolatility:
         self.min_str_cnt = min_str_cnt
         self.max_str_cnt = max_str_cnt
         self.print_zero_tickers = print_zero_tickers
+        # TODO Необходимо добавить проверку того, что путь существует и если
+        # TODO он не существует, то выбрасывать исключение
         self.file_path = file_path
+        # TODO В атрибуты экземпляра класса стоит выносить только то, что
+        # TODO используется в нескольких методах класса или то, что
+        # TODO характеризует конкретный экземпляр класса (на пример у класса
+        # TODO Person, логично сделать name атрибутом экземляра класса).
+        # TODO В данном случае лучше объявить переменные ticker, prices и
+        # TODO tickers просто внутри функции _get_file_from_file_list, потому
+        # TODO  что доступ к атрибутам класса дорогой.
         self.ticker, self.prices = set(), []
         self.tickers = {}
         self.ordered_tickers = {}
@@ -109,6 +121,8 @@ class TickerVolatility:
         self.ordered_tickers = OrderedDict(sorted(self.tickers.items(), key=lambda x: x[1], reverse=True))
         self.zero_volatility = []
 
+        # TODO Лучше дать переменным цикла названия, которые будут отражать их
+        # TODO назначение
         for k, v in list(self.ordered_tickers.items()):
             if v == 0:
                 self.zero_volatility.append(k)
@@ -151,10 +165,9 @@ class TickerVolatility:
 
 
 if __name__ == '__main__':
-    tickers_report = TickerVolatility(file_path=trade_files,
-                                      min_str_cnt=3,
-                                      max_str_cnt=3,
-                                      print_zero_tickers=True
-                                      )
-
+    #  Лучше форматировать создание класса вот так
+    tickers_report = TickerVolatility(
+        file_path=trade_files, min_str_cnt=3, max_str_cnt=3,
+        print_zero_tickers=True
+    )
     tickers_report.run()
