@@ -68,10 +68,7 @@ import os
 from collections import OrderedDict
 from utils import time_track
 
-# TODO Для того, чтобы скрипт был более гибкий лучше реализовать динамические
-# TODO вычисление пути до папки trades (при вычислении необходимо опираться на
-# TODO предположение, что папка будет лежать рядом с запускаемым скриптом)
-trade_files = '/home/andrey/PycharmProjects/python_base/lesson_012/trades'
+trade_files = './trades'
 
 
 class TickerVolatility:
@@ -80,94 +77,85 @@ class TickerVolatility:
         self.min_str_cnt = min_str_cnt
         self.max_str_cnt = max_str_cnt
         self.print_zero_tickers = print_zero_tickers
-        # TODO Необходимо добавить проверку того, что путь существует и если
-        # TODO он не существует, то выбрасывать исключение
-        self.file_path = file_path
-        # TODO В атрибуты экземпляра класса стоит выносить только то, что
-        # TODO используется в нескольких методах класса или то, что
-        # TODO характеризует конкретный экземпляр класса (на пример у класса
-        # TODO Person, логично сделать name атрибутом экземляра класса).
-        # TODO В данном случае лучше объявить переменные ticker, prices и
-        # TODO tickers просто внутри функции _get_file_from_file_list, потому
-        # TODO  что доступ к атрибутам класса дорогой.
-        self.ticker, self.prices = set(), []
-        self.tickers = {}
+        if os.path.exists(file_path):
+            self.file_path = file_path
+        else:
+            raise FileExistsError('Каталог с файлами отсутствует')
         self.ordered_tickers = {}
         self.zero_volatility = []
 
     def _get_file_from_file_list(self):
+        ticker, prices = set(), []
+
         for dirpath, dirnames, filenames in os.walk(self.file_path):
             for filename in filenames:
                 file_name = os.path.join(dirpath, filename)
-                yield file_name
+
+                with open(file=file_name, mode='r', encoding='utf8') as csv_file:
+                    csv_dict = csv.DictReader(csv_file, delimiter=',')
+                    prices = []
+
+                    for line in csv_dict:
+                        ticker = line['SECID']
+                        prices.append(float(line['PRICE']))
+
+                yield ticker, prices
 
     def calculate_volatility(self):
+        tickers = {}
+        for ticker, prices in self._get_file_from_file_list():
 
-        for file_name in self._get_file_from_file_list():
-            with open(file=file_name, mode='r', encoding='utf8') as csv_file:
-                csv_dict = csv.DictReader(csv_file, delimiter=',')
-                self.prices = []
+            max_price, min_price = max(prices), min(prices)
+            average_price = (max_price + min_price) / 2
+            volatility = ((max_price - min_price) / average_price) * 100
 
-                for line in csv_dict:
-                    self.ticker = line['SECID']
-                    self.prices.append(float(line['PRICE']))
+            if volatility == 0:
+                self.zero_volatility.append(ticker)
+            else:
+                tickers[ticker] = volatility
 
-                max_price, min_price = max(self.prices), min(self.prices)
-                average_price = (max_price + min_price) / 2
-                volatility = ((max_price - min_price) / average_price) * 100
-
-            self.tickers[self.ticker] = volatility
-
-        self.ordered_tickers = OrderedDict(sorted(self.tickers.items(), key=lambda x: x[1], reverse=True))
-        self.zero_volatility = []
-
-        # TODO Лучше дать переменным цикла названия, которые будут отражать их
-        # TODO назначение
-        for k, v in list(self.ordered_tickers.items()):
-            if v == 0:
-                self.zero_volatility.append(k)
-                del self.ordered_tickers[k]
+        self.zero_volatility = sorted(self.zero_volatility)
+        self.ordered_tickers = OrderedDict(sorted(tickers.items(), key=lambda x: x[1], reverse=True))
 
     def print_max_volatility(self):
-        i = 0
-        for secid, volatility in self.ordered_tickers.items():
-            i += 1
-            if i <= self.max_str_cnt:
-                print(f'\t{secid} - {volatility} %')
+        if self.max_str_cnt:
+            print('Максимальная волатильность:')
+            i = 0
+            for secid, volatility in self.ordered_tickers.items():
+                i += 1
+                if i <= self.max_str_cnt:
+                    print(f'\t{secid} - {volatility} %')
 
     def print_min_volatility(self):
-        i = 0
-        for secid, volatility in self.ordered_tickers.items():
-            i += 1
-            if i >= len(self.ordered_tickers.items()) - self.min_str_cnt + 1:
-                print(f'\t{secid} - {volatility} %')
+        if self.min_str_cnt:
+            print('Минимальная волатильность:')
+            i = 0
+            for secid, volatility in self.ordered_tickers.items():
+                i += 1
+                if i >= len(self.ordered_tickers.items()) - self.min_str_cnt + 1:
+                    print(f'\t{secid} - {volatility} %')
 
     def print_zero_volatility(self):
         if self.print_zero_tickers:
-            print(f'\t{sorted(self.zero_volatility)}')
+            print('Нулевая волатильность:')
+            print(f'\t{self.zero_volatility}')
 
     @time_track
-    def run(self):
-
-        self.calculate_volatility()
-
-        if self.max_str_cnt:
-            print('Максимальная волатильность:')
+    def print_report(self):
+        if not self.ordered_tickers:
+            self.calculate_volatility()
             self.print_max_volatility()
-
-        if self.min_str_cnt:
-            print('Минимальная волатильность:')
             self.print_min_volatility()
-
-        if self.print_zero_tickers:
-            print('Нулевая волатильность:')
             self.print_zero_volatility()
 
 
 if __name__ == '__main__':
     #  Лучше форматировать создание класса вот так
-    tickers_report = TickerVolatility(
-        file_path=trade_files, min_str_cnt=3, max_str_cnt=3,
-        print_zero_tickers=True
-    )
-    tickers_report.run()
+    try:
+        tickers_report = TickerVolatility(
+            file_path=trade_files, min_str_cnt=3, max_str_cnt=3,
+            print_zero_tickers=True
+        )
+        tickers_report.print_report()
+    except FileExistsError as exc:
+        print(f'Ошибка! {exc}.')
