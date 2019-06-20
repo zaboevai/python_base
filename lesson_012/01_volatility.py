@@ -84,7 +84,7 @@ class TickerVolatility:
         self.ordered_tickers = {}
         self.zero_volatility = []
 
-    def _get_file_from_file_list(self):
+    def get_tickers_info_from_file(self):
         ticker, prices = set(), []
 
         for dirpath, dirnames, filenames in os.walk(self.file_path):
@@ -103,18 +103,19 @@ class TickerVolatility:
 
     def calculate_volatility(self):
         tickers = {}
-        for ticker, prices in self._get_file_from_file_list():
+        zero_volatility = []
+        for ticker, prices in self.get_tickers_info_from_file():
 
             max_price, min_price = max(prices), min(prices)
             average_price = (max_price + min_price) / 2
             volatility = ((max_price - min_price) / average_price) * 100
 
             if volatility == 0:
-                self.zero_volatility.append(ticker)
+                zero_volatility.append(ticker)
             else:
                 tickers[ticker] = volatility
 
-        self.zero_volatility = sorted(self.zero_volatility)
+        self.zero_volatility = sorted(zero_volatility)
         self.ordered_tickers = OrderedDict(sorted(tickers.items(), key=lambda x: x[1], reverse=True))
 
     def print_max_volatility(self):
@@ -144,16 +145,18 @@ class TickerVolatility:
     def print_report(self):
         if not self.ordered_tickers:
             self.calculate_volatility()
-            self.print_max_volatility()
-            self.print_min_volatility()
-            self.print_zero_volatility()
+
+        self.print_max_volatility()
+        self.print_min_volatility()
+        self.print_zero_volatility()
 
 
 if __name__ == '__main__':
-    #  Лучше форматировать создание класса вот так
     try:
         tickers_report = TickerVolatility(
-            file_path=trade_files, min_str_cnt=3, max_str_cnt=3,
+            file_path=trade_files,
+            min_str_cnt=3,
+            max_str_cnt=3,
             print_zero_tickers=True
         )
         tickers_report.print_report()
