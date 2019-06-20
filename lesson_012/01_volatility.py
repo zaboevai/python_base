@@ -123,12 +123,12 @@ class TickerVolatility:
         if self.max_str_cnt:
             print('Максимальная волатильность:')
             for secid in ticker[:self.max_str_cnt]:
-                print(f'\t{secid} - {self.ordered_tickers[secid]} %')
+                print(f'\t{secid} - {self.ordered_tickers[secid]:2.2f} %')
 
         if self.min_str_cnt:
             print('Минимальная волатильность:')
             for secid in ticker[-self.min_str_cnt:]:
-                print(f'\t{secid} - {self.ordered_tickers[secid]} %')
+                print(f'\t{secid} - {self.ordered_tickers[secid]:2.2f} %')
 
         if self.print_zero_tickers:
             print('Нулевая волатильность:')
