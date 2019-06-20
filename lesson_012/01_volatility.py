@@ -73,9 +73,9 @@ trade_files = './trades'
 
 class TickerVolatility:
 
-    def __init__(self, file_path, min_str_cnt, max_str_cnt, print_zero_tickers=False):
-        self.min_str_cnt = min_str_cnt
+    def __init__(self, file_path, max_str_cnt, min_str_cnt, print_zero_tickers=False):
         self.max_str_cnt = max_str_cnt
+        self.min_str_cnt = min_str_cnt
         self.print_zero_tickers = print_zero_tickers
         if os.path.exists(file_path):
             self.file_path = file_path
@@ -118,25 +118,18 @@ class TickerVolatility:
         self.zero_volatility = sorted(zero_volatility)
         self.ordered_tickers = OrderedDict(sorted(tickers.items(), key=lambda x: x[1], reverse=True))
 
-    def print_max_volatility(self):
+    def print_volatility(self):
+        ticker = list(self.ordered_tickers.keys())
         if self.max_str_cnt:
             print('Максимальная волатильность:')
-            i = 0
-            for secid, volatility in self.ordered_tickers.items():
-                i += 1
-                if i <= self.max_str_cnt:
-                    print(f'\t{secid} - {volatility} %')
+            for secid in ticker[:self.max_str_cnt]:
+                print(f'\t{secid} - {self.ordered_tickers[secid]} %')
 
-    def print_min_volatility(self):
         if self.min_str_cnt:
             print('Минимальная волатильность:')
-            i = 0
-            for secid, volatility in self.ordered_tickers.items():
-                i += 1
-                if i >= len(self.ordered_tickers.items()) - self.min_str_cnt + 1:
-                    print(f'\t{secid} - {volatility} %')
+            for secid in ticker[-self.min_str_cnt:]:
+                print(f'\t{secid} - {self.ordered_tickers[secid]} %')
 
-    def print_zero_volatility(self):
         if self.print_zero_tickers:
             print('Нулевая волатильность:')
             print(f'\t{self.zero_volatility}')
@@ -146,17 +139,15 @@ class TickerVolatility:
         if not self.ordered_tickers:
             self.calculate_volatility()
 
-        self.print_max_volatility()
-        self.print_min_volatility()
-        self.print_zero_volatility()
+        self.print_volatility()
 
 
 if __name__ == '__main__':
     try:
         tickers_report = TickerVolatility(
             file_path=trade_files,
-            min_str_cnt=3,
             max_str_cnt=3,
+            min_str_cnt=3,
             print_zero_tickers=True
         )
         tickers_report.print_report()
