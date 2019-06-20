@@ -20,7 +20,6 @@
 
 import csv
 import os
-import time
 from collections import OrderedDict
 from utils import time_track
 from threading import Thread
@@ -29,21 +28,51 @@ trade_files = './trades'
 
 
 class TickerVolatility(Thread):
+    completed_files = []
+    isReportPrepare = False
     tickers = {}
     zero_volatility = []
-    completed_files = []
+    THREADS_COUNT = 5
 
-    def __init__(self, file_path, min_str_cnt=3, max_str_cnt=3, print_zero_tickers=True):
+    def __init__(self, file_path, min_str_cnt, max_str_cnt, print_zero_tickers=False):
         super().__init__()
         self.min_str_cnt = min_str_cnt
         self.max_str_cnt = max_str_cnt
         self.print_zero_tickers = print_zero_tickers
-        self.file_path = file_path
+        self.threads = []
+        if os.path.exists(file_path):
+            self.file_path = file_path
+        else:
+            raise FileExistsError('Каталог с файлами отсутствует')
 
-    def get_info_from_trades_files(self):
+    def create_threads(self):
+        self.threads = [TickerVolatility(
+            file_path=trade_files,
+            min_str_cnt=self.min_str_cnt,
+            max_str_cnt=self.max_str_cnt,
+            print_zero_tickers=True
+        ) for thread in range(0, TickerVolatility.THREADS_COUNT)]
+
+    def run_report(self):
+
+        self.create_threads()
+
+        for thread in self.threads:
+            thread.start()
+            # print(thread)
+
+        for thread in self.threads:
+            thread.join()
+
+        #self.threads[0].print_volatility()
+
+    def get_tickers_info_from_files(self):
+        ticker, prices = set(), []
+
         for dirpath, dirnames, filenames in os.walk(self.file_path):
             for filename in filenames:
                 file_name = os.path.join(dirpath, filename)
+
                 if file_name in TickerVolatility.completed_files:
                     continue
                 else:
@@ -59,81 +88,57 @@ class TickerVolatility(Thread):
                     yield ticker, prices
 
     def calculate_volatility(self):
-        for ticker, prices in self.get_info_from_trades_files():
-            if not TickerVolatility.tickers.get(ticker):
-                max_price, min_price = max(prices), min(prices)
-                average_price = (max_price + min_price) / 2
-                volatility = ((max_price - min_price) / average_price) * 100
+        for ticker, prices in self.get_tickers_info_from_files():
+            max_price, min_price = max(prices), min(prices)
+            average_price = (max_price + min_price) / 2
+            volatility = ((max_price - min_price) / average_price) * 100
 
-                if volatility == 0:
-                    if ticker not in TickerVolatility.zero_volatility:
-                        TickerVolatility.zero_volatility.append(ticker)
-                else:
-                    TickerVolatility.tickers[ticker] = volatility
+            if volatility == 0:
+                TickerVolatility.zero_volatility.append(ticker)
+            else:
+                TickerVolatility.tickers[ticker] = volatility
 
-        TickerVolatility.tickers = OrderedDict(sorted(TickerVolatility.tickers.items(), key=lambda x: x[1], reverse=True))
-        TickerVolatility.zero_volatility = sorted(TickerVolatility.zero_volatility)
+    def print_volatility(self):
 
-    def print_max_volatility(self):
+        ordered_tickers = OrderedDict(sorted(TickerVolatility.tickers.items(), key=lambda x: x[1], reverse=True))
+        TickerVolatility.isReportPrepare = True
+        ticker = list(ordered_tickers.keys())
+
         if self.max_str_cnt:
-            i = 0
             print('Максимальная волатильность:')
+            for secid in ticker[:self.max_str_cnt]:
+                print(f'\t{secid} - {ordered_tickers[secid]:2.2f} %')
 
-            for secid, volatility in TickerVolatility.tickers.items():
-                i += 1
-                if i <= self.max_str_cnt:
-                    print(f'\t{secid} - {volatility} %')
-
-    def print_min_volatility(self):
         if self.min_str_cnt:
-            i = 0
             print('Минимальная волатильность:')
-            for secid, volatility in TickerVolatility.tickers.items():
-                i += 1
-                if i >= len(TickerVolatility.tickers.items()) - self.min_str_cnt + 1:
-                    print(f'\t{secid} - {volatility} %')
+            for secid in ticker[-self.min_str_cnt:]:
+                print(f'\t{secid} - {ordered_tickers[secid]:2.2f} %')
 
-    def print_zero_volatility(self):
         if self.print_zero_tickers:
             print('Нулевая волатильность:')
-            print(f'\t{TickerVolatility.zero_volatility}')
+            print(f'\t{sorted(TickerVolatility.zero_volatility)}')
 
     def run(self):
-        self.calculate_volatility()
-
-@time_track
-def byThreads(threads_cnt):
-
-    threads = [TickerVolatility(file_path=trade_files) for i in range(threads_cnt)]
-
-    for thread in threads:
-        thread.start()
-
-    for thread in threads:
-        thread.join()
-
-    thread.print_max_volatility()
-    thread.print_min_volatility()
-    thread.print_zero_volatility()
-
-    thread.tickers.clear()
-    thread.completed_files.clear()
+        if not TickerVolatility.isReportPrepare:
+            self.calculate_volatility()
 
 
 @time_track
-def byThread():
-    report = TickerVolatility(file_path=trade_files)
-    report.run()
+def main():
+    try:
+        report = TickerVolatility(
+            file_path=trade_files,
+            min_str_cnt=3,
+            max_str_cnt=3,
+            print_zero_tickers=True
+        )
 
-    report.print_max_volatility()
-    report.print_min_volatility()
-    report.print_zero_volatility()
+        report.run_report()
+        report.print_volatility()
 
-    report.tickers.clear()
-    report.completed_files.clear()
-
+    except FileExistsError as exc:
+        print(f'Ошибка! {exc}.')
 
 
 if __name__ == '__main__':
-    byThread()
-    byThreads(threads_cnt=5)
+    main()
