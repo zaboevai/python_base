@@ -71,6 +71,8 @@ from utils import time_track
 trade_files = './trades'
 
 
+# TODO Для подготовки к мультипоточности надо в классе реализовать чтение из ОДНОГО файла и возвращать
+# TODO значения волатильности для тикера из этого файла.
 class TickerVolatility:
 
     def __init__(self, file_path, max_str_cnt, min_str_cnt, print_zero_tickers=False):
@@ -101,6 +103,7 @@ class TickerVolatility:
 
                 yield ticker, prices
 
+    # TODO И также для удобства перехода к мультипоточности лучше основной метод назвать run
     def calculate_volatility(self):
         tickers = {}
         zero_volatility = []
@@ -118,6 +121,7 @@ class TickerVolatility:
         self.zero_volatility = sorted(zero_volatility)
         self.ordered_tickers = OrderedDict(sorted(tickers.items(), key=lambda x: x[1], reverse=True))
 
+    # TODO А печатать мы будем уже в модуле, когда все классы отработают
     def print_volatility(self):
         ticker = list(self.ordered_tickers.keys())
         if self.max_str_cnt:
@@ -153,3 +157,7 @@ if __name__ == '__main__':
         tickers_report.print_report()
     except FileExistsError as exc:
         print(f'Ошибка! {exc}.')
+
+# TODO То есть идея такая - один класс отвечает за чтение одного файла. В модуле мы создаем на каждый
+# TODO файл свой объект TickerVolatility, запускаем их всех, ждем когда они все вернут свои результаты,
+# TODO и потом уже находим среди них 3 макс/мин и нулевые.
