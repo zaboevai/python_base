@@ -124,6 +124,8 @@ def main(tickers_path):
         else:
             tickers[ticker] = volatility
 
+    # TODO Можно сортировку и вывод в отдельную функцию оформить и тоже в utils запихать, чтобы не таскать этот код
+    # TODO из задания в задание)
     zero_volatility_tickers = sorted(zero_volatility_tickers)
     ordered_tickers = OrderedDict(sorted(tickers.items(), key=lambda x: x[1], reverse=True))
 
@@ -138,6 +140,7 @@ def main(tickers_path):
         print(f'\t{secid} - {ordered_tickers[secid]:2.2f} %')
 
     print('Нулевая волатильность:')
+    # TODO Тут бы через ', '.join распечатать, чтобы не просто список выводился
     print(f'\t{zero_volatility_tickers}')
 
 
@@ -145,3 +148,5 @@ if __name__ == '__main__':
     TRADE_FILES = './trades'
 
     main(tickers_path=TRADE_FILES)
+
+# TODO А так да, понято в принципе правильно) Можно вторую часть делать
