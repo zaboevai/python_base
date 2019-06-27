@@ -63,10 +63,10 @@
 # Подсказка: нужно последовательно открывать каждый файл, вычитывать данные, высчитывать волатильность и запоминать.
 # Вывод на консоль можно сделать только после обработки всех файлов.
 
+
 import csv
 import os
-from collections import OrderedDict
-from utils import time_track
+from utils import time_track, print_report
 
 
 class TickerVolatility:
@@ -102,51 +102,30 @@ class TickerVolatility:
         return ticker, volatility
 
 
-def get_next_ticker(file_path):
-
-    for dirpath, dirnames, filenames in os.walk(file_path):
-        for filename in filenames:
-            file_name = os.path.join(dirpath, filename)
-
-            yield TickerVolatility(file_path=file_name)
-
-
 @time_track
 def main(tickers_path):
+
+    def get_next_ticker(file_path):
+        for dirpath, dirnames, filenames in os.walk(file_path):
+            for filename in filenames:
+                file_name = os.path.join(dirpath, filename)
+                yield TickerVolatility(file_path=file_name)
+
     tickers = {}
     zero_volatility_tickers = []
 
-    for ticker_volatility in get_next_ticker(tickers_path):
-        ticker, volatility = ticker_volatility.run()
+    for calc_volatility in get_next_ticker(tickers_path):
+        ticker, volatility = calc_volatility.run()
 
         if volatility == 0:
             zero_volatility_tickers.append(ticker)
         else:
             tickers[ticker] = volatility
 
-    # TODO Можно сортировку и вывод в отдельную функцию оформить и тоже в utils запихать, чтобы не таскать этот код
-    # TODO из задания в задание)
-    zero_volatility_tickers = sorted(zero_volatility_tickers)
-    ordered_tickers = OrderedDict(sorted(tickers.items(), key=lambda x: x[1], reverse=True))
-
-    tickers_list = list(ordered_tickers.keys())
-
-    print('Максимальная волатильность:')
-    for secid in tickers_list[:3]:
-        print(f'\t{secid} - {ordered_tickers[secid]:2.2f} %')
-
-    print('Минимальная волатильность:')
-    for secid in tickers_list[-3:]:
-        print(f'\t{secid} - {ordered_tickers[secid]:2.2f} %')
-
-    print('Нулевая волатильность:')
-    # TODO Тут бы через ', '.join распечатать, чтобы не просто список выводился
-    print(f'\t{zero_volatility_tickers}')
+    print_report(tickers, zero_volatility_tickers)
 
 
 if __name__ == '__main__':
     TRADE_FILES = './trades'
 
     main(tickers_path=TRADE_FILES)
-
-# TODO А так да, понято в принципе правильно) Можно вторую часть делать
