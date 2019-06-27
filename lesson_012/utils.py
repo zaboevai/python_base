@@ -31,4 +31,4 @@ def print_report(tickers, zero_volatility_tickers):
         print(f'\t{secid} - {ordered_tickers[secid]:2.2f} %')
 
     print('Нулевая волатильность:')
-    print(', '.join(zero_volatility_tickers))
+    print('\t', ', '.join(zero_volatility_tickers), sep='')
