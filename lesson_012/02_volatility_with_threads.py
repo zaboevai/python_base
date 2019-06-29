@@ -62,6 +62,7 @@ class TickerVolatility(Thread):
         max_price, min_price = max(prices), min(prices)
         average_price = (max_price + min_price) / 2
         volatility = ((max_price - min_price) / average_price) * 100
+        # TODO Да, добавление в список/словарь атомарная операция, но для практики добавим блокировку
         if volatility == 0:
             self.zero_volatility_tickers.append(ticker)
         else:
@@ -70,6 +71,8 @@ class TickerVolatility(Thread):
 
 @time_track
 def main(tickers_path):
+
+    # TODO А вообще ее лучше тогда тоже в utils затолкать)
     def get_next_file(file_path):
         for dirpath, dirnames, filenames in os.walk(file_path):
             for filename in filenames:
