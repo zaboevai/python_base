@@ -16,17 +16,10 @@
 #   Нулевая волатильность:
 #       ТИКЕР7, ТИКЕР8, ТИКЕР9, ТИКЕР10, ТИКЕР11, ТИКЕР12
 # Волатильности указывать в порядке убывания. Тикеры с нулевой волатильностью упорядочить по имени.
-#
-# TODO Внимание! это задание можно выполнять только после зачета lesson_012/02_volatility_with_threads.py !!!
-
-# TODO тут ваш код в многопроцессном стиле
-
 
 import csv
 import os
-from multiprocessing import Process
-from queue import Queue, Empty
-
+from multiprocessing import Process, Queue
 from utils import time_track, print_report, get_next_file
 
 
@@ -70,32 +63,19 @@ class TickerVolatility(Process):
         self.tickers_queue.put((ticker, volatility))
 
 
-@ time_track
+@time_track
 def main(tickers_path):
-    threads = []
     tickers = {}
-    q = Queue()
+    collector = Queue()
 
-    for fname in get_next_file(tickers_path):
-        threads.append(TickerVolatility(file_path=fname,
-                                        tickers_queue=q)
-                       )
+    threads = [TickerVolatility(file_path=fname, tickers_queue=collector) for fname in get_next_file(tickers_path)]
 
     [thread.start() for thread in threads]
 
-        # print(thread.tickers_queue.get())
+    while not collector.empty():
+        ticker, volatility = collector.get()
+        tickers[ticker] = volatility
 
-    while True:
-        try:
-            print(q.qsize())
-            ticker, volatility = q.get(timeout=1)
-            tickers[ticker] = volatility
-        except Empty as exc:
-            if not any(thread.is_alive() for thread in threads):
-                break
-            print(exc)
-
-    print(tickers)
     [thread.join() for thread in threads]
 
     print_report(tickers)
@@ -103,5 +83,4 @@ def main(tickers_path):
 
 if __name__ == '__main__':
     TRADE_FILES = './trades'
-
     main(tickers_path=TRADE_FILES)
