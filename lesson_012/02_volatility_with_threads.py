@@ -19,24 +19,22 @@
 
 import csv
 import os
-from threading import Thread
-from utils import time_track, print_report
-
-tickers = {}
-zero_volatility_tickers = []
+from threading import Thread, Lock
+from utils import time_track, print_report, get_next_file
 
 
 class TickerVolatility(Thread):
 
-    def __init__(self, file_path, tickers, zero_volatility_tickers):
+    def __init__(self, file_path, tickers, lock):
         super().__init__()
 
         if os.path.exists(file_path):
             self.file_path = file_path
         else:
             raise FileExistsError('Каталог с файлами отсутствует')
+
         self.tickers = tickers
-        self.zero_volatility_tickers = zero_volatility_tickers
+        self.lock = lock
 
     def get_tickers_info_from_file(self):
         prices = []
@@ -62,38 +60,27 @@ class TickerVolatility(Thread):
         max_price, min_price = max(prices), min(prices)
         average_price = (max_price + min_price) / 2
         volatility = ((max_price - min_price) / average_price) * 100
-        # TODO Да, добавление в список/словарь атомарная операция, но для практики добавим блокировку
-        if volatility == 0:
-            self.zero_volatility_tickers.append(ticker)
-        else:
+
+        with self.lock:
             self.tickers[ticker] = volatility
 
 
 @time_track
 def main(tickers_path):
-
-    # TODO А вообще ее лучше тогда тоже в utils затолкать)
-    def get_next_file(file_path):
-        for dirpath, dirnames, filenames in os.walk(file_path):
-            for filename in filenames:
-                file_name = os.path.join(dirpath, filename)
-                yield file_name
-
     threads = []
+    tickers = {}
+    lock = Lock()
 
     for fname in get_next_file(tickers_path):
         threads.append(TickerVolatility(file_path=fname,
                                         tickers=tickers,
-                                        zero_volatility_tickers=zero_volatility_tickers)
+                                        lock=lock)
                        )
 
-    for thread in threads:
-        thread.start()
+    [thread.start() for thread in threads]
+    [thread.join() for thread in threads]
 
-    for thread in threads:
-        thread.join()
-
-    print_report(tickers, zero_volatility_tickers)
+    print_report(tickers)
 
 
 if __name__ == '__main__':
