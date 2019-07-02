@@ -66,7 +66,7 @@
 
 import csv
 import os
-from utils import time_track, print_report, get_next_file
+from utils import time_track, print_report
 
 
 class TickerVolatility:
@@ -102,3 +102,33 @@ class TickerVolatility:
         return ticker, volatility
 
 
+#  Определим эту функцию тогда вне main, а то вложненные функции затрудняют восприятие кода, лучше так не делать
+def get_next_ticker(file_path):
+    for dirpath, dirnames, filenames in os.walk(file_path):
+        for filename in filenames:
+            file_name = os.path.join(dirpath, filename)
+            yield TickerVolatility(file_path=file_name)
+
+
+@time_track
+def main(tickers_path):
+    tickers = {}
+    zero_volatility_tickers = []
+
+    for calc_volatility in get_next_ticker(tickers_path):
+        ticker, volatility = calc_volatility.run()
+
+        if volatility == 0:
+            zero_volatility_tickers.append(ticker)
+        else:
+            tickers[ticker] = volatility
+
+    print_report(tickers, zero_volatility_tickers)
+
+
+if __name__ == '__main__':
+    TRADE_FILES = './trades'
+
+    main(tickers_path=TRADE_FILES)
+
+# зачет!
