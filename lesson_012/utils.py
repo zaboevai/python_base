@@ -21,7 +21,6 @@ def print_report(tickers, zero_volatility_tickers):
     ordered_tickers = OrderedDict(sorted(tickers.items(), key=lambda x: x[1], reverse=True))
     tickers_list = list(ordered_tickers.keys())
 
-
     print('Максимальная волатильность:')
     for secid in tickers_list[:3]:
         print(f'\t{secid} - {ordered_tickers[secid]:2.2f} %')
