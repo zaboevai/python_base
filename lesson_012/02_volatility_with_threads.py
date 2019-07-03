@@ -87,3 +87,5 @@ if __name__ == '__main__':
     TRADE_FILES = './trades'
 
     main(tickers_path=TRADE_FILES)
+
+# зачет!

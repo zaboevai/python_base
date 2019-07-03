@@ -66,12 +66,16 @@ class TickerVolatility(Process):
 @time_track
 def main(tickers_path):
     tickers = {}
+    # TODO Для практики - сделаем очередь ограниченной, допустим 2-5 элементов. Можно покрутить это число,
+    # TODO посмотреть что происходит
     collector = Queue()
 
     threads = [TickerVolatility(file_path=fname, tickers_queue=collector) for fname in get_next_file(tickers_path)]
 
     [thread.start() for thread in threads]
 
+    # TODO Пустая очередь - это еще не сигнал к тому, что все потоки отработали.
+    # TODO Как итог - результаты от запуска к запуску меняются
     while not collector.empty():
         ticker, volatility = collector.get()
         tickers[ticker] = volatility
