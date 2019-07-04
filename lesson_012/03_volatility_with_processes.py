@@ -77,7 +77,7 @@ def main(tickers_path):
         try:
             ticker, volatility = collector.get(timeout=1)
             tickers[ticker] = volatility
-        except Empty as exc:
+        except Empty:
             if not any(process.is_alive() for process in processes):
                 break
 
@@ -89,3 +89,5 @@ def main(tickers_path):
 if __name__ == '__main__':
     TRADE_FILES = './trades'
     main(tickers_path=TRADE_FILES)
+
+# зачет!
