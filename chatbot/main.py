@@ -28,7 +28,6 @@ class Bot:
             self.vk.messages.send(user_id=event.user_id,
                                   random_id=get_random_id(),
                                   message='Привет!')
-        elif event.type == VkEventType.
 
 
 if __name__ == '__main__':
