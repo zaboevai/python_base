@@ -41,6 +41,8 @@ def draw_text(draw, fio, from_, to_, date, ):
     draw.text(xy=DATE_COORD, text=date, fill=COLOR_BLACK, font=font)
 
 
+# TODO Нейминг dst не очень мне нравится, сделаем без сокращения. Тем более по заданию ниже save_to говорится
+# TODO параметр назвать.
 def make_dir(dst: str):
     if not os.path.exists(dst):
         try:
@@ -94,3 +96,6 @@ if __name__ == '__main__':
 
     if args:
         make_ticket(args.fio, args.from_, args.to_, args.date, args.destination)
+
+# TODO В остльном норм.
+# TODO И жду на проверку бота
