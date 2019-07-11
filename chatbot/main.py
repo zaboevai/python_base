@@ -19,15 +19,24 @@ class Bot:
         except Exception as exc:
             print(exc)
             return
+        print('Бот запущен.')
 
         for event in longpoll.listen():
             self.on_event(event)
 
     def on_event(self, event):
+
         if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-            self.vk.messages.send(user_id=event.user_id,
+            print(f'Бот получил сообщение "{event.message}"')
+            self.vk.messages.send(peer_id=event.user_id,
                                   random_id=get_random_id(),
                                   message='Привет!')
+        elif event.type == VkEventType.USER_TYPING:
+            self.vk.messages.send(user_id=event.user_id,
+                                  random_id=get_random_id(),
+                                  message='Так так такк, что ты там пишешь ?!')
+        else:
+            print(f'Я ещё не умею работать с данными методами {event.type}')
 
 
 if __name__ == '__main__':
