@@ -52,17 +52,17 @@ def make_dir(dst: str):
             raise PermissionError
 
 
-def make_ticket(fio=None, from_=None, to_=None, date=None, dst=None):
+def make_ticket(fio=None, from_=None, to_=None, date=None, save_to=None):
     fio, from_, to_, date = [arg.upper() for arg in (fio, from_, to_, date)]
     img = Image.open(DEFAULT_TEMPLATE_PATH)
     draw = ImageDraw.Draw(im=img)
+
     clear_template(draw)
     draw_text(draw, fio, from_, to_, date, )
-    if not dst:
-        dst = os.path.join(PARENT_PATH, 'result')
-    print(dst)
-    make_dir(dst)
-    ticket_path = os.path.join(dst, f'{fio}.png')
+    if not save_to:
+        save_to = os.path.join(PARENT_PATH, 'result')
+    make_dir(save_to)
+    ticket_path = os.path.join(save_to, f'{fio}.png')
 
     img.save(ticket_path, 'PNG')
     print(f'Билет успешно создан в каталоге "{ticket_path}"')
@@ -88,14 +88,15 @@ if __name__ == '__main__':
     parser.add_argument('from_', type=str, help='Откуда')
     parser.add_argument('to_', type=str, help='Куда')
     parser.add_argument('date', type=str, help='Дата вылета')
-    parser.add_argument('-dst', '--destination',
+    parser.add_argument('-save_to', '--save_to',
                         type=str,
                         default='',
                         help='Куда разместить билет (default: "<current_dir>/result")')
     args = parser.parse_args()
 
     if args:
-        make_ticket(args.fio, args.from_, args.to_, args.date, args.destination)
-
-# TODO В остльном норм.
-# TODO И жду на проверку бота
+        make_ticket(fio=args.fio,
+                    from_=args.from_,
+                    to_=args.to_,
+                    date=args.date,
+                    save_to=args.save_to)
