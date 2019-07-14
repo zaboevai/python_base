@@ -41,12 +41,11 @@ def draw_text(draw, fio, from_, to_, date, ):
     draw.text(xy=DATE_COORD, text=date, fill=COLOR_BLACK, font=font)
 
 
-# TODO Нейминг dst не очень мне нравится, сделаем без сокращения. Тем более по заданию ниже save_to говорится
-# TODO параметр назвать.
-def make_dir(dst: str):
-    if not os.path.exists(dst):
+# Здесь тогда тоже поменяем
+def make_dir(save_to: str):
+    if not os.path.exists(save_to):
         try:
-            os.mkdir(dst)
+            os.mkdir(save_to)
         except PermissionError:
             print('ОШИБКА: Нет прав на запись!')
             raise PermissionError
@@ -100,3 +99,5 @@ if __name__ == '__main__':
                     to_=args.to_,
                     date=args.date,
                     save_to=args.save_to)
+
+# зачет!

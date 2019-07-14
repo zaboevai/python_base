@@ -3,6 +3,11 @@ import vk_api
 from vk_api.longpoll import VkEventType, VkLongPoll
 from vk_api.utils import get_random_id
 
+# TODO принято делать импорт в таком порядке:
+# TODO встроенные библиотеки
+# TODO внешние (загруженные) библиотеки
+# TODO свои модули/пакеты
+
 
 class Bot:
 
@@ -28,6 +33,10 @@ class Bot:
 
         if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
             print(f'Бот получил сообщение "{event.message}"')
+            # TODO Нам нужно сделать эхо-бота. То есть мы ему пишем сообщение, а он нам его посылаем в ответ.
+            # TODO То есть примерно так это должно выглядеть:
+            # TODO Юзер: Привет бот!
+            # TODO Бот: Вы сказали "Привет бот!"
             self.vk.messages.send(peer_id=event.user_id,
                                   random_id=get_random_id(),
                                   message='Привет!')
@@ -42,3 +51,5 @@ class Bot:
 if __name__ == '__main__':
     bot = Bot(token=TOKEN, group_id=GROUP_ID)
     bot.start()
+
+# TODO Еще бы хорошо файл requirements сделать
