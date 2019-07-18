@@ -38,3 +38,6 @@ class Bot:
 if __name__ == '__main__':
     bot = Bot(token=TOKEN, group_id=GROUP_ID)
     bot.start()
+
+# Оставил тудушки в файле requirements - их надо поправить к следующему дз тогда.
+# а так зачет!
