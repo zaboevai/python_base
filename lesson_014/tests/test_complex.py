@@ -9,7 +9,7 @@ class BowlingTest(unittest.TestCase):
             calculate = CalculateResult(game_result='1s2/')
             result = calculate.run()
         except ValueError as exc:
-            self.assertEqual(exc.__class__, ValueError, 'Проверка на допустимые символы не работает !!!')
+            self.assertEqual(exc.__class__, ValueError, 'Проверка на допустимые символы не работает !!!')  # TODO  посмотрите на self.assertRaises()
 
     def test_check_func_length(self):
         try:

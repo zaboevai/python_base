@@ -30,7 +30,7 @@ class CalculateResult:
             logging.basicConfig(level=logging.DEBUG, filename='bowling.log')
             logging.info(f' !!! NEW GAME !!! results < {self.game_result} >')
 
-        if len(self.game_result.replace('X', '')) % 2 == 1:
+        if len(self.game_result.replace('X', '')) % 2 == 1:  # TODO по условию геймов должно быть ровно 10
             if need_log:
                 logging.debug('Ошибка! Введены не полные результаты')
             raise WrongGameLengthError('Введены не полные результаты')
@@ -80,7 +80,7 @@ class NeedCheck(State):
     def next(self):
 
         MAX_FRAME = 10
-        if MAX_FRAME < self.calculate.frame:
+        if MAX_FRAME < self.calculate.frame:  # TODO по условию геймов должно быть ровно 10
             if self.calculate.need_log:
                 logging.debug('Ошибка! Превышено кол-во фреймов')
             raise MaxFrameError('Превышено кол-во фреймов')
@@ -167,6 +167,15 @@ class SecondHit(State):
             self.calculate.change_state(FirstHit())
 
             return
+
+# TODO логика получилась слишком сложной и избыточной, Предлагаю пойти след путем:
+#  Основной класс игры который посимвольно обходит сроку с результатом и отдает текущий символ текущему броску
+#  для посчета очков по символу. Базовый класс бросок. В нем шаблоный метод который принимает символ,
+#  сравнивает с возможными "-.*1-9" и вызывает обработчик соответсвующего символа.
+#  Конретные обработчики реализованы в наследниках - первый или второй бросок.
+#  Основной класс игры получив очки по символу - решает в какое бросок переключаться и посчитывает кол-во фреймов и общую сумму.
+#  Ну и не забываем остальные проверки, которые нужны по условию.
+#  Если необходимо в основном классе игры можно запоминать предыдущее значение очков.
 
 
 if __name__ == '__main__':
