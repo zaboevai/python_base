@@ -1,68 +1,177 @@
-class WrongSymbolsError(Exception):
+import logging
+
+
+class BowlingError(Exception):
     pass
 
-class WrongGameLengthError(Exception):
+
+class WrongGameLengthError(BowlingError):
     pass
 
 
-def check_game_result(game_result):
-    symbols = ['Х', '/', '-']
-    result = game_result
-    for symbol in symbols:
-        result = result.replace(symbol, '')
+class MaxFrameError(BowlingError):
+    pass
 
-    if result:
-        if not result.isdigit():
-            raise WrongSymbolsError('Ошибка! Введен неверный символ. (допустимы только "цифры, Х, /, -")')
-        elif len(game_result.replace('Х', '')) % 2 == 1:
+
+class CalculateResult:
+
+    def __init__(self, game_result, need_log=False):
+
+        if not game_result:
+            raise AttributeError('Не указаны результаты игры!')
+
+        self.frame = 1
+        self.total_score = 0
+        self.game_result = game_result
+        self.state = None
+        self.need_log = need_log
+
+        if need_log:
+            logging.basicConfig(level=logging.DEBUG, filename='bowling.log')
+            logging.info(f' !!! NEW GAME !!! results < {self.game_result} >')
+
+        if len(self.game_result.replace('X', '')) % 2 == 1:
+            if need_log:
+                logging.debug('Ошибка! Введены не полные результаты')
             raise WrongGameLengthError('Введены не полные результаты')
 
+    def change_state(self, state_):
+        self.state = state_
+        self.state.calculate = self
 
-def get_score(game_result):
-    error = check_game_result(game_result)
-    if error:
-        return f'Ошибка: <{error}>'
-    else:
-        result = 0
-        frame = 0
-        is_first_strike, is_second_strike = True, False
-        first_strike_score = 0
-        second_strike_score = 0
+    def run(self):
+        for hit_score in self.game_result:
+            self.hit_score = hit_score
 
-        for score in game_result:
-            if is_first_strike:
-                if score == 'Х':
-                    first_strike_score = 20
-                    frame += 1
-                elif score.isdigit():
-                    first_strike_score = int(score)
-                    is_first_strike, is_second_strike = False, True
-                elif score == '-':
-                    is_first_strike, is_second_strike = False, True
-                    continue
-                result += first_strike_score
-            elif is_second_strike:
-                if score == '/':
-                    result -= first_strike_score
-                    first_strike_score = 0
-                    second_strike_score = 15
-                elif score.isdigit():
-                    second_strike_score = int(score)
-                elif score == '-':
-                    second_strike_score = 0
-                is_first_strike, is_second_strike = True, False
-                result += second_strike_score
-                frame += 1
-        print('Бросков=', frame, ', очков=', result)
-    return result
+            if not self.state:
+                self.change_state(FirstHit())
+
+            self.state.next()
+        if self.need_log:
+            logging.info(f' !!! END GAME !!! TOTAL SCORE < {self.total_score} >')
+        return self.total_score
+
+    def next(self):
+        self.state.next()
+
+
+class State:
+    first_hit_score = 0
+    second_hit_score = 0
+    HIT = 'HIT'
+    MISS = 'MISS'
+    SPARE = 'SPARE'
+    STRIKE = 'STRIKE'
+
+    @property
+    def calculate(self):
+        return self._calculate
+
+    @calculate.setter
+    def calculate(self, calculate):
+        self._calculate = calculate
+
+    def next(self):
+        pass
+
+
+class NeedCheck(State):
+
+    def next(self):
+
+        MAX_FRAME = 10
+        if MAX_FRAME < self.calculate.frame:
+            if self.calculate.need_log:
+                logging.debug('Ошибка! Превышено кол-во фреймов')
+            raise MaxFrameError('Превышено кол-во фреймов')
+
+        elif self.calculate.hit_score not in ('X', '/', '-') and not self.calculate.hit_score.isdigit():
+            if self.calculate.need_log:
+                logging.debug(
+                    f'Ошибка! Введен неверный символ <{self.calculate.hit_score}>. (допустимы только "цифры, X, /, -")')
+            raise ValueError(
+                f'Ошибка! Введен неверный символ <{self.calculate.hit_score}>. (допустимы только "цифры, X, /, -")')
+        return
+
+
+class FirstHit(State):
+
+    def next(self):
+        self.calculate.change_state(NeedCheck())
+        self.calculate.state.next()
+
+        if isinstance(self.calculate.state, NeedCheck):
+
+            if self.calculate.need_log:
+                logging.info(f' FRAME_{self.calculate.frame}')
+
+            self.calculate.change_state(FirstHit())
+            State.first_hit_score = 0
+
+            if self.calculate.hit_score == 'X':
+                State.first_hit_score = 20
+                self.calculate.total_score += State.first_hit_score
+                if self.calculate.need_log:
+                    logging.info(f'\t first  hit -> {State.STRIKE} - {State.first_hit_score}')
+                    logging.info(f' FRAME_{self.calculate.frame} SCORE -> {self.calculate.total_score}')
+                self.calculate.frame += 1
+
+            elif self.calculate.hit_score.isdigit():
+                State.first_hit_score = int(self.calculate.hit_score)
+                self.calculate.change_state(SecondHit())
+                if self.calculate.need_log:
+                    logging.info(f'\t first  hit -> {State.HIT} - {State.first_hit_score}')
+
+            elif self.calculate.hit_score == '-':
+                self.calculate.change_state(SecondHit())
+                if self.calculate.need_log:
+                    logging.info(f'\t first  hit -> {State.MISS} - {State.first_hit_score}')
+
+            return
+
+
+class SecondHit(State):
+
+    def next(self):
+        self.calculate.change_state(NeedCheck())
+        self.calculate.state.next()
+
+        if isinstance(self.calculate.state, NeedCheck):
+
+            self.calculate.change_state(SecondHit())
+            State.second_hit_score = 0
+
+            if self.calculate.hit_score == '/':
+                State.first_hit_score = 0
+                State.second_hit_score = 15
+                if self.calculate.need_log:
+                    logging.info(f'\t second hit -> {State.SPARE} - {State.second_hit_score}')
+
+            elif self.calculate.hit_score.isdigit():
+                State.second_hit_score = int(self.calculate.hit_score)
+                if self.calculate.need_log:
+                    logging.info(f'\t second hit -> {State.HIT} - {State.second_hit_score}')
+
+            elif self.calculate.hit_score == '-':
+                State.second_hit_score = 0
+                if self.calculate.need_log:
+                    logging.info(f'\t second hit -> {State.MISS} - {State.second_hit_score}')
+
+            self.calculate.total_score += State.first_hit_score
+            self.calculate.total_score += State.second_hit_score
+
+            if self.calculate.need_log:
+                logging.info(f' FRAME_{self.calculate.frame} SCORE -> {self.calculate.total_score}')
+
+            self.calculate.frame += 1
+            self.calculate.change_state(FirstHit())
+
+            return
 
 
 if __name__ == '__main__':
     try:
-        print(get_score(game_result='Х1231231/555574964355'))
-    except WrongGameLengthError as exc:
-        print(exc)
-    except WrongSymbolsError as exc:
-        print(exc)
-    except BaseException as exc:
-        print(f'Непредвиденная ошибка {exc}')
+        calc = CalculateResult(game_result='X4/34--', need_log=False)
+        print(calc.run())
+    except (BowlingError, BaseException) as exc:
+        raise exc

@@ -36,12 +36,14 @@ import bowling
 def console_parser():
     parser = argparse.ArgumentParser(description='Утилита для расчета результата партии на основе результата бросков',
                                      add_help=True)
-    parser.add_argument('--result', type=str, help='Результаты бросков')
+    parser.add_argument('-result', '--result', type=str, help='Результаты бросков')
     args = parser.parse_args()
-    if args:
-        print(bowling.get_score(
-            game_result=args.result
-        ))
+
+    if args.result:
+        calculate_result = bowling.CalculateResult(game_result=args.result, need_log=True)
+        print(calculate_result.run())
+    else:
+        print('Укажите параметры или воспользуйтесь --help')
 
 
 if __name__ == '__main__':
