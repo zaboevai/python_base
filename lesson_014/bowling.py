@@ -21,11 +21,11 @@ class BowlingGame:
         if not game_result:
             raise AttributeError('Не указаны результаты игры!')
 
-        self.frame = 1
+        self.frame = 1  # TODO почему не 0?
         self.total_score = 0
-        self.throw_score = 0
+        self.throw_score = 0  # TODO не нужно в self
         self.game_result = game_result
-        self.throw = None
+        self.throw = None # TODO не нужно в self
         self.need_log = need_log
 
 
@@ -46,10 +46,10 @@ class BowlingGame:
 
         for throw_symbol in self.game_result:
 
-            if self.frame > 10:
+            if self.frame > 10:  # TODO венесите за цикл self.frame != 10
                 raise MaxFrameError(f'Превышено кол-во фреймов на символе "{throw_symbol}" !')
 
-            if not self.throw:
+            if not self.throw:  # TODO просто до цикла выставить в FirstThrow. # TODO зачем self?
                 self.change_throw(FirstThrow())
 
             self.throw_score = self.throw.process(symbol=throw_symbol)
@@ -57,8 +57,9 @@ class BowlingGame:
 
             if isinstance(self.throw, FirstThrow):
                 first_hit = self.throw_score
-                self.change_throw(SecondThrow())
-                if first_hit == 20:
+                self.change_throw(SecondThrow())  # TODO может просто создать две перемнных first_throw and second_throw,
+                # зачем каждый раз новый объект создавать?
+                if first_hit == 20:  # TODO код выше нужно убрать под else
                     self.change_throw(FirstThrow())
                     self.total_score += first_hit
                     self.frame += 1
@@ -67,7 +68,8 @@ class BowlingGame:
                 if second_hit == 15:
                     first_hit = 0
                 self.change_throw(FirstThrow())
-                self.total_score += (first_hit + second_hit)
+                self.total_score += (first_hit + second_hit)  # TODO не проверки что сумма двух бросков
+                # меньши 10 если не все кегли выбиты
                 self.frame += 1
 
         if self.need_log:
@@ -84,7 +86,7 @@ class BowlingGame:
             print(f' FRAME_{self.frame} {self.throw} - "{throw_symbol}" -> {self.throw_score}')
             logging.info(f' FRAME_{self.frame} {self.throw} - "{throw_symbol}" -> {self.throw_score}')
 
-    def next(self):
+    def next(self):  # TODO уже не нужен? и не забываем тесты на все исключительные ситуации
         self.throw.next()
 
 
@@ -98,7 +100,7 @@ class Throw(ABC):
             return self.spare()
         elif symbol == '-':
             return 0
-        elif symbol in map(str,(nom for nom in range(1, 10))):
+        elif symbol in map(str,(nom for nom in range(1, 10))):  # А для чего усложнили? вместо двух сранений сделали 9
             return int(symbol)
         else:
             raise ValueError(f'Введен неверный символ "{symbol}"')
@@ -118,7 +120,7 @@ class FirstThrow(Throw):
         return 20
 
     def spare(self):
-        pass
+        pass  # TODO правильнее выкидывать исключение
 
     def __str__(self):
         return self.__class__.__name__
@@ -127,7 +129,7 @@ class FirstThrow(Throw):
 class SecondThrow(Throw):
 
     def strike(self):
-        pass
+        pass  # TODO правильнее выкидывать исключение
 
     def spare(self):
         return 15
