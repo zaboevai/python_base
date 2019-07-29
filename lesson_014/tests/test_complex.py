@@ -4,19 +4,20 @@ from bowling import CalculateResult, WrongGameLengthError, BowlingError
 
 class BowlingTest(unittest.TestCase):
 
+    def test_check_func_atr_error(self):
+        with self.assertRaises(AttributeError):
+            calculate = CalculateResult(game_result='')
+            result = calculate.run()
+
     def test_check_func_symbols(self):
-        try:
+        with self.assertRaises(ValueError):
             calculate = CalculateResult(game_result='1s2/')
             result = calculate.run()
-        except ValueError as exc:
-            self.assertEqual(exc.__class__, ValueError, 'Проверка на допустимые символы не работает !!!')  # TODO  посмотрите на self.assertRaises()
 
     def test_check_func_length(self):
-        try:
+        with self.assertRaises(WrongGameLengthError):
             calculate = CalculateResult(game_result='132')
             result = calculate.run()
-        except WrongGameLengthError as exc:
-            self.assertEqual(exc.__class__, WrongGameLengthError, 'Проверка на полноту результатов не работает !!!')
 
     def test_functional_geme_calc(self):
         calculate = CalculateResult(game_result='X4/34--')
