@@ -40,8 +40,8 @@ def console_parser():
     args = parser.parse_args()
 
     if args.result:
-        calculate_result = bowling.CalculateResult(game_result=args.result, need_log=True)
-        print(calculate_result.run())
+        game = bowling.Game(game_result=args.result, need_log=True)
+        print(game.calculate_result())
     else:
         print('Укажите параметры или воспользуйтесь --help')
 
