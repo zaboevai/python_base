@@ -61,7 +61,7 @@ class Game:
 
             try:
                 throw_score = throw.process(symbol=throw_symbol)
-            except (ValueError, StrikeError, SpareError) as exc:
+            except (ValueError, StrikeError, SpareError) as exc:  # TODO Может лучше отказаться от ValueError и перехватывать одно BowlingError
                 logging.critical(f' {exc}')
                 raise exc
 
@@ -81,7 +81,7 @@ class Game:
                 else:
                     second_hit = throw_score
                     total_skittle_hits = first_hit + second_hit
-                    if (SKITTLE_COUNT - total_skittle_hits) > 0 and total_skittle_hits < SKITTLE_COUNT:
+                    if (SKITTLE_COUNT - total_skittle_hits) > 0 and total_skittle_hits < SKITTLE_COUNT:  # TODO это одно и тоже
                         self.total_score += total_skittle_hits
                     else:
                         logging.critical('введены результаты бросков превышающие кол-во кеглей !')
@@ -111,11 +111,11 @@ class Throw(ABC):
                 return self.spare()
             elif symbol == '-':
                 return 0
-            elif 1 <= int(symbol) <= 9:
+            elif 1 <= int(symbol) <= 9:  # TODO вы просто можно сравнивать символы '0', '9'
                 return int(symbol)
             else:
                 raise ValueError(f'Введен неверный символ "{symbol}"')
-        except ValueError:
+        except ValueError:  # TODO не нужно, если в строке 114 написать правильное сравнение
             raise ValueError(f'Введен неверный символ "{symbol}"')
 
     @abstractmethod
@@ -130,7 +130,7 @@ class Throw(ABC):
 class FirstThrow(Throw):
 
     def strike(self):
-        return 20
+        return 20  # TODO есть смысл использовать константу
 
     def spare(self):
         raise SpareError('Spare "/" не может быть 1 броском ')
@@ -145,7 +145,7 @@ class SecondThrow(Throw):
         raise StrikeError('Strike "X" не может быть 2 броском ')
 
     def spare(self):
-        return 15
+        return 15  # TODO есть смысл использовать константу
 
     def __str__(self):
         return self.__class__.__name__
