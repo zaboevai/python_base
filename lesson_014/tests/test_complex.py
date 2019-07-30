@@ -1,5 +1,5 @@
 import unittest
-from bowling import Game, WrongGameLengthError, BowlingError, StrikeError, SpareError
+from bowling import Game, InputValueError, MaxFrameError, StrikeError, SpareError
 
 
 class BowlingTest(unittest.TestCase):
@@ -14,8 +14,13 @@ class BowlingTest(unittest.TestCase):
             game = Game(game_result='X47')
             result = game.calculate_result()
 
+    def test_check_func_max_frame_error(self):
+        with self.assertRaises(MaxFrameError):
+            game = Game(game_result='XXXXXXXXXXX')
+            result = game.calculate_result()
+
     def test_check_func_symbols(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(InputValueError):
             game = Game(game_result='1s2/')
             result = game.calculate_result()
 
