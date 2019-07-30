@@ -108,16 +108,16 @@ class Game:
 class Throw(ABC):
 
     def process(self, symbol):
-            if symbol == 'X':
-                return self.strike()
-            elif symbol == '/':
-                return self.spare()
-            elif symbol == '-':
-                return 0
-            elif '1' <= symbol <= '9':
-                return int(symbol)
-            else:
-                raise InputValueError(f'Введен неверный символ "{symbol}"')
+        if symbol == 'X':
+            return self.strike()
+        elif symbol == '/':
+            return self.spare()
+        elif symbol == '-':
+            return 0
+        elif '1' <= symbol <= '9':
+            return int(symbol)
+        else:
+            raise InputValueError(f'Введен неверный символ "{symbol}"')
 
 
     @abstractmethod
