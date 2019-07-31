@@ -1,7 +1,28 @@
+import logging
 import vk_api
 from vk_api.longpoll import VkEventType, VkLongPoll
 from vk_api.utils import get_random_id
-from config import TOKEN, GROUP_ID
+
+try:
+    from config import TOKEN, GROUP_ID
+except ImportError:
+    exit('DO cp config.txt config.default.txt')
+
+
+def log_settings(log):
+    fh_formatter = logging.Formatter(fmt='%(asctime)s %(levelname)s: %(message)s', datefmt='%m-%d-%Y %H:%M:%S')
+    fh = logging.FileHandler(filename='vkBot.log', delay=True)
+    fh.setLevel(level=logging.DEBUG)
+    fh.setFormatter(fh_formatter)
+
+    sh_formatter = logging.Formatter(fmt='%(levelname)s: %(message)s', datefmt='%m-%d-%Y %H:%M:%S')
+    sh = logging.StreamHandler()
+    sh.setLevel(level=logging.WARNING)
+    sh.setFormatter(sh_formatter)
+
+    log.setLevel(logging.DEBUG)
+    log.addHandler(fh)
+    log.addHandler(sh)
 
 
 class Bot:
@@ -12,27 +33,31 @@ class Bot:
         self.session = vk_api.VkApi(token=token)
         self.vk = self.session.get_api()
 
+        self.log = logging.getLogger('vkBot')
+
     def start(self):
+
+        log_settings(self.log)
 
         try:
             longpoll = VkLongPoll(vk=self.session, wait=5, group_id=GROUP_ID)
         except Exception as exc:
-            print(exc)
+            self.log.exception('ошибка')
             return
-        print('Бот запущен.')
 
+        self.log.info('Бот запущен.')
         for event in longpoll.listen():
             self.on_event(event)
 
     def on_event(self, event):
 
         if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-            print(f'Бот получил сообщение "{event.message}"')
+            self.log.info('Бот получил сообщение %s', event.message)
             self.vk.messages.send(peer_id=event.peer_id,
                                   random_id=get_random_id(),
                                   message=event.message)
         else:
-            print(f'Я ещё не умею работать с данными методами {event.type}')
+            self.log.warning('Я ещё не умею работать с данными методами %s', event.type)
 
 
 if __name__ == '__main__':
