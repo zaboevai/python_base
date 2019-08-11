@@ -1,6 +1,6 @@
 import logging
 import vk_api
-from vk_api.longpoll import VkEventType, VkLongPoll
+from vk_api.bot_longpoll import VkBotEventType, VkBotLongPoll
 from vk_api.utils import get_random_id
 
 try:
@@ -12,7 +12,7 @@ except ImportError:
 def log_settings(log):
     fh_formatter = logging.Formatter(fmt='%(asctime)s %(levelname)s: %(message)s', datefmt='%m-%d-%Y %H:%M:%S')
     fh = logging.FileHandler(filename='vkBot.log', delay=True)
-    fh.setLevel(level=logging.DEBUG)
+    fh.setLevel(level=logging.WARNING)
     fh.setFormatter(fh_formatter)
 
     sh_formatter = logging.Formatter(fmt='%(levelname)s: %(message)s', datefmt='%m-%d-%Y %H:%M:%S')
@@ -26,6 +26,9 @@ def log_settings(log):
 
 
 class Bot:
+    '''
+    Эхо Бот
+    '''
 
     def __init__(self, token, group_id):
         self.log = logging.getLogger('vkBot')
@@ -33,9 +36,9 @@ class Bot:
 
         self.token = token
         self.group_id = group_id
-        self.session = vk_api.VkApi(token=token)
-        self.vk = self.session.get_api()
-        self.longpoll = VkLongPoll(vk=self.session, wait=5, group_id=self.group_id)
+        self.vk = vk_api.VkApi(token=token)
+        self.longpoll = VkBotLongPoll(vk=self.vk, group_id=self.group_id)
+        self.api = self.vk.get_api()
 
     def start(self):
         self.log.info('Бот запущен.')
@@ -45,13 +48,17 @@ class Bot:
             except Exception as exc:
                 self.log.exception(f'ошибка {exc}')
 
-    def on_event(self, event):
-
-        if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-            self.log.info('Бот получил сообщение %s', event.message)
-            self.vk.messages.send(peer_id=event.peer_id,
-                                  random_id=get_random_id(),
-                                  message=event.message)
+    def on_event(self, event: VkBotEventType):
+        '''
+        Событие при получении сообщения
+        :param event: VkBotMessageEvent
+        :return: None
+        '''
+        if event.type == VkBotEventType.MESSAGE_NEW:
+            self.log.info('Бот получил сообщение %s', event.object.text)
+            self.api.messages.send(message=event.object.text,
+                                   random_id=get_random_id(),
+                                   peer_id=event.object.peer_id)
         else:
             self.log.warning('Я ещё не умею работать с данными методами %s', event.type)
 
