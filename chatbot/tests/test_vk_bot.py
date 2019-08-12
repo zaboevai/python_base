@@ -3,11 +3,12 @@ from unittest.mock import Mock, patch, ANY
 
 from vk_api.bot_longpoll import VkBotMessageEvent
 
-from main import Bot
+from ..main import Bot
 
 
 class TestBot(unittest.TestCase):
-    RAW_EVENT = {'type': 'message_new',
+    RAW_EVENT = {'type': 'message_new',  # TODO для type лучще использовать
+                 # соответсвующую константу из  VkBotEventType
                  'object': {'date': 1565551500, 'from_id': 4145622, 'id': 194, 'out': 0, 'peer_id': 4145622,
                             'text': 'as', 'conversation_message_id': 194, 'fwd_messages': [], 'important': False,
                             'random_id': 0, 'attachments': [], 'is_hidden': False},
@@ -22,7 +23,7 @@ class TestBot(unittest.TestCase):
         long_poller_listen_mock = Mock()
         long_poller_listen_mock.listen = long_poller_mock
 
-        with patch('main.vk_api.VkApi'):
+        with patch('main.vk_api.VkApi'):  # TODO можно в одном with
             with patch('main.VkBotLongPoll', return_value=long_poller_listen_mock):
                 bot = Bot('', '')
                 bot.on_event = Mock()
@@ -37,7 +38,7 @@ class TestBot(unittest.TestCase):
 
         send_mock = Mock()
 
-        with patch('main.vk_api.VkApi'):
+        with patch('main.vk_api.VkApi'):  # TODO можно в одном with
             with patch('main.VkBotLongPoll'):
                 bot = Bot('', '')
                 bot.api = Mock()
