@@ -7,10 +7,9 @@ from ..main import Bot
 
 
 class TestBot(unittest.TestCase):
-    RAW_EVENT = {'type': 'message_new',  # TODO для type лучще использовать
-                 # соответсвующую константу из  VkBotEventType
+    RAW_EVENT = {'type': 'message_new',  # Это реальный пример возвращаемого raw объекта VkBotMessageEvent, предлагаю оставить
                  'object': {'date': 1565551500, 'from_id': 4145622, 'id': 194, 'out': 0, 'peer_id': 4145622,
-                            'text': 'as', 'conversation_message_id': 194, 'fwd_messages': [], 'important': False,
+                            'text': 'test', 'conversation_message_id': 194, 'fwd_messages': [], 'important': False,
                             'random_id': 0, 'attachments': [], 'is_hidden': False},
                  'group_id': 184332451}
 
@@ -23,28 +22,26 @@ class TestBot(unittest.TestCase):
         long_poller_listen_mock = Mock()
         long_poller_listen_mock.listen = long_poller_mock
 
-        with patch('main.vk_api.VkApi'):  # TODO можно в одном with
-            with patch('main.VkBotLongPoll', return_value=long_poller_listen_mock):
-                bot = Bot('', '')
-                bot.on_event = Mock()
-                bot.start()
+        with patch('main.vk_api.VkApi'), patch('main.VkBotLongPoll', return_value=long_poller_listen_mock):
+            bot = Bot('', '')
+            bot.on_event = Mock()
+            bot.start()
 
-                bot.on_event.assert_called()
-                bot.on_event.assert_any_call(obj)
-                assert bot.on_event.call_count == count
+            bot.on_event.assert_called()
+            bot.on_event.assert_any_call(obj)
+            assert bot.on_event.call_count == count
 
     def test_on_event(self):
         event = VkBotMessageEvent(raw=self.RAW_EVENT)
 
         send_mock = Mock()
 
-        with patch('main.vk_api.VkApi'):  # TODO можно в одном with
-            with patch('main.VkBotLongPoll'):
-                bot = Bot('', '')
-                bot.api = Mock()
-                bot.api.messages.send = send_mock
+        with patch('main.vk_api.VkApi'), patch('main.VkBotLongPoll'):
+            bot = Bot('', '')
+            bot.api = Mock()
+            bot.api.messages.send = send_mock
 
-                bot.on_event(event)
+            bot.on_event(event)
 
         send_mock.assert_called_once_with(message=self.RAW_EVENT['object']['text'],
                                           random_id=ANY,
