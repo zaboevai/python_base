@@ -1,13 +1,13 @@
 import unittest
 from unittest.mock import Mock, patch, ANY
 
-from vk_api.bot_longpoll import VkBotMessageEvent
+from vk_api.bot_longpoll import VkBotMessageEvent, VkBotEventType
 
 from ..main import Bot
 
 
 class TestBot(unittest.TestCase):
-    RAW_EVENT = {'type': 'message_new',  # Это реальный пример возвращаемого raw объекта VkBotMessageEvent, предлагаю оставить
+    RAW_EVENT = {'type': VkBotEventType.MESSAGE_NEW,
                  'object': {'date': 1565551500, 'from_id': 4145622, 'id': 194, 'out': 0, 'peer_id': 4145622,
                             'text': 'test', 'conversation_message_id': 194, 'fwd_messages': [], 'important': False,
                             'random_id': 0, 'attachments': [], 'is_hidden': False},
