@@ -46,3 +46,5 @@ class TestBot(unittest.TestCase):
         send_mock.assert_called_once_with(message=self.RAW_EVENT['object']['text'],
                                           random_id=ANY,
                                           peer_id=self.RAW_EVENT['object']['peer_id'])
+
+# зачет!
