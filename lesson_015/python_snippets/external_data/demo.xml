@@ -1,0 +1,17 @@
+<data>
+ <name>Petya</name>
+ <age>23</age>
+ <sex>true</sex>
+ <languages>
+  <language name="Python">9</language>
+  <language name="Java">7</language>
+  <language name="C#">8</language>
+  <language1 name="C#">8</language1>
+ </languages>
+  <pc>
+    <pc_item name="os">Linux</pc_item>
+    <pc_item name="proc">Intel Core i7-8700</pc_item>
+    <pc_item name="ram">64</pc_item>
+    <pc_item name="hard">5000</pc_item>
+  </pc>
+</data>
