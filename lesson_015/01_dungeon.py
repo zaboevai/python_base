@@ -91,12 +91,97 @@
 #  ...
 #
 # и так далее...
-
+import datetime
+import json
+import re
+import time
+from decimal import Decimal
 
 remaining_time = '123456.0987654321'
 # если изначально не писать число в виде строки - теряется точность!
 field_names = ['current_location', 'current_experience', 'current_date']
 
-# TODO тут ваш код
+patterns = {'location': r'\w{,8}_\w{0,2}_\w{,2}(\d.\d+)',
+            'creature': r'\w{,4}_\w{3}\d{,3}_\w{,2}\d+',
+            'hatch': r'\w{,5}_\w{,2}(\d.\d+)'}
+
+
+def identify_way(way):
+    for name, pattern in patterns.items():
+        res = re.match(pattern, way)
+        if res:
+            return name
+
+
+def get_exp(way):
+    _, exp, _ = way.split('_')
+    return str(exp).replace('exp', '')
+
+
+def get_time(way):
+    *_, time = way.split('_')
+    return str(time).replace('tm', '')
+
+
+def get_ways_names(ways):
+    next_ways = []
+    for way in ways:
+        if isinstance(way, dict):
+            for way in way.keys():
+                next_ways.append(way)
+        else:
+            next_ways.append(way)
+    return next_ways
+
+# identify_way(text)
+# exp = get_exp(text)
+# time = get_time(text)
+# print(exp, time)
+
+
+def get_locations():
+    for current_location, ways in rpg_map.items():
+        way_names = get_ways_names(ways)
+
+        return current_location, way_names
+
+
+with open(file='rpg.json', mode='r') as f:
+    rpg_map = json.load(f)
+
+delta_time = 0
+total_time = Decimal(remaining_time)
+
+
+while True:
+    begin_time = datetime.datetime.now()
+    cur_loc, ways = get_locations()
+
+    print(f'Вы находитесь в {cur_loc}')
+    print(f'У вас 0 опыта и осталось {total_time} секунд до наводнения')
+    print(f'Прошло времени: {delta_time}')
+
+    print('Внутри Вы видите:')
+
+    [print(f'- {way}') for way in ways]
+
+    choice = input('Выберите действие:')
+
+    end_time = datetime.datetime.now()
+    delta_time = end_time - begin_time
+
+    print(delta_time.seconds + (delta_time.microseconds / 1000000))
+
+    total_time -= delta_time.seconds + Decimal(delta_time.microseconds/1000000)
+
+    # for way_name in way_names:
+    #
+    #     identify = identify_way(way_name)
+    #     print(way_name)
+    #     if identify:
+    #         if identify == 'creature':
+    #             print(get_exp(way_name))
+    #
+    #         print(get_time(way_name))
 
 # Учитывая время и опыт, не забывайте о точности вычислений!
