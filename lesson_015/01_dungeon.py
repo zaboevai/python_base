@@ -106,17 +106,11 @@ patterns = {'location': r'\w{,8}_\w{0,2}_\w{,2}(\d.\d+)',
             'creature': r'\w{,4}_\w{3}\d{,3}_\w{,2}\d+',
             'hatch': r'\w{,5}_\w{,2}(\d.\d+)'}
 
+
 getcontext().prec = 12
 
 
-def identify_way(way):
-    if not way:
-        return
 
-    for name, pattern in patterns.items():
-        res = re.match(pattern, way)
-        if res:
-            return name
 
 
 def get_exp(way):
@@ -129,188 +123,211 @@ def get_time(way):
     return str(time).replace('tm', '')
 
 
-def get_ways_names(ways):
-    next_ways = []
-    for way in ways:
-        if isinstance(way, dict):
-            for way in way:
-                next_ways.append(way)
-        elif isinstance(way, list):
-            next_ways.extend(way)
-        else:
-            next_ways.append(way)
-    return next_ways
 
-
-def get_current_location_info(game_map):
-    for location, next_locations in game_map.items():
-        return location, next_locations
-
-
-def go_to_next_location(game_map: dict, next_location):
-    cur_map = game_map
-
-    current_location, next_locations = get_current_location_info(game_map)
-
-    if next_location:
-        next_location_num = ''
-
-        for num, way in enumerate(next_locations):
-            if isinstance(way, str) and way == next_location:
-                next_location_num = int(num)
-            elif isinstance(way, dict) and way.get(next_location, None):
-                next_location_num = int(num)
-            elif isinstance(way, list) and next_location in way:
-                next_location_num = int(num)
-
-        if next_location_num != '':
-            cur_map = next_locations[next_location_num]
-            if identify_way(next_location) == 'hatch':
-                print(cur_map[next_location])
-            else:
-                current_location, next_locations = get_current_location_info(cur_map)
-
-    next_ways = get_ways_names(next_locations)
-
-    return cur_map, current_location, next_ways
-
-
-def show_game_desc(location: str, remaining_time: str, total_time: str, next_ways: list):
-    print(f'Вы находитесь в {location}')
-    print(f'У вас 0 опыта и осталось {remaining_time} секунд до наводнения')
-    print(f'Прошло времени: {total_time}')
-    print('')
-    print('Внутри Вы видите:')
-
-    [print(f'- {way}') for way in next_ways]
-
-
-def get_monsters(ways_list):
-    return {num + 1: Monster(name=monster_name) for num, monster_name in enumerate(ways_list) if
-            identify_way(monster_name) != 'location'}
-
-
-def get_alive_monsters(mob_list: dict):
-    return {num: monster for num, monster in mob_list.items() if monster.is_live}
 
 
 class Monster:
 
-    def __init__(self, name, is_live=True):
+    def __init__(self, name, is_alive=True):
         self.name = name
-        self.is_live = is_live
+        self.is_live = is_alive
 
     def __str__(self):
         return f'{self.name} ({"alive" if self.is_live else "dead"})'
 
 
-def user_game_step(current_location, next_ways):
-    avalible_monsters = {}
-    is_end_game = False
-    next_location = None
+class GameDungeon:
 
-    if not avalible_monsters.get(current_location):
-        avalible_monsters = {current_location: get_monsters(next_ways)}
+    def __init__(self, path_map):
+        self.path_map = path_map
+        self.rpg_map = None
 
-    locations = [way for way in next_ways if identify_way(way) in ('location', 'hatch')]
-    avalible_location = {num + 1: loc for num, loc in enumerate(locations)}
+        self.next_location = None
+        self.current_location = None
+        self.is_end_game = False
 
-    user_actions = ('Атаковать монстра',
-                    'Перейти в другую локацию',
-                    'Сдаться и выйти из игры')
+        self.available_monsters = {}
+        self.available_location = {}
+        self.available_actions = ()
 
-    while True:
+    def open_map(self):
+        with open(file=self.path_map, mode='r') as f:
+            self.rpg_map = json.load(f)
 
-        print('Выберите действие:')
-        [print(f'{num + 1}. {action}') for num, action in enumerate(user_actions)]
+    def show_state_info(self, location: str, remaining_time: str, total_time: str, next_ways: list):
+        print(f'Вы находитесь в {location}')
+        print(f'У вас 0 опыта и осталось {remaining_time} секунд до наводнения')
+        print(f'Прошло времени: {total_time}')
+        print('')
+        print('Внутри Вы видите:')
 
+        [print(f'- {way}') for way in next_ways]
+
+    def get_monsters(self, actions: list) -> list:
+        return [action for action in actions if self.identify_action(action) == 'creature']
+
+    def create_monsters(self, monsters: list) -> list:
+        return [Monster(name=monster_name) for monster_name in monsters]
+
+    def get_locations(self, ways):
+        return [way for way in ways if self.identify_action(way) in ('location', 'hatch')]
+
+    def get_ways_names(self, ways):
+        next_ways = []
+        for way in ways:
+            if isinstance(way, dict):
+                for way in way:
+                    next_ways.append(way)
+            elif isinstance(way, list):
+                next_ways.extend(way)
+            else:
+                next_ways.append(way)
+        return next_ways
+
+    def get_current_location_info(self, game_map):
+        for location, next_locations in game_map.items():
+            return location, next_locations
+
+    def identify_action(self, way):
+        if not way:
+            return
+
+        for name, pattern in patterns.items():
+            res = re.match(pattern, way)
+            if res:
+                return name
+
+    def change_location(self, next_location):
+
+        # cur_map = self.rpg_map
+        # current_location, next_locations = self.get_current_location_info(self.rpg_map)
+
+        if next_location:
+            next_location_num = ''
+
+            for num, way in enumerate(self.available_actions):
+                if isinstance(way, str) and way == next_location:
+                    next_location_num = int(num)
+                elif isinstance(way, dict) and way.get(next_location, None):
+                    next_location_num = int(num)
+                elif isinstance(way, list) and next_location in way:
+                    next_location_num = int(num)
+
+            if next_location_num != '':
+                self.rpg_map = self.available_actions[next_location_num]
+                if self.identify_action(next_location) == 'hatch':
+                    print(self.rpg_map[next_location])
+                    self.is_end_game = True
+                # else:
+                #     current_location, self.available_actions = self.get_current_location_info(self.rpg_map)
+
+        # next_ways = get_ways_names(next_locations)
+
+        # return  current_location, next_ways
+
+    def get_user_choice(self, choice_text, choice_list: list or tuple) -> chr:
+
+        avalible_choices = [num + 1 for num in range(len(choice_list))]
+
+        print(choice_text)
+        [print(f'{num + 1}. {action}') for num, action in enumerate(choice_list)]
         choice = input('')
-
         os.system('cls' if os.name == 'nt' else 'clear')
-        avalible_choices = [num + 1 for num in range(len(user_actions))]
 
         if choice.isalpha() or choice not in map(str, avalible_choices):
             print(f'!!! ВНИМАНИЕ !!! Введено "{choice}", доступные варианты {avalible_choices}.')
             time.sleep(1)
+            return
+        else:
+            return int(choice)
 
-        elif choice == '3':
-            is_end_game = True
-            break
+    def user_action(self):
 
-        elif choice == '2':
+        next_location = None
 
-            if avalible_location:
-                print('Доступные локации:')
-                [print(num, loc) for num, loc in avalible_location.items()]
-                choice = input('Выберите локацию:')
+        user_actions = ('Атаковать монстра',
+                        'Перейти в другую локацию',
+                        'Сдаться и выйти из игры')
 
-                for num, way in avalible_location.items():
-                    if num == int(choice):
-                        next_location = way
+        choice = self.get_user_choice('Выберите действие:', user_actions)
+
+        if choice == 3:
+            self.is_end_game = True
+        elif choice == 2:
+            if self.available_location:
+                choice = self.get_user_choice('Доступные локации:', self.available_location)
+                if choice:
+                    for num, way in enumerate(self.available_location):
+                        if num + 1 == choice:
+                            next_location = way
+                            print(f'Вы выбрали переход в локацию "{next_location}"')
             else:
                 print('ТУПИК')
-                is_end_game = True
-            print(f'Вы выбрали переход в локацию "{next_location}"')
-        elif choice == '1':
+                self.is_end_game = True
 
-            if get_alive_monsters(avalible_monsters[current_location]):
-                print('Доступные монстры:')
-                [print(num, monster) for num, monster in
-                 get_alive_monsters(avalible_monsters[current_location]).items()]
-                choice = int(input('Выберите монстра:'))
+        elif choice == 1:
+            alive_monsters = [monster for monster in
+                              self.available_monsters[self.current_location] if monster.is_live]
 
-                for num, monster in avalible_monsters[current_location].items():
-                    if num == choice:
-                        monster.is_live = False
-                print(f'Вы выбрали атаку на монстра "{monster.name}"')
+            if alive_monsters:
+                choice = self.get_user_choice('Доступные монстры:', alive_monsters)
+                if choice:
+                    for num, monster in enumerate(alive_monsters):
+                        if num + 1 == choice:
+                            monster.is_live = False
+                            print(f'Вы выбрали атаку на монстра "{monster.name}"')
             else:
                 print('Нет доступных монстров')
 
-            time.sleep(1)
-
-            os.system('cls' if os.name == 'nt' else 'clear')
-        break
-
-    return is_end_game, next_location
-
-
-def main():
-    with open(file='rpg.json', mode='r') as f:
-        rpg_map = json.load(f)
-
-    remaining_time_dec = Decimal(remaining_time)
-
-    total_time = Decimal()
-    next_location = None
-
-    current_location = None
-    is_end_game = False
-
-    while True:
-
-        if is_end_game:
-            break
-        elif identify_way(next_location) == 'hatch':
-            print(rpg_map[current_location])
-
-        begin_time = datetime.datetime.now()
-
-        rpg_map, current_location, next_ways = go_to_next_location(rpg_map, next_location)
-
-        show_game_desc(current_location, remaining_time_dec, total_time, next_ways)
-        print('')
-        is_end_game, next_location = user_game_step(current_location, next_ways)
-
+        time.sleep(1)
         os.system('cls' if os.name == 'nt' else 'clear')
 
-        end_time = datetime.datetime.now()
-        delta_time = end_time - begin_time
+        return next_location
 
-        delta_time = Decimal(delta_time.seconds + (delta_time.microseconds / 1000000))
-        remaining_time_dec -= delta_time
-        total_time += delta_time
+    def run(self):
 
-    print('YOU LOOSE !')
+        self.open_map()
+
+        remaining_time_dec = Decimal(remaining_time)
+        total_time = Decimal()
+
+        while True:
+
+            if self.is_end_game:
+                break
+
+            begin_time = datetime.datetime.now()
+
+            self.current_location, self.available_actions = self.get_current_location_info(self.rpg_map)
+
+            # self.available_actions = self.get_ways_names(self.available_actions)
+
+            if not self.available_monsters.get(self.current_location):
+                monsters = self.get_monsters(self.get_ways_names(self.available_actions))
+                self.available_monsters = {self.current_location: self.create_monsters(monsters)}
+
+            self.available_location = self.get_locations(self.get_ways_names(self.available_actions))
+
+            self.show_state_info(self.current_location, remaining_time_dec, total_time, self.get_ways_names(self.available_actions))
+
+            print('')
+
+            self.next_location = self.user_action()
+
+            self.change_location(self.next_location)
+
+            os.system('cls' if os.name == 'nt' else 'clear')
+
+            end_time = datetime.datetime.now()
+            delta_time = end_time - begin_time
+
+            delta_time = Decimal(delta_time.seconds + (delta_time.microseconds / 1000000))
+            remaining_time_dec -= delta_time
+            total_time += delta_time
+
+        print(self.current_location)
+        [print(m) for m in self.available_monsters[self.current_location]]
+        print('YOU LOOSE !')
 
     # os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -327,6 +344,6 @@ def main():
     # Учитывая время и опыт, не забывайте о точности вычислений!
 
 
-
 if __name__ == '__main__':
-    main()
+    game = GameDungeon(path_map='rpg.json')
+    game.run()
