@@ -104,11 +104,15 @@ remaining_time = '123456.0987654321'
 getcontext().prec = 12
 
 
-class GameScoreMixin:
+def convert_list(func):
+    def wrapper(act):
+        func_list = func(act)
+        return {num + 1: {'action_name': monster} for num, monster in enumerate(func_list)} if func_list else None
 
-    patterns = {'location': r'\w{,8}_\w{0,2}_\w{,2}(\d.\d+)',
-                'creature': r'\w{,4}\d{,}_\w{3}\d{,3}_\w{,2}\d+',
-                'hatch': r'\w{,5}_\w{,2}(\d.\d+)'}
+    return wrapper
+
+
+class GameScoreMixin:
 
     time_pattern = r'tm\d{1,}'
     exp_pattern = r'exp\d{0,}'
@@ -116,12 +120,12 @@ class GameScoreMixin:
     @staticmethod
     def get_exp(obj):
         exp = re.search(GameScoreMixin.exp_pattern, obj)
-        return exp.group(0)[3:] if exp else 0
+        return Decimal(exp.group(0)[3:]) if exp else 0
 
     @staticmethod
     def get_time(obj):
-        exp = re.match(GameScoreMixin.time_pattern, obj)
-        return exp.group(0) if exp else 0
+        exp = re.search(GameScoreMixin.time_pattern, obj)
+        return Decimal(exp.group(0)[2:]) if exp else 0
 
 
 class Monster(GameScoreMixin):
@@ -132,13 +136,13 @@ class Monster(GameScoreMixin):
 
     @property
     def exp(self):
-        return int(self.get_exp(self.name))
+        return self.get_exp(self.name)
 
     @property
     def time(self):
-        return Decimal(self.get_time(self.name))
+        return self.get_time(self.name)
 
-    def kill_monster(self):
+    def kill_monster(self) -> (Decimal, int):
         self.is_alive = False
         return self.time, self.exp
 
@@ -147,10 +151,12 @@ class Monster(GameScoreMixin):
 
 
 class GameDungeon(GameScoreMixin):
-
     is_end_game = False
     is_exit_game = False
 
+    patterns = {'location': r'\w{,8}_\w{0,2}_\w{,2}(\d.\d+)',
+                'creature': r'\w{,4}\d{,}_\w{3}\d{,3}_\w{,2}\d+',
+                'hatch': r'\w{,5}_\w{,2}(\d.\d+)'}
 
     def __init__(self, path_map):
 
@@ -165,9 +171,6 @@ class GameDungeon(GameScoreMixin):
         self.available_actions = []
         self.action_names = []
 
-    def atack(self):
-        pass
-
     def open_map(self):
         with open(file=self.path_map, mode='r') as f:
             self.rpg_map = json.load(f)
@@ -180,14 +183,6 @@ class GameDungeon(GameScoreMixin):
         print('Внутри Вы видите:')
 
         [print(f'- {way}') for way in self.action_names]
-
-    def get_monster_names(self, actions: list) -> list:
-        identifiers = 'creature'
-        return [action for action in actions if self._identify_action(action) == identifiers]
-
-    def get_locations(self, actions: list) -> dict:
-        identifiers = ('location', 'hatch')
-        return {num: {'desc': action} for num, action in enumerate(actions) if self._identify_action(action) in identifiers}
 
     @staticmethod
     def _create_monsters(monster_names: list) -> list:
@@ -211,110 +206,149 @@ class GameDungeon(GameScoreMixin):
         for location, next_locations in game_map.items():
             return location, next_locations
 
-    @staticmethod
-    def _identify_action(action: str) -> str:
+    def _identify_action(self, action: str) -> str:
         if not action:
             return ''
 
-        for name, pattern in GameScoreMixin.patterns.items():
+        for name, pattern in self.patterns.items():
             res = re.match(pattern, action)
             if res:
                 return name
         return ''
 
+    @convert_list
+    def get_available_monsters(self):
+        if not self.available_monsters.get(self.current_location):
+            monster_names = [action for action in self.action_names if self._identify_action(action) == 'creature']
+            self.available_monsters = {self.current_location: self._create_monsters(monster_names)}
+
+        alive_monsters = [monster for monster in
+                          self.available_monsters[self.current_location] if monster.is_alive]
+
+        return alive_monsters #{num + 1: {'action_name': monster} for num, monster in enumerate(alive_monsters)}
+
+    @convert_list
+    def get_available_locations(self):
+        available_locations = [location for location in self.action_names if
+                               self._identify_action(location) in ('location', 'hatch')]
+        return available_locations #{num + 1: {'action_name': location} for num, location in enumerate(available_locations)}
+
+    def end_game(self, _=None) -> (Decimal, int):
+        self.is_end_game = True
+        return 0, 0
+
+    def attack_monster(self, monster: Monster) -> (Decimal, int):
+        if not monster:
+            return 0, 0
+        _time, exp = monster.kill_monster()
+        return _time, exp
+
     def change_location(self, next_location: str) -> (Decimal, int):
 
-        if next_location:
+        if not next_location:
+            return self.end_game()
 
-            next_location_num = ''
+        next_location_num = ''
 
-            for num, available_action in enumerate(self.available_actions):
-                if isinstance(available_action, dict) and available_action.get(next_location, None):
-                    next_location_num = num
+        for num, available_action in enumerate(self.available_actions):
+            if isinstance(available_action, dict) and available_action.get(next_location, None):
+                next_location_num = num
 
-            if next_location_num != '':
-                self.rpg_map = self.available_actions[next_location_num]
+        if next_location_num != '':
+            self.rpg_map = self.available_actions[next_location_num]
 
         _time, exp = self.get_time(next_location), 0
         return _time, exp
 
     @staticmethod
-    def get_user_choice(choice_text, choice_list: dict) -> chr:
+    def get_user_choice(choice_text: str, choice_list: dict) -> int:
+        while True:
+            avalible_choices = [num + 1 for num in range(len(choice_list))]
 
-        avalible_choices = [num + 1 for num in range(len(choice_list))]
+            print(choice_text)
 
-        print(choice_text)
+            [print(f'{num}. {action.get("action_name")}') for num, action in choice_list.items()]
+            choice = input('')
+            os.system('cls' if os.name == 'nt' else 'clear')
 
-        [print(f'{num}. {action.get("desc")}') for num, action in choice_list.items()]
-        choice = input('')
-        os.system('cls' if os.name == 'nt' else 'clear')
+            if choice.isalpha() or choice not in map(str, avalible_choices):
+                print(f'!!! ВНИМАНИЕ !!! Введено "{choice}", доступные варианты {avalible_choices}.')
+                continue
 
-        if choice.isalpha() or choice not in map(str, avalible_choices):
-            print(f'!!! ВНИМАНИЕ !!! Введено "{choice}", доступные варианты {avalible_choices}.')
-        else:
             return int(choice)
 
-        return
+    def user_action(self) -> (Decimal, int):
 
-    def user_action(self):
+        action_time, action_exp = 0, 0
 
-        USER_ACTIONS = {1: {'desc': 'Атаковать монстра', 'action': self.user_attack},
-                        2: {'desc': 'Перейти в другую локацию', 'action': self.user_move},
-                        3: {'desc': 'Сдаться и выйти из игры', 'action': self.user_exit}}
+        user_actions = {
+            1: {'action_name': 'Атаковать монстра',
+                'action_targets': self.get_available_monsters,
+                'action': self.attack_monster,
+                'action_error_text': 'Монстров не видно !'},
 
-        user_choice = {}
+            2: {'action_name': 'Перейти в другую локацию',
+                'action_targets': self.get_available_locations,
+                'action': self.change_location,
+                'action_error_text': 'Пещер не найдено !'},
 
-        choice = self.get_user_choice('Выберите действие:', USER_ACTIONS)
+            3: {'action_name': 'Сдаться и выйти из игры',
+                'action_targets': None,
+                'action': self.end_game,
+                'action_error_text': 'Ха ха слабак !'}
+        }
 
-        for num, action in USER_ACTIONS.items():
-            if choice == num:
-                user_choice = {choice: action.get('action')()
+        choice = self.get_user_choice('Выберите действие:', user_actions)
 
-        # if choice == 3:
-        #     self.is_end_game = True
-        # elif choice == 2:
-        #     user_choice = {choice: self.user_move()}
-        # elif choice == 1:
-        #     user_choice = {choice: self.user_attack()}
+        if choice:
+            for num, action in user_actions.items():
+                if choice == num:
+                    action_targets = action.get('action_targets')
+
+                    if action_targets:
+                        action_targets = action_targets()
+
+                    if not action_targets:
+                        print(action.get('action_error_text'))
+
+                    user_target_choice = self.get_user_target_choice(action_targets)
+
+                    user_action = action.get('action')
+                    action_time, action_exp = user_action(user_target_choice)
 
         time.sleep(1)
         os.system('cls' if os.name == 'nt' else 'clear')
 
+        return action_time, action_exp
+
+    def get_user_target_choice(self, targets):
+
+        user_choice = None
+
+        if not targets:
+            return user_choice
+
+        user_target_num = self.get_user_choice('Доступные цели:', targets)
+        for num, target in enumerate(targets.values()):
+            if num + 1 == user_target_num:
+                print(f'Вы выбрали "{target.get("action_name")}"')
+                user_choice = target.get("action_name")
+
         return user_choice
 
-    def user_exit(self):
-        self.is_end_game = True
-
-    def user_move(self):
-        user_choice = ''
-        available_location = self.get_locations(self.action_names)
-        if available_location:
-            location_choice = self.get_user_choice('Доступные локации:', available_location)
-            for num, location in enumerate(available_location.values()):
-                if num == location_choice:
-                    print(f'Вы выбрали переход в локацию "{location.get("desc")}"')
-                    user_choice = location.get('desc')
-        else:
-            print('ТУПИК')
-            self.is_end_game = True
-        return user_choice
-
-    def user_attack(self):
-        user_choice = ''
-        if not self.available_monsters.get(self.current_location):
-            monster_names = self.get_monster_names(self.action_names)
-            self.available_monsters = {self.current_location: self._create_monsters(monster_names)}
-        alive_monsters = {num + 1: {'desc': monster} for num, monster in
-                          enumerate(self.available_monsters[self.current_location]) if monster.is_alive}
-        if alive_monsters:
-            monster_choice = self.get_user_choice('Доступные монстры:', alive_monsters)
-            for num, monster in alive_monsters.items():
-                if num == monster_choice:
-                    print(f'Вы выбрали атаку на монстра "{monster.get("desc").name}"')
-                    user_choice = monster.get('desc')
-        else:
-            print('Нет доступных монстров')
-        return user_choice
+    def game_checks(self):
+        if self.is_end_game:
+            print('О нееет вода поднимается !')
+            print('Вжжжух.')
+            print('Мамин амулет творит чудеса.')
+            choice = input('Желаете воскреснуть ? (y/n)')
+            if choice in ('Y', 'y', 'Д', 'д'):
+                self.is_end_game = False
+                return False
+            else:
+                self.is_exit_game = True
+                return False
+        return True
 
     def run(self):
 
@@ -329,47 +363,25 @@ class GameDungeon(GameScoreMixin):
             self.open_map()
             remaining_time_dec = Decimal(remaining_time)
             total_time, total_exp = Decimal(), Decimal()
-            action_time, action_exp = 0, 0
 
             while True:
 
                 os.system('cls' if os.name == 'nt' else 'clear')
 
-                if self.is_end_game:
-                    print('Мамин амулет творит чудеса.')
-                    choice = input('Желаете воскреснуть ? (y/n)')
-                    if choice in ('Y', 'y', 'Д', 'д'):
-                        self.is_end_game = False
-                        break
-                    else:
-                        self.is_exit_game = True
-                        break
+                if not self.game_checks():
+                    break
 
                 begin_time = datetime.datetime.now()
 
                 self.current_location, self.available_actions = self._parse_map(self.rpg_map)
 
                 self.action_names = self._get_action_names(self.available_actions)
+
                 self.show_game_state_info(remaining_time_dec, total_time, total_exp)
 
                 print('')
 
-                self.user_choice = self.user_action()
-
-                for num, map_object in self.user_choice.items():
-
-                    if num == 3:
-                        break
-                    elif num == 1:
-                        action_time, action_exp = map_object.kill_monster()
-                    elif num == 2:
-
-                        if self._identify_action(map_object) == 'hatch':
-                            print(self.rpg_map[map_object])
-                            self.is_end_game = True
-                            break
-
-                        action_time, action_exp = self.change_location(map_object)
+                action_time, action_exp = self.user_action()
 
                 end_time = datetime.datetime.now()
                 delta_time = end_time - begin_time
@@ -379,10 +391,7 @@ class GameDungeon(GameScoreMixin):
                 total_time += delta_time + action_time
                 total_exp += action_exp
 
-
-
-    # Учитывая время и опыт, не забывайте о точности вычислений!
-
+# Учитывая время и опыт, не забывайте о точности вычислений!
 
 if __name__ == '__main__':
     game = GameDungeon(path_map='rpg.json')
