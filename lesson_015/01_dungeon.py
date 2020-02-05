@@ -100,7 +100,10 @@ import re
 import time
 from decimal import Decimal
 
-
+# TODO
+# После успешного или неуспешного завершения игры вам необходимо записать
+# всю собранную информацию в csv файл dungeon.csv.
+# Названия столбцов для csv файла: current_location, current_experience, current_date
 class GameCore:
     def __init__(self):
         self.is_end_game = False
@@ -225,7 +228,7 @@ class Map:
         with open(file=self.path_map, mode='r') as f:
             self.rpg_map = json.load(f)
 
-    @staticmethod
+    @staticmethod  # если этот метод работает с данными объекта зачем делать его статическим?...
     def _parse_map(game_map: dict) -> (str, tuple):
         for location, next_locations in game_map.items():
             return location, next_locations
@@ -360,8 +363,7 @@ class GameDungeon(GameCore):
         print(f'Прошло времени: {self.user_total_time}')
         print('')
         print('Внутри Вы видите:')
-        _list = []
-        _list.extend(self.map.current_location.get_available_monsters())
+        _list = self.map.current_location.get_available_monsters()
         _list.extend(self.map.current_location.get_available_location())
         [print(f'- {way}') for way in _list]
 
@@ -502,6 +504,7 @@ class GameDungeon(GameCore):
 
                 action_time, action_exp = self.run_user_actions()
 
+                # TODO вроде время на обдумывания хода не надо было учитывать
                 end_time = datetime.datetime.now()
                 delta_time = end_time - begin_time
                 delta_time = Decimal(delta_time.seconds + (delta_time.microseconds / 1000000))
