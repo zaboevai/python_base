@@ -234,9 +234,7 @@ class Map:
     def _get_object_names(objects: list) -> list:
         object_names = []
         for object in objects:
-            if isinstance(object, dict):
-                object_names.extend([object_name for object_name in object])
-            elif isinstance(object, list):
+            if isinstance(object, dict) or isinstance(object, list):
                 object_names.extend(object)
             else:
                 object_names.append(object)
@@ -302,8 +300,8 @@ class Location(GameObject):
         self.available_location = {self.name: locations}
 
     def get_alive_monster_count(self):
-        return len([monster.name for monster in
-                    self.available_monsters[self.name] if monster.is_alive])
+        return sum(monster.is_alive for monster in
+                    self.available_monsters[self.name])
 
     def get_location_monster(self, name):
         for monster in self.available_monsters[self.name]:
