@@ -92,7 +92,7 @@
 #
 # и так далее...
 # если изначально не писать число в виде строки - теряется точность!
-
+import csv
 import datetime
 import json
 import os
@@ -100,10 +100,7 @@ import re
 import time
 from decimal import Decimal
 
-# TODO
-# После успешного или неуспешного завершения игры вам необходимо записать
-# всю собранную информацию в csv файл dungeon.csv.
-# Названия столбцов для csv файла: current_location, current_experience, current_date
+
 class GameCore:
     def __init__(self):
         self.is_end_game = False
@@ -225,8 +222,8 @@ class Map:
         self.current_location = None
 
     def open_map(self) -> None:
-        with open(file=self.path_map, mode='r') as f:
-            self.rpg_map = json.load(f)
+        with open(file=self.path_map, mode='r') as file:
+            self.rpg_map = json.load(file)
 
     @staticmethod  # если этот метод работает с данными объекта зачем делать его статическим?...
     def _parse_map(game_map: dict) -> (str, tuple):
@@ -331,13 +328,15 @@ class GameDungeon(GameCore):
     HATCH_EXP_NEEDED = 280
     REMAINING_TIME = '123456.0987654321'
 
-    def __init__(self, game_map: Map, user: User):
+    def __init__(self, game_map: Map, user: User, logging=False):
         super().__init__()
+
+        self.map = game_map
 
         self.user = user
         self.user.set_user_action('exit', self.end_game)
 
-        self.map = game_map
+        self.logging = logging
 
         self.user_choice = None
         self.remaining_time_dec = Decimal(GameDungeon.REMAINING_TIME)
@@ -346,6 +345,8 @@ class GameDungeon(GameCore):
         self.is_exit_game = False
         self.is_win_game = False
         self.user_exp = 0
+
+        self.log_csv_writer = None
 
     def win_game(self, _=None) -> (Decimal, int):
         if self.user_exp >= GameDungeon.HATCH_EXP_NEEDED:
@@ -357,6 +358,21 @@ class GameDungeon(GameCore):
 
         return 0, 0
 
+    def open_log_file(func):
+        def wrapper(self):
+            if self.logging:
+                file_name = f'{self.user.name}_{self.__class__.__name__}_{datetime.datetime.now().strftime("%d%m%Y_%H%M%S")}.csv'
+                file_name = file_name.lower()
+                with open(file=file_name, mode='w', newline='') as file:
+                    self.log_csv_writer = csv.writer(file)
+                    self.log_csv_writer.writerow(['current location', 'exp', 'date'])
+                    func(self)
+                return
+
+            func(self)
+
+        return wrapper
+
     def show_game_state_info(self) -> None:
         print(f'Вы находитесь в {self.map.current_location.name}')
         print(f'У вас {self.user_exp} опыта и осталось {self.remaining_time_dec} секунд до наводнения')
@@ -366,6 +382,10 @@ class GameDungeon(GameCore):
         _list = self.map.current_location.get_available_monsters()
         _list.extend(self.map.current_location.get_available_location())
         [print(f'- {way}') for way in _list]
+
+    def write_log(self):
+        if self.logging:
+            self.log_csv_writer.writerow([self.map.current_location, self.user_exp, datetime.datetime.now()])
 
     def game_checks(self):
 
@@ -467,6 +487,41 @@ class GameDungeon(GameCore):
 
         return action_time, action_exp
 
+    @open_log_file
+    def start_game(self):
+        while True:
+
+            os.system('cls' if os.name == 'nt' else 'clear')
+
+            if not self.game_checks():
+                break
+
+            begin_time = datetime.datetime.now()
+
+            self.map.create_new_location()
+
+            self.map = self.user.get_map()
+            self.user.set_user_action_targets('attack', self.map.current_location.get_alive_available_monsters)
+            self.user.set_user_action_targets('move', self.map.current_location.get_available_location)
+
+            self.user.go_to_location(self.map.current_location)
+
+            self.show_game_state_info()
+
+            print('')
+
+            action_time, action_exp = self.run_user_actions()
+
+            self.write_log()
+
+            end_time = datetime.datetime.now()
+            delta_time = end_time - begin_time
+            delta_time = Decimal(delta_time.seconds + (delta_time.microseconds / 1000000))
+
+            self.remaining_time_dec -= delta_time + action_time
+            self.user_total_time += delta_time + action_time
+            self.user_exp += action_exp
+
     def run(self):
 
         while True:
@@ -481,37 +536,8 @@ class GameDungeon(GameCore):
             if not self.user.get_map():
                 self.user.set_map(self.map)
 
-            while True:
+            self.start_game()
 
-                os.system('cls' if os.name == 'nt' else 'clear')
-
-                if not self.game_checks():
-                    break
-
-                begin_time = datetime.datetime.now()
-
-                self.map.create_new_location()
-
-                self.map = self.user.get_map()
-                self.user.set_user_action_targets('attack', self.map.current_location.get_alive_available_monsters)
-                self.user.set_user_action_targets('move', self.map.current_location.get_available_location)
-
-                self.user.go_to_location(self.map.current_location)
-
-                self.show_game_state_info()
-
-                print('')
-
-                action_time, action_exp = self.run_user_actions()
-
-                # TODO вроде время на обдумывания хода не надо было учитывать
-                end_time = datetime.datetime.now()
-                delta_time = end_time - begin_time
-                delta_time = Decimal(delta_time.seconds + (delta_time.microseconds / 1000000))
-
-                self.remaining_time_dec -= delta_time + action_time
-                self.user_total_time += delta_time + action_time
-                self.user_exp += action_exp
 
 # Учитывая время и опыт, не забывайте о точности вычислений!
 
@@ -519,5 +545,5 @@ class GameDungeon(GameCore):
 if __name__ == '__main__':
     game_user = User(name='User')
     rpg_map = Map(path_map='rpg.json')
-    game = GameDungeon(game_map=rpg_map, user=game_user)
+    game = GameDungeon(game_map=rpg_map, user=game_user, logging=True)
     game.run()
